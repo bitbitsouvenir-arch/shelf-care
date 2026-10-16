@@ -68,7 +68,6 @@
     </div>
 
     <div class="space-y-4">
-      <!-- Shelf Care Button -->
       <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-6 rounded-3xl font-extrabold text-xl shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-black tracking-tight">Shelf Care</div>
@@ -77,7 +76,6 @@
         <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- Supplies Button -->
       <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-6 rounded-3xl font-extrabold text-xl shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-black tracking-tight">Supplies</div>
@@ -87,7 +85,6 @@
       </button>
     </div>
 
-    <!-- Quick Footer Status -->
     <div class="text-center pt-8 text-[11px] text-gray-400">
       Tap the top right pill to switch crew member
     </div>
@@ -144,8 +141,42 @@
           </div>
         </div>
 
-        <!-- Dynamic Form Fields depending on selected source -->
+        <!-- Dynamic Form Fields -->
         <div id="source-form-fields" class="space-y-3">
+          
+          <!-- CREATABLE SELECT: ONLY FOR IN-HOUSE -->
+          <div id="inhouse-category-box" class="hidden space-y-1 relative">
+            <label class="block text-xs font-bold text-gray-700">Material / Production Batch</label>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="inhouse-cat-input" 
+                placeholder="Type or select material (Leather, Clay...)" 
+                onfocus="showCategoryDropdown()" 
+                oninput="filterCategories()"
+                autocomplete="off"
+                class="w-full p-3 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-semibold text-xs text-[#2B2523] outline-none focus:border-[#8C5835] pr-8"
+              />
+              <button type="button" onclick="toggleCategoryDropdown()" class="absolute right-2.5 top-3 text-gray-400 hover:text-gray-600 text-xs">▼</button>
+            </div>
+
+            <!-- Creatable Dropdown Panel -->
+            <div id="category-dropdown-panel" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-[#D9D1C7] rounded-xl shadow-xl z-30 max-h-48 overflow-y-auto divide-y divide-gray-100">
+              <div id="category-options-list">
+                <!-- Pre-populated options -->
+              </div>
+              <button 
+                type="button" 
+                id="btn-create-category" 
+                onclick="createNewCategory()" 
+                class="hidden w-full p-2.5 text-left text-xs font-bold text-[#8C5835] bg-[#FAF7F2] hover:bg-[#F3EFEA] flex items-center space-x-1 cursor-pointer"
+              >
+                <span>+ Add</span>
+                <span id="new-cat-label" class="truncate font-black"></span>
+              </button>
+            </div>
+          </div>
+
           <div>
             <label id="label-photo-1" class="block text-xs font-bold text-gray-700 mb-1.5">1. Courier Waybill / Tracking Label</label>
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
@@ -373,13 +404,16 @@
       { id: "8", name: "Louise", pin: "1234", role: "admin" }
     ];
 
+    // Pre-populated In-House Categories (Creatable)
+    let inhouseCategories = ["Leather", "Clay", "Beads", "Resin", "Renew / Repurposed", "Wire", "Fabric"];
+
     let crewMembers = [...DEFAULT_ROSTER];
     let currentActiveCrew = null;
     let selectedCrewForAuth = null;
     let enteredPin = "";
     let currentIntakeSource = "courier";
 
-    // Navigation Router
+    // View Navigation Router
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -418,21 +452,98 @@
       const label1 = document.getElementById('label-photo-1');
       const label2 = document.getElementById('label-photo-2');
       const submitBtn = document.getElementById('btn-submit-intake');
+      const inhouseBox = document.getElementById('inhouse-category-box');
 
       if (type === 'courier') {
+        inhouseBox.classList.add('hidden');
         label1.textContent = "1. Courier Waybill / Tracking Label";
         label2.textContent = "2. Open Box / Bag Content";
         submitBtn.textContent = "Send Parcel to Werqroom White Bin";
       } else if (type === 'merchant') {
+        inhouseBox.classList.add('hidden');
         label1.textContent = "1. Merchant Delivery Receipt / Sheet";
         label2.textContent = "2. Delivered Goods / Batch Photo";
         submitBtn.textContent = "Log Merchant Delivery to White Bin";
       } else if (type === 'inhouse') {
-        label1.textContent = "1. Material / Production Batch Sheet";
+        inhouseBox.classList.remove('hidden');
+        renderCategoryOptions();
+        label1.textContent = "1. Production / Batch Notes Photo (Optional)";
         label2.textContent = "2. Finished Craft or Renew Items";
-        submitBtn.textContent = "Proceed Directly to SKU Builder →";
+        submitBtn.textContent = "Proceed to Werqroom Intake & SKU Builder →";
       }
     }
+
+    // ================= CREATABLE SELECT LOGIC =================
+    function renderCategoryOptions(filterText = "") {
+      const list = document.getElementById('category-options-list');
+      const createBtn = document.getElementById('btn-create-category');
+      const newCatLabel = document.getElementById('new-cat-label');
+      
+      const filtered = inhouseCategories.filter(cat => 
+        cat.toLowerCase().includes(filterText.toLowerCase().trim())
+      );
+
+      if (filtered.length > 0) {
+        list.innerHTML = filtered.map(cat => `
+          <div onclick="selectCategory('${cat}')" class="p-2.5 text-xs font-semibold text-gray-700 hover:bg-[#FAF7F2] hover:text-[#8C5835] cursor-pointer transition">
+            ${cat}
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = `<div class="p-2.5 text-xs text-gray-400">No matching material found</div>`;
+      }
+
+      // If user typed something not strictly in the list, offer to create it
+      const exactMatch = inhouseCategories.some(cat => cat.toLowerCase() === filterText.toLowerCase().trim());
+      if (filterText.trim().length > 0 && !exactMatch) {
+        newCatLabel.textContent = `"${filterText.trim()}"`;
+        createBtn.classList.remove('hidden');
+      } else {
+        createBtn.classList.add('hidden');
+      }
+    }
+
+    function showCategoryDropdown() {
+      document.getElementById('category-dropdown-panel').classList.remove('hidden');
+      renderCategoryOptions(document.getElementById('inhouse-cat-input').value);
+    }
+
+    function toggleCategoryDropdown() {
+      const panel = document.getElementById('category-dropdown-panel');
+      if (panel.classList.contains('hidden')) {
+        showCategoryDropdown();
+      } else {
+        panel.classList.add('hidden');
+      }
+    }
+
+    function filterCategories() {
+      const val = document.getElementById('inhouse-cat-input').value;
+      renderCategoryOptions(val);
+      document.getElementById('category-dropdown-panel').classList.remove('hidden');
+    }
+
+    function selectCategory(catName) {
+      document.getElementById('inhouse-cat-input').value = catName;
+      document.getElementById('category-dropdown-panel').classList.add('hidden');
+    }
+
+    function createNewCategory() {
+      const val = document.getElementById('inhouse-cat-input').value.trim();
+      if (!val) return;
+      if (!inhouseCategories.includes(val)) {
+        inhouseCategories.push(val);
+      }
+      selectCategory(val);
+    }
+
+    // Hide creatable dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const box = document.getElementById('inhouse-category-box');
+      if (box && !box.contains(e.target)) {
+        document.getElementById('category-dropdown-panel')?.classList.add('hidden');
+      }
+    });
 
     // Expense Source
     function setExpenseSource(src) {
@@ -609,9 +720,14 @@
     }
 
     function logDroppedParcel() {
-      const currentBin = parseInt(document.getElementById('whitebin-count').textContent) || 0;
-      document.getElementById('whitebin-count').textContent = currentBin + 1;
-      alert(`Logged under ${currentIntakeSource.toUpperCase()}! Added to White Bin.`);
+      if (currentIntakeSource === 'inhouse') {
+        const selectedMat = document.getElementById('inhouse-cat-input').value.trim() || 'General Craft';
+        alert(`In-House ${selectedMat} batch started! Directing to SKU Builder.`);
+      } else {
+        const currentBin = parseInt(document.getElementById('whitebin-count').textContent) || 0;
+        document.getElementById('whitebin-count').textContent = currentBin + 1;
+        alert(`Logged under ${currentIntakeSource.toUpperCase()}! Added to White Bin.`);
+      }
     }
 
     function previewFile(input, labelId) {

@@ -6,6 +6,8 @@
   <title>Bitcrew — Shelf Care</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Google Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -44,13 +46,13 @@
       </div>
     </div>
 
-    <!-- Active Crew Profile Switcher Button -->
-    <button type="button" onclick="openCrewModal()" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3 py-1.5 rounded-full transition active:scale-95 cursor-pointer">
-      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-[#8C5835] text-white flex items-center justify-center text-[10px] font-bold">
-        A
+    <!-- Active Crew Profile Switcher Button (Defaults to "Hello") -->
+    <button type="button" onclick="openCrewModal()" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3.5 py-1.5 rounded-full transition active:scale-95 cursor-pointer shadow-sm">
+      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-[#D9D1C7] text-white flex items-center justify-center text-[10px] font-bold">
+        ?
       </div>
-      <span id="crew-name" class="text-xs font-semibold text-[#2B2523]">Alex</span>
-      <span id="clock-badge" class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200"></span>
+      <span id="crew-name" class="text-xs font-semibold text-[#2B2523]">Hello</span>
+      <span id="clock-badge" class="w-2 h-2 rounded-full bg-gray-300"></span>
     </button>
   </header>
 
@@ -184,111 +186,77 @@
     </button>
   </nav>
 
-  <!-- CREW PROFILE / TIME CLOCK MODAL (HIDDEN BY DEFAULT WITH DISPLAY:NONE) -->
-  <div id="crew-modal" style="display: none;" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-base text-[#2B2523]">Switch Crew / Shift Clock</h3>
-        <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
+  <!-- CREW MODAL (ROSTER + PIN PAD) -->
+  <div id="crew-modal" style="display: none;" class="fixed inset-0 bg-black/45 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 transition-all">
+
+      <!-- VIEW 1: CREW ROSTER SELECTION -->
+      <div id="modal-roster-view" class="space-y-4">
+        <div class="flex items-center justify-between border-b pb-3">
+          <div>
+            <h3 class="font-bold text-base text-[#2B2523]">Store Crew</h3>
+            <span class="text-[11px] text-gray-400">Select your name to sign in</span>
+          </div>
+          <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
+        </div>
+
+        <div id="crew-list" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          <div class="col-span-2 text-center text-xs text-gray-400 py-6">Loading team roster...</div>
+        </div>
+
+        <div id="active-shift-actions" class="pt-2 border-t hidden">
+          <button type="button" onclick="clockOutCurrentCrew()" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-xl cursor-pointer transition">
+            Clock Out Active Shift
+          </button>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-2.5">
-        <button type="button" onclick="selectCrew('Alex')" class="p-3 rounded-2xl border border-[#8C5835] bg-[#FAF7F2] flex items-center space-x-3 text-left cursor-pointer">
-          <div class="w-8 h-8 rounded-full bg-[#8C5835] text-white flex items-center justify-center font-bold text-xs">A</div>
-          <div>
-            <span class="text-xs font-bold block text-[#2B2523]">Alex</span>
-            <span class="text-[10px] text-emerald-600 font-semibold">Clocked In</span>
+      <!-- VIEW 2: PIN ENTRY KEYPAD -->
+      <div id="modal-pin-view" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b pb-3">
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="showRosterView()" class="text-xs text-[#8C5835] font-bold cursor-pointer">← Back</button>
+            <h3 id="pin-target-name" class="font-bold text-base text-[#2B2523]">Enter PIN</h3>
           </div>
-        </button>
-        <button type="button" onclick="selectCrew('Sarah')" class="p-3 rounded-2xl border border-gray-200 hover:border-gray-300 flex items-center space-x-3 text-left cursor-pointer">
-          <div class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-xs">S</div>
-          <div>
-            <span class="text-xs font-bold block text-[#2B2523]">Sarah</span>
-            <span class="text-[10px] text-gray-400 font-semibold">Off Shift</span>
-          </div>
-        </button>
+          <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
+        </div>
+
+        <!-- 4-Dot PIN Indicator -->
+        <div class="flex justify-center space-x-3 py-2">
+          <span id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+        </div>
+
+        <div id="pin-error" class="text-center text-xs font-bold text-red-500 h-4"></div>
+
+        <!-- Numeric Keypad Grid -->
+        <div class="grid grid-cols-3 gap-2 pt-1 font-mono">
+          <button type="button" onclick="enterPinDigit('1')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">1</button>
+          <button type="button" onclick="enterPinDigit('2')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">2</button>
+          <button type="button" onclick="enterPinDigit('3')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">3</button>
+          <button type="button" onclick="enterPinDigit('4')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">4</button>
+          <button type="button" onclick="enterPinDigit('5')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">5</button>
+          <button type="button" onclick="enterPinDigit('6')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">6</button>
+          <button type="button" onclick="enterPinDigit('7')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">7</button>
+          <button type="button" onclick="enterPinDigit('8')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">8</button>
+          <button type="button" onclick="enterPinDigit('9')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">9</button>
+          <button type="button" onclick="clearPin()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-xs rounded-2xl cursor-pointer">Clear</button>
+          <button type="button" onclick="enterPinDigit('0')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">0</button>
+          <button type="button" onclick="deletePinDigit()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-2xl cursor-pointer">⌫</button>
+        </div>
       </div>
 
-      <div class="pt-2 border-t flex gap-2">
-        <button type="button" onclick="alert('Clocked out successfully!'); closeCrewModal();" class="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-xl cursor-pointer">
-          Clock Out Shift
-        </button>
-        <button type="button" onclick="closeCrewModal()" class="flex-1 py-3 bg-[#EFE9E0] text-[#2B2523] font-bold text-xs rounded-xl cursor-pointer">
-          Close
-        </button>
-      </div>
     </div>
   </div>
 
   <script>
-    // Tab switching
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
+    // Supabase Configuration
+    const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-      const isAudit = tabId === 'tab-audit';
-      document.getElementById('nav-audit').className = isAudit ? 'flex flex-col items-center text-[#8C5835] font-bold cursor-pointer' : 'flex flex-col items-center text-gray-400 hover:text-[#2B2523] font-bold cursor-pointer';
-      document.getElementById('nav-dropoff').className = !isAudit ? 'flex flex-col items-center text-[#8C5835] font-bold cursor-pointer' : 'flex flex-col items-center text-gray-400 hover:text-[#2B2523] font-bold cursor-pointer';
-
-      if (isAudit) {
-        setTimeout(() => document.getElementById('scanner-input').focus(), 150);
-      }
-    }
-
-    // Modal controls using explicit inline display
-    function openCrewModal() {
-      document.getElementById('crew-modal').style.display = 'flex';
-    }
-
-    function closeCrewModal() {
-      document.getElementById('crew-modal').style.display = 'none';
-    }
-
-    // Select crew profile
-    function selectCrew(name) {
-      document.getElementById('crew-name').textContent = name;
-      document.getElementById('crew-avatar').textContent = name.charAt(0);
-      closeCrewModal();
-    }
-
-    // File preview helper
-    function previewFile(input, labelId) {
-      if (input.files && input.files[0]) {
-        document.getElementById(labelId).textContent = "✓ " + input.files[0].name.substring(0, 18) + "...";
-      }
-    }
-
-    // Scanner Listener
-    let count = 14;
-    const scannerInput = document.getElementById('scanner-input');
-    scannerInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const sku = scannerInput.value.trim();
-        if (sku) {
-          count++;
-          document.getElementById('session-counter').textContent = count;
-          document.getElementById('display-sku').textContent = sku;
-          playBeep();
-          scannerInput.value = '';
-        }
-      }
-    });
-
-    // Web Audio Synthesizer Beep
-    function playBeep() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.08);
-      } catch (err) {}
-    }
-  </script>
-</body>
-</html>
+    let crewMembers = [];
+    let currentActiveCrew = null;
+    let

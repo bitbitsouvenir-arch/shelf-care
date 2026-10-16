@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bitcrew — Shelf Care</title>
-  <!-- Tailwind CSS CDN for styling -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Font: Plus Jakarta Sans for clean modern retail look -->
+  <!-- Google Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -30,98 +30,100 @@
     }
   </script>
 </head>
-<body class="bg-linen text-walnut font-sans min-h-screen flex flex-col antialiased selection:bg-saddle selection:text-white">
+<body class="bg-[#F9F6F0] text-[#2B2523] font-sans min-h-screen flex flex-col antialiased selection:bg-[#8C5835] selection:text-white relative">
 
   <!-- TOP HEADER / CREW BAR -->
-  <header class="bg-white/80 backdrop-blur-md border-b border-[#E6E0D8] sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
-    <div class="flex items-center space-x-2">
-      <div class="w-8 h-8 rounded-full bg-saddle flex items-center justify-center text-white font-bold text-xs tracking-wider">
+  <header class="bg-white/90 backdrop-blur-md border-b border-[#E6E0D8] sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-sm">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-8 h-8 rounded-full bg-[#8C5835] flex items-center justify-center text-white font-bold text-xs tracking-wider">
         BC
       </div>
       <div>
-        <h1 class="text-sm font-bold tracking-tight text-walnut leading-none">Shelf Care</h1>
+        <h1 class="text-sm font-bold tracking-tight text-[#2B2523] leading-none">Shelf Care</h1>
         <span class="text-[10px] text-gray-500 font-medium">Werqroom & Store Ops</span>
       </div>
     </div>
 
-    <!-- Active Crew Profile Switcher -->
-    <button onclick="toggleModal('crew-modal')" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3 py-1.5 rounded-full transition active:scale-95">
+    <!-- Active Crew Profile Switcher Button -->
+    <button type="button" onclick="openCrewModal()" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3 py-1.5 rounded-full transition active:scale-95 cursor-pointer">
       <div id="crew-avatar" class="w-5 h-5 rounded-full bg-[#8C5835] text-white flex items-center justify-center text-[10px] font-bold">
         A
       </div>
-      <span id="crew-name" class="text-xs font-semibold text-walnut">Alex</span>
+      <span id="crew-name" class="text-xs font-semibold text-[#2B2523]">Alex</span>
       <span id="clock-badge" class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200"></span>
     </button>
   </header>
 
-  <!-- MAIN SCROLLABLE CONTENT AREA -->
+  <!-- MAIN CONTENT AREA -->
   <main class="flex-1 max-w-md w-full mx-auto p-4 pb-28">
 
-    <!-- OVERVIEW / QUICK STATUS -->
+    <!-- OVERVIEW STATUS CARDS -->
     <div class="grid grid-cols-3 gap-2.5 mb-5">
       <div class="bg-white p-3 rounded-2xl border border-[#E6E0D8] shadow-sm flex flex-col justify-between">
         <span class="text-[11px] font-semibold text-gray-500">Werqroom</span>
         <div class="mt-1">
-          <span class="text-xl font-extrabold text-walnut">142</span>
+          <span class="text-xl font-extrabold text-[#2B2523]">142</span>
           <span class="text-[10px] text-gray-400 block font-medium">packs</span>
         </div>
       </div>
       <div class="bg-white p-3 rounded-2xl border border-[#E6E0D8] shadow-sm flex flex-col justify-between">
         <span class="text-[11px] font-semibold text-gray-500">Shop Storage</span>
         <div class="mt-1">
-          <span class="text-xl font-extrabold text-walnut">68</span>
+          <span class="text-xl font-extrabold text-[#2B2523]">68</span>
           <span class="text-[10px] text-gray-400 block font-medium">packs</span>
         </div>
       </div>
-      <div class="bg-white p-3 rounded-2xl border border-[#E6E0D8] shadow-sm flex flex-col justify-between border-l-4 border-l-ochre">
-        <span class="text-[11px] font-semibold text-ochre">White Bin</span>
+      <div class="bg-white p-3 rounded-2xl border border-[#E6E0D8] shadow-sm flex flex-col justify-between border-l-4 border-l-[#E0A93B]">
+        <span class="text-[11px] font-semibold text-[#E0A93B]">White Bin</span>
         <div class="mt-1">
-          <span class="text-xl font-extrabold text-walnut">2</span>
+          <span class="text-xl font-extrabold text-[#2B2523]">2</span>
           <span class="text-[10px] text-gray-400 block font-medium">parcels</span>
         </div>
       </div>
     </div>
 
-    <!-- TAB VIEW: DROP-OFF -->
+    <!-- TAB 1: DROP-OFF SCREEN -->
     <section id="tab-dropoff" class="tab-pane space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         <div class="border-b border-gray-100 pb-3">
           <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 uppercase tracking-wide">Step 1: Door Drop-Off</span>
-          <h2 class="text-lg font-bold text-walnut mt-1">Log Dropped Parcel</h2>
+          <h2 class="text-lg font-bold text-[#2B2523] mt-1">Log Dropped Parcel</h2>
           <p class="text-xs text-gray-500">Store crew takes 2 photos when courier delivers.</p>
         </div>
 
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1.5">1. Courier Waybill / Tracking Label</label>
-            <div class="border-2 border-dashed border-[#D9D1C7] hover:border-saddle rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] transition">
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
+              <input type="file" accept="image/*" capture="environment" class="hidden" onchange="previewFile(this, 'waybill-label')">
               <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <span class="text-xs font-semibold text-saddle">Snap or Upload Waybill</span>
-            </div>
+              <span id="waybill-label" class="text-xs font-semibold text-[#8C5835]">Snap or Upload Waybill</span>
+            </label>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1.5">2. Open Box / Bag Content</label>
-            <div class="border-2 border-dashed border-[#D9D1C7] hover:border-saddle rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] transition">
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
+              <input type="file" accept="image/*" capture="environment" class="hidden" onchange="previewFile(this, 'contents-label')">
               <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              <span class="text-xs font-semibold text-saddle">Snap Contents Photo</span>
-            </div>
+              <span id="contents-label" class="text-xs font-semibold text-[#8C5835]">Snap Contents Photo</span>
+            </label>
           </div>
         </div>
 
-        <button class="w-full py-3.5 bg-saddle hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98]">
+        <button type="button" onclick="alert('Parcel photo logged! Status: IN_WHITE_BIN')" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
           Send Parcel to Werqroom White Bin
         </button>
       </div>
     </section>
 
-    <!-- TAB VIEW: AUDIT (CONTINUOUS SCANNER) -->
+    <!-- TAB 2: AUDIT SCREEN (CONTINUOUS SCANNER) -->
     <section id="tab-audit" class="tab-pane hidden space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 uppercase tracking-wide">Weekly Audit</span>
-            <h2 class="text-lg font-bold text-walnut mt-1">Continuous Count</h2>
+            <h2 class="text-lg font-bold text-[#2B2523] mt-1">Continuous Count</h2>
           </div>
           <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -130,39 +132,39 @@
         </div>
 
         <!-- Scanner Receiver Input -->
-        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-saddle transition">
+        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
           <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Active Scan Listener</label>
           <input 
             type="text" 
             id="scanner-input" 
             placeholder="Scan barcode or type SKU..." 
-            class="w-full bg-transparent font-mono font-bold text-base text-walnut outline-none"
+            class="w-full bg-transparent font-mono font-bold text-base text-[#2B2523] outline-none"
             autofocus
           />
         </div>
 
         <!-- Scanned Feedback Card -->
         <div id="last-scanned" class="bg-[#F8F6F2] p-4 rounded-2xl border border-[#E0D8CE] flex items-center space-x-3.5">
-          <div class="w-12 h-12 bg-white rounded-xl border border-gray-200 flex items-center justify-center font-bold text-xs text-saddle shadow-inner">
+          <div class="w-12 h-12 bg-white rounded-xl border border-gray-200 flex items-center justify-center font-bold text-xs text-[#8C5835] shadow-inner">
             IMG
           </div>
           <div class="flex-1 min-w-0">
-            <h3 class="text-xs font-bold text-walnut truncate">CHA-BOS-RES-SNICKERS</h3>
+            <h3 id="display-sku" class="text-xs font-bold text-[#2B2523] truncate">CHA-BOS-RES-SNICKERS</h3>
             <span class="text-[11px] text-gray-500 block">Resin Snickers Charm • 10 pcs/pack</span>
-            <span class="text-[11px] font-bold text-sage mt-0.5 inline-block">+1 Pack Scanned</span>
+            <span class="text-[11px] font-bold text-[#7A8B43] mt-0.5 inline-block">+1 Pack Scanned</span>
           </div>
           <div class="text-right">
             <span class="text-xs text-gray-400 block font-medium">Session</span>
-            <span class="text-lg font-black text-walnut">14</span>
+            <span id="session-counter" class="text-lg font-black text-[#2B2523]">14</span>
           </div>
         </div>
 
         <div class="flex gap-2">
-          <button class="flex-1 py-3 bg-[#EFE9E0] hover:bg-[#E5DDD2] text-walnut font-bold text-xs rounded-xl transition">
+          <button type="button" onclick="alert('Open Custom Count Form')" class="flex-1 py-3 bg-[#EFE9E0] hover:bg-[#E5DDD2] text-[#2B2523] font-bold text-xs rounded-xl transition cursor-pointer">
             + Custom / Partial Pack
           </button>
-          <button class="flex-1 py-3 bg-walnut text-white font-bold text-xs rounded-xl transition">
-            Finish & Review Variance
+          <button type="button" onclick="alert('Audit Finished! No variances found.')" class="flex-1 py-3 bg-[#2B2523] text-white font-bold text-xs rounded-xl transition cursor-pointer">
+            Finish & Review
           </button>
         </div>
       </div>
@@ -171,31 +173,122 @@
   </main>
 
   <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-lg border-t border-[#E6E0D8] z-30 px-6 py-2.5 max-w-md mx-auto flex items-center justify-around shadow-lg">
-    <button onclick="switchTab('tab-dropoff')" id="nav-dropoff" class="flex flex-col items-center text-saddle font-bold transition">
+  <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-lg border-t border-[#E6E0D8] z-20 px-8 py-3 max-w-md mx-auto flex items-center justify-around shadow-lg">
+    <button type="button" onclick="switchTab('tab-dropoff')" id="nav-dropoff" class="flex flex-col items-center text-[#8C5835] font-bold cursor-pointer">
       <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
       <span class="text-[10px]">Drop-Off</span>
     </button>
-    <button onclick="switchTab('tab-audit')" id="nav-audit" class="flex flex-col items-center text-gray-400 hover:text-walnut font-bold transition">
+    <button type="button" onclick="switchTab('tab-audit')" id="nav-audit" class="flex flex-col items-center text-gray-400 hover:text-[#2B2523] font-bold cursor-pointer">
       <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
       <span class="text-[10px]">Audit</span>
     </button>
   </nav>
 
-  <!-- CREW PROFILE / TIME CLOCK MODAL -->
-  <div id="crew-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 hidden">
+  <!-- CREW PROFILE / TIME CLOCK MODAL (HIDDEN BY DEFAULT WITH DISPLAY:NONE) -->
+  <div id="crew-modal" style="display: none;" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-base text-walnut">Switch Crew / Clock In-Out</h3>
-        <button onclick="toggleModal('crew-modal')" class="text-gray-400 hover:text-gray-700 text-sm font-bold">✕</button>
+        <h3 class="font-bold text-base text-[#2B2523]">Switch Crew / Shift Clock</h3>
+        <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
       </div>
 
       <div class="grid grid-cols-2 gap-2.5">
-        <button onclick="selectCrew('Alex')" class="p-3 rounded-2xl border border-saddle bg-[#FAF7F2] flex items-center space-x-3 text-left">
-          <div class="w-8 h-8 rounded-full bg-saddle text-white flex items-center justify-center font-bold text-xs">A</div>
+        <button type="button" onclick="selectCrew('Alex')" class="p-3 rounded-2xl border border-[#8C5835] bg-[#FAF7F2] flex items-center space-x-3 text-left cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-[#8C5835] text-white flex items-center justify-center font-bold text-xs">A</div>
           <div>
-            <span class="text-xs font-bold block text-walnut">Alex</span>
+            <span class="text-xs font-bold block text-[#2B2523]">Alex</span>
             <span class="text-[10px] text-emerald-600 font-semibold">Clocked In</span>
           </div>
         </button>
-        <button onclick="selectCrew('Sarah')" class="p-3 rounded-2xl border border-gray
+        <button type="button" onclick="selectCrew('Sarah')" class="p-3 rounded-2xl border border-gray-200 hover:border-gray-300 flex items-center space-x-3 text-left cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-xs">S</div>
+          <div>
+            <span class="text-xs font-bold block text-[#2B2523]">Sarah</span>
+            <span class="text-[10px] text-gray-400 font-semibold">Off Shift</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="pt-2 border-t flex gap-2">
+        <button type="button" onclick="alert('Clocked out successfully!'); closeCrewModal();" class="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-xl cursor-pointer">
+          Clock Out Shift
+        </button>
+        <button type="button" onclick="closeCrewModal()" class="flex-1 py-3 bg-[#EFE9E0] text-[#2B2523] font-bold text-xs rounded-xl cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      const isAudit = tabId === 'tab-audit';
+      document.getElementById('nav-audit').className = isAudit ? 'flex flex-col items-center text-[#8C5835] font-bold cursor-pointer' : 'flex flex-col items-center text-gray-400 hover:text-[#2B2523] font-bold cursor-pointer';
+      document.getElementById('nav-dropoff').className = !isAudit ? 'flex flex-col items-center text-[#8C5835] font-bold cursor-pointer' : 'flex flex-col items-center text-gray-400 hover:text-[#2B2523] font-bold cursor-pointer';
+
+      if (isAudit) {
+        setTimeout(() => document.getElementById('scanner-input').focus(), 150);
+      }
+    }
+
+    // Modal controls using explicit inline display
+    function openCrewModal() {
+      document.getElementById('crew-modal').style.display = 'flex';
+    }
+
+    function closeCrewModal() {
+      document.getElementById('crew-modal').style.display = 'none';
+    }
+
+    // Select crew profile
+    function selectCrew(name) {
+      document.getElementById('crew-name').textContent = name;
+      document.getElementById('crew-avatar').textContent = name.charAt(0);
+      closeCrewModal();
+    }
+
+    // File preview helper
+    function previewFile(input, labelId) {
+      if (input.files && input.files[0]) {
+        document.getElementById(labelId).textContent = "✓ " + input.files[0].name.substring(0, 18) + "...";
+      }
+    }
+
+    // Scanner Listener
+    let count = 14;
+    const scannerInput = document.getElementById('scanner-input');
+    scannerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const sku = scannerInput.value.trim();
+        if (sku) {
+          count++;
+          document.getElementById('session-counter').textContent = count;
+          document.getElementById('display-sku').textContent = sku;
+          playBeep();
+          scannerInput.value = '';
+        }
+      }
+    });
+
+    // Web Audio Synthesizer Beep
+    function playBeep() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      } catch (err) {}
+    }
+  </script>
+</body>
+</html>

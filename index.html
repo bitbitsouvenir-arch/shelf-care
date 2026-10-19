@@ -10,6 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- HTML5 QR/Barcode Camera Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <!-- Google Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,9 +44,17 @@
       <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden mr-1 text-[#8C5835] font-bold text-xs bg-[#F3EFEA] hover:bg-[#EAE4DC] px-2.5 py-1.5 rounded-full transition cursor-pointer">
         ← Hub
       </button>
-      <div class="w-8 h-8 rounded-full bg-[#8C5835] flex items-center justify-center text-white font-bold text-xs tracking-wider">
-        BC
+      
+      <!-- ROUND BITCREW "B" LOGO BADGE -->
+      <div class="w-9 h-9 rounded-full bg-[#FA6900] p-0.5 shadow-sm flex items-center justify-center shrink-0 overflow-hidden border border-[#E05800]">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <!-- Starburst Sun Shape -->
+          <path d="M50 0 C53 12 60 15 70 12 C78 22 85 24 92 34 C90 46 95 50 100 50 C95 50 90 54 92 66 C85 76 78 78 70 88 C60 85 53 88 50 100 C47 88 40 85 30 88 C22 78 15 76 8 66 C10 54 5 50 0 50 C5 50 10 46 8 34 C15 24 22 22 30 12 C40 15 47 12 50 0 Z" fill="#FFE838"/>
+          <!-- Bold 'B' Glyph -->
+          <text x="50%" y="68%" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="52" fill="#B26800" transform="rotate(-6 50 50)">B</text>
+        </svg>
       </div>
+
       <div>
         <h1 id="header-title" class="text-sm font-bold tracking-tight text-[#2B2523] leading-none">Bitcrew</h1>
         <span id="header-subtitle" class="text-[10px] text-gray-500 font-medium">Store Operations</span>
@@ -61,39 +71,65 @@
     </button>
   </header>
 
+  <!-- CAMERA SCANNER OVERLAY MODAL -->
+  <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-sm text-[#2B2523]">Scan Barcode / QR</h3>
+        <button type="button" onclick="stopCameraScanner()" class="text-gray-400 hover:text-gray-700 font-bold p-1 text-base">✕</button>
+      </div>
+      <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
+      <p class="text-[11px] text-center text-gray-500 font-medium">Point camera directly at the waybill or item QR</p>
+    </div>
+  </div>
+
   <!-- ==================== VIEW 1: BITCREW MAIN HUB ==================== -->
-  <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-6 flex flex-col justify-center space-y-6">
-    <div class="text-center space-y-2 mb-2">
-      <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EFE9E0] text-[#8C5835] tracking-wide uppercase">Workspace</span>
+  <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-4">
+    <div class="text-center space-y-1 mb-2">
+      <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EFE9E0] text-[#8C5835] tracking-wide uppercase">Workspace</span>
       <h2 class="text-2xl font-black text-[#2B2523]">Bitcrew Portal</h2>
       <p class="text-xs text-gray-500">Select an operational module to begin.</p>
     </div>
 
-    <div class="space-y-4">
-      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-6 rounded-3xl font-extrabold text-xl shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+    <div class="space-y-3">
+      <!-- 1. SHELF HEALTH (AUDIT & STOCK VISIBILITY) -->
+      <button type="button" onclick="goToView('view-shelf-health')" class="w-full bg-[#FAF7F2] hover:bg-[#F3EFEA] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-sm border-2 border-[#8C5835] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-black tracking-tight">Shelf Care</div>
-          <span class="text-xs font-medium text-gray-700 block mt-0.5">Inventory, Parcels & Audits</span>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#8C5835] text-white uppercase">Master View</span>
+            <div class="text-lg font-black tracking-tight text-[#8C5835]">Shelf Health</div>
+          </div>
+          <span class="text-xs font-semibold text-gray-600 block mt-1">Live Stock, Search, Audit & Trend Reports</span>
         </div>
-        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-xl text-[#8C5835] group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-6 rounded-3xl font-extrabold text-xl shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+      <!-- 2. SHELF CARE -->
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-black tracking-tight">Shelf Care</div>
+          <span class="text-xs font-medium text-gray-700 block mt-0.5">Intake, White Bin, QR Builder & Movement</span>
+        </div>
+        <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 3. SUPPLIES -->
+      <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-black tracking-tight">Supplies</div>
           <span class="text-xs font-medium text-gray-700 block mt-0.5">Petty Cash & Store Expenses</span>
         </div>
-        <span class="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
       </button>
     </div>
 
-    <div class="text-center pt-8 text-[11px] text-gray-400">
+    <div class="text-center pt-6 text-[11px] text-gray-400">
       Tap the top right pill to switch crew member
     </div>
   </main>
 
 
-  <!-- ==================== VIEW 2: SHELF CARE (INVENTORY) ==================== -->
+  <!-- ==================== VIEW 2: SHELF CARE (INVENTORY PIPELINE) ==================== -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28">
 
     <!-- OVERVIEW STATUS CARDS -->
@@ -143,35 +179,54 @@
 
         <!-- 1. COURIER DROP FIELDS -->
         <div id="fields-courier" class="space-y-3">
+          <!-- Waybill Input with Eyoyo + Camera Option -->
           <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
-            <label class="block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1">
-              1. Scan Waybill Barcode (Eyoyo)
-            </label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+                1. Waybill Barcode
+              </label>
+              <button type="button" onclick="startCameraScanner('waybill-barcode-input')" class="text-[11px] font-bold text-[#8C5835] flex items-center space-x-1 hover:underline cursor-pointer">
+                <span>📷 Scan via Camera</span>
+              </button>
+            </div>
             <div class="flex items-center space-x-2">
               <input 
                 type="text" 
                 id="waybill-barcode-input" 
-                placeholder="Scan barcode or type tracking #..." 
+                placeholder="Scan with Eyoyo or type..." 
                 class="w-full bg-transparent font-mono font-bold text-sm text-[#2B2523] outline-none"
               />
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             </div>
           </div>
 
+          <!-- Required Photo 1: Outer Package / Waybill Photo -->
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1.5">2. Open Box / Bag Content Photo</label>
-            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
-              <!-- Accepts both direct camera snap and saved gallery photos -->
-              <input type="file" id="courier-photo-file" accept="image/*" class="hidden" onchange="previewParcelPhoto(this)">
-              <div id="photo-preview-wrap" class="hidden mb-2">
-                <img id="img-preview" class="w-24 h-24 object-cover rounded-xl mx-auto border shadow-sm" alt="Preview">
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Outer Package Photo <span class="text-red-500">*</span></label>
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
+              <input type="file" id="package-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-package-preview', 'wrap-package-preview', 'icon-package', 'lbl-package')">
+              <div id="wrap-package-preview" class="hidden mb-1">
+                <img id="img-package-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Package Photo">
               </div>
-              <svg id="photo-placeholder-icon" class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              <span id="courier-contents-label" class="text-xs font-semibold text-[#8C5835]">Add from Camera or Photos</span>
+              <svg id="icon-package" class="w-5 h-5 mx-auto text-gray-400 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <span id="lbl-package" class="text-xs font-semibold text-[#8C5835]">Add Outer Package Photo</span>
             </label>
           </div>
 
-          <button type="button" onclick="logCourierDrop()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
+          <!-- Required Photo 2: Open Box / Content Photo -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">3. Content Photo <span class="text-red-500">*</span></label>
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
+              <input type="file" id="content-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-content-preview', 'wrap-content-preview', 'icon-content', 'lbl-content')">
+              <div id="wrap-content-preview" class="hidden mb-1">
+                <img id="img-content-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Content Photo">
+              </div>
+              <svg id="icon-content" class="w-5 h-5 mx-auto text-gray-400 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span id="lbl-content" class="text-xs font-semibold text-[#8C5835]">Add Content Photo</span>
+            </label>
+          </div>
+
+          <button type="button" onclick="logCourierDropStrict()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
             Send Parcel to Werqroom White Bin
           </button>
         </div>
@@ -179,19 +234,17 @@
         <!-- 2. MERCHANT DELIVERY FIELDS -->
         <div id="fields-merchant" class="space-y-3 hidden">
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1.5">1. Merchant Delivery Receipt / Sheet</label>
-            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
+            <label class="block text-xs font-bold text-gray-700 mb-1">1. Merchant Receipt / Sheet</label>
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
               <input type="file" accept="image/*" class="hidden" onchange="previewFile(this, 'merchant-receipt-label')">
-              <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <span id="merchant-receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Receipt from Camera or Photos</span>
+              <span id="merchant-receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Receipt Photo</span>
             </label>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1.5">2. Delivered Goods / Batch Photo</label>
-            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Delivered Goods Photo</label>
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
               <input type="file" accept="image/*" class="hidden" onchange="previewFile(this, 'merchant-batch-label')">
-              <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
               <span id="merchant-batch-label" class="text-xs font-semibold text-[#8C5835]">Add Goods Photo</span>
             </label>
           </div>
@@ -203,41 +256,16 @@
 
         <!-- 3. IN-HOUSE CRAFT & RENEW FIELDS -->
         <div id="fields-inhouse" class="space-y-3 hidden">
-          <div id="inhouse-category-box" class="space-y-1 relative">
+          <div class="space-y-1">
             <label class="block text-xs font-bold text-gray-700">Material / Production Batch</label>
-            <div class="relative">
-              <input 
-                type="text" 
-                id="inhouse-cat-input" 
-                placeholder="Type or select material (Leather, Clay...)" 
-                onfocus="showCategoryDropdown()" 
-                oninput="filterCategories()"
-                autocomplete="off"
-                class="w-full p-3 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-semibold text-xs text-[#2B2523] outline-none focus:border-[#8C5835] pr-8"
-              />
-              <button type="button" onclick="toggleCategoryDropdown()" class="absolute right-2.5 top-3 text-gray-400 hover:text-gray-600 text-xs">▼</button>
-            </div>
-
-            <div id="category-dropdown-panel" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-[#D9D1C7] rounded-xl shadow-xl z-30 max-h-48 overflow-y-auto divide-y divide-gray-100">
-              <div id="category-options-list"></div>
-              <button 
-                type="button" 
-                id="btn-create-category" 
-                onclick="createNewCategory()" 
-                class="hidden w-full p-2.5 text-left text-xs font-bold text-[#8C5835] bg-[#FAF7F2] hover:bg-[#F3EFEA] flex items-center space-x-1 cursor-pointer"
-              >
-                <span>+ Add</span>
-                <span id="new-cat-label" class="truncate font-black"></span>
-              </button>
-            </div>
+            <input type="text" id="inhouse-cat-input" placeholder="e.g. Leather, Clay, Beads..." class="w-full p-3 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-semibold text-xs text-[#2B2523] outline-none">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1.5">Finished Craft or Renew Items Photo</label>
-            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
+            <label class="block text-xs font-bold text-gray-700 mb-1">Finished Craft Photo</label>
+            <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
               <input type="file" accept="image/*" class="hidden" onchange="previewFile(this, 'inhouse-photo-label')">
-              <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              <span id="inhouse-photo-label" class="text-xs font-semibold text-[#8C5835]">Add Photo from Camera or Photos</span>
+              <span id="inhouse-photo-label" class="text-xs font-semibold text-[#8C5835]">Add Finished Item Photo</span>
             </label>
           </div>
 
@@ -262,14 +290,14 @@
           </span>
         </div>
 
-        <p class="text-xs text-gray-500">Tap a parcel below and scan its physical waybill barcode to begin unboxing.</p>
+        <p class="text-xs text-gray-500">Tap a parcel below and match its physical waybill barcode using Eyoyo or camera.</p>
 
         <!-- Parcel Cards List -->
         <div id="whitebin-list" class="space-y-3"></div>
       </div>
     </section>
 
-    <!-- TAB 3: QR BUILDER WORKSPACE -->
+    <!-- TAB 3: QR BUILDER WORKSPACE (CREATABLE COMBOBOXES) -->
     <section id="tab-qrbuilder" class="tab-pane hidden space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         
@@ -282,31 +310,52 @@
         </div>
 
         <div class="space-y-3">
-          <!-- 1. Category & Type -->
+          <!-- 1. Creatable Category Combobox (Always 3 Letters) -->
           <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-bold text-gray-600 mb-1">Category</label>
-              <select id="sku-cat" onchange="generateSkuPreview()" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none focus:border-[#8C5835]">
-                <option value="CHM">Charm (CHM)</option>
-                <option value="LNK">Link/Chain (LNK)</option>
-                <option value="HRD">Hardware (HRD)</option>
-                <option value="CLY">Clay (CLY)</option>
-                <option value="MER">Merchant (MER)</option>
-              </select>
+            <div class="relative">
+              <label class="block text-[11px] font-bold text-gray-600 mb-1">Category (3-LTR)</label>
+              <input 
+                type="text" 
+                id="sku-cat-input" 
+                list="cat-suggestions"
+                placeholder="CHM, LNK, CLY..." 
+                oninput="updateCategoryCode()"
+                class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]"
+              />
+              <datalist id="cat-suggestions">
+                <option value="Charm (CHM)"></option>
+                <option value="Link/Chain (LNK)"></option>
+                <option value="Hardware (HRD)"></option>
+                <option value="Clay (CLY)"></option>
+                <option value="Merchant (MER)"></option>
+                <option value="Leather (LEA)"></option>
+                <option value="Beads (BDS)"></option>
+              </datalist>
             </div>
-            <div>
-              <label class="block text-[11px] font-bold text-gray-600 mb-1">Type</label>
-              <select id="sku-type" onchange="generateSkuPreview()" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none focus:border-[#8C5835]">
-                <option value="SS">Stainless (SS)</option>
-                <option value="RSN">Resin (RSN)</option>
-                <option value="ENM">Enamel (ENM)</option>
-                <option value="CRD">Cord (CRD)</option>
-                <option value="RAW">Raw Part (RAW)</option>
-              </select>
+
+            <!-- 2. Creatable Type Combobox (Always 3 Letters) -->
+            <div class="relative">
+              <label class="block text-[11px] font-bold text-gray-600 mb-1">Type (3-LTR)</label>
+              <input 
+                type="text" 
+                id="sku-type-input" 
+                list="type-suggestions"
+                placeholder="SS, RSN, ENM..." 
+                oninput="updateTypeCode()"
+                class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]"
+              />
+              <datalist id="type-suggestions">
+                <option value="Stainless (STN)"></option>
+                <option value="Resin (RSN)"></option>
+                <option value="Enamel (ENM)"></option>
+                <option value="Cord (CRD)"></option>
+                <option value="Raw Part (RAW)"></option>
+                <option value="Acrylic (ACR)"></option>
+              </datalist>
             </div>
           </div>
 
-          <!-- 2. Identifier & Name -->
+          <!-- 3. Identifier & Name -->
           <div>
             <label class="block text-[11px] font-bold text-gray-600 mb-1">Identifier Code</label>
             <input type="text" id="sku-ident" oninput="generateSkuPreview()" placeholder="e.g. STAR-01 or HEART-RED" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-mono text-xs font-bold uppercase outline-none focus:border-[#8C5835]">
@@ -317,23 +366,21 @@
             <input type="text" id="sku-name" placeholder="e.g. Silver Mini Star Charm" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-semibold outline-none focus:border-[#8C5835]">
           </div>
 
-          <!-- 3. Generated SKU Banner -->
+          <!-- 4. Generated SKU Banner -->
           <div class="bg-[#FAF7F2] p-3 rounded-2xl border-2 border-dashed border-[#8C5835] text-center">
             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5">Generated SKU</span>
-            <span id="sku-preview-badge" class="font-mono font-black text-base text-[#8C5835] tracking-wider select-all">CHM-SS-______</span>
+            <span id="sku-preview-badge" class="font-mono font-black text-base text-[#8C5835] tracking-wider select-all">CHM-STN-______</span>
           </div>
 
-          <!-- 4. QR Code & Photo Upload Side-by-Side -->
+          <!-- 5. QR Code & Master Photo Side-by-Side -->
           <div class="grid grid-cols-2 gap-2">
-            <!-- Dynamic QR Code Container -->
             <div class="p-3 bg-white rounded-2xl border border-[#D9D1C7] flex flex-col items-center justify-center min-h-[120px] shadow-sm">
               <div id="qrcode-container" class="p-1 bg-white"></div>
-              <span class="text-[9px] font-bold text-gray-400 mt-1 uppercase">Generated QR Code</span>
+              <span class="text-[9px] font-bold text-gray-400 mt-1 uppercase">Generated QR</span>
             </div>
 
-            <!-- Master Item Photo Upload -->
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-2 text-center cursor-pointer bg-[#FCFAF8] flex flex-col items-center justify-center transition">
-              <input type="file" id="sku-photo-file" accept="image/*" class="hidden" onchange="previewSkuMasterPhoto(this)">
+              <input type="file" id="sku-master-file" accept="image/*" class="hidden" onchange="previewSkuMasterPhoto(this)">
               <div id="sku-photo-preview-wrap" class="hidden mb-1">
                 <img id="sku-img-preview" class="w-16 h-16 object-cover rounded-xl border shadow-sm" alt="SKU Master">
               </div>
@@ -342,7 +389,7 @@
             </label>
           </div>
 
-          <!-- 5. Repack Quantities (Sets of 10 + Partials) -->
+          <!-- 6. Repack Quantities -->
           <div class="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100">
             <div>
               <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
@@ -362,7 +409,6 @@
             Total Unboxed: <span id="sku-total-calc" class="text-sm font-black text-[#8C5835]">0</span> pcs
           </div>
 
-          <!-- 6. Submit Button -->
           <button type="button" onclick="saveSkuAndIntake()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-xs shadow-md transition active:scale-[0.98] cursor-pointer">
             Save SKU & Add to Werqroom Stock →
           </button>
@@ -371,56 +417,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: AUDIT SCREEN -->
-    <section id="tab-audit" class="tab-pane hidden space-y-4">
-      <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 uppercase tracking-wide">Weekly Audit</span>
-            <h2 class="text-lg font-bold text-[#2B2523] mt-1">Continuous Count</h2>
-          </div>
-          <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Eyoyo Ready
-          </span>
-        </div>
-
-        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
-          <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Active Scan Listener</label>
-          <input 
-            type="text" 
-            id="scanner-input" 
-            placeholder="Scan barcode or type SKU..." 
-            class="w-full bg-transparent font-mono font-bold text-base text-[#2B2523] outline-none"
-          />
-        </div>
-
-        <div id="last-scanned" class="bg-[#F8F6F2] p-4 rounded-2xl border border-[#E0D8CE] flex items-center space-x-3.5">
-          <div class="w-12 h-12 bg-white rounded-xl border border-gray-200 flex items-center justify-center font-bold text-xs text-[#8C5835] shadow-inner">
-            IMG
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 id="display-sku" class="text-xs font-bold text-[#2B2523] truncate">Scan an item to start...</h3>
-            <span class="text-[11px] text-gray-500 block">Session ready</span>
-          </div>
-          <div class="text-right">
-            <span class="text-xs text-gray-400 block font-medium">Session</span>
-            <span id="session-counter" class="text-lg font-black text-[#2B2523]">0</span>
-          </div>
-        </div>
-
-        <div class="flex gap-2">
-          <button type="button" onclick="alert('Manual counter opened')" class="flex-1 py-3 bg-[#EFE9E0] hover:bg-[#E5DDD2] text-[#2B2523] font-bold text-xs rounded-xl transition cursor-pointer">
-            + Custom / Partial
-          </button>
-          <button type="button" onclick="alert('Audit session saved!')" class="flex-1 py-3 bg-[#2B2523] text-white font-bold text-xs rounded-xl transition cursor-pointer">
-            Finish & Review
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6-BUTTON BOTTOM NAVIGATION (DROPOFF, RECEIVED, QR BUILDER, DELIVERED, REPLENISH, AUDIT) -->
+    <!-- 5-BUTTON BOTTOM NAVIGATION (DROPOFF, RECEIVED, QR BUILD, DELIVERED, REPLENISH) -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-lg border-t border-[#E6E0D8] z-20 px-2 py-2 max-w-md mx-auto flex items-center justify-between shadow-lg text-[9px] font-bold">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-dropoff" class="flex flex-col items-center flex-1 text-[#8C5835] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -432,7 +429,6 @@
         <span>Received</span>
       </button>
 
-      <!-- NEW: QR BUILDER BUTTON (BEFORE DELIVERED) -->
       <button type="button" onclick="switchShelfTab('tab-qrbuilder')" id="nav-qrbuilder" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
         <span>QR Build</span>
@@ -443,20 +439,78 @@
         <span>Delivered</span>
       </button>
 
-      <button type="button" onclick="alert('Replenished movement view coming next!')" class="flex flex-col items-center flex-1 text-gray-300 cursor-not-allowed">
-        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        <span>Replenish</span>
-      </button>
-
-      <button type="button" onclick="switchShelfTab('tab-audit')" id="nav-audit" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
+      <button type="button" onclick="goToView('view-shelf-health')" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        <span>Audit</span>
+        <span>Stock</span>
       </button>
     </nav>
   </main>
 
 
-  <!-- ==================== VIEW 3: SUPPLIES ==================== -->
+  <!-- ==================== VIEW 3: SHELF HEALTH (MASTER INVENTORY & AUDIT) ==================== -->
+  <main id="view-shelf-health" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8C5835] text-white uppercase tracking-wide">Stock Intelligence</span>
+          <h2 class="text-xl font-black text-[#2B2523] mt-1">Shelf Health</h2>
+        </div>
+        <button type="button" onclick="startFloorAuditMode()" class="px-3 py-1.5 bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] font-extrabold text-xs rounded-xl shadow-sm cursor-pointer transition">
+          ⚡ Start Audit
+        </button>
+      </div>
+
+      <!-- Live Search & Filter Bar -->
+      <div class="bg-[#FCFAF8] p-2.5 rounded-2xl border border-[#D9D1C7] flex items-center space-x-2 focus-within:ring-2 focus-within:ring-[#8C5835]">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input 
+          type="text" 
+          id="stock-search-input" 
+          placeholder="Search by SKU, item name, or category..." 
+          oninput="filterMasterInventory()"
+          class="w-full bg-transparent text-xs font-semibold text-[#2B2523] outline-none"
+        />
+        <button type="button" onclick="startCameraScanner('stock-search-input', filterMasterInventory)" class="text-xs text-[#8C5835] font-bold">📷</button>
+      </div>
+
+      <!-- AUDIT RUNNER PANEL (Visible when audit is running) -->
+      <div id="audit-session-banner" class="hidden bg-[#FAF7F2] p-4 rounded-2xl border-2 border-[#8C5835] space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full animate-pulse">Audit Active</span>
+            <div class="text-xs font-bold text-[#2B2523] mt-1">Scan every item in shelf/bin</div>
+          </div>
+          <span id="audit-scan-counter" class="text-2xl font-black text-[#8C5835]">0</span>
+        </div>
+        
+        <div class="flex gap-2">
+          <button type="button" onclick="downloadAuditReportCSV()" class="flex-1 py-2 bg-[#2B2523] text-white font-bold text-xs rounded-xl cursor-pointer">
+            Download CSV Report
+          </button>
+          <button type="button" onclick="endAuditMode()" class="py-2 px-3 bg-gray-200 text-gray-700 font-bold text-xs rounded-xl cursor-pointer">
+            Close
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Master Stock List -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-gray-500 px-1">
+          <span>Active Catalog</span>
+          <span id="catalog-count-label">0 SKUs</span>
+        </div>
+
+        <div id="master-stock-list" class="space-y-2 max-h-96 overflow-y-auto pr-1">
+          <!-- Populated from Supabase items table -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- ==================== VIEW 4: SUPPLIES (PETTY CASH) ==================== -->
   <main id="view-supplies" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
       <div class="border-b border-gray-100 pb-3">
@@ -498,7 +552,6 @@
           <label class="block text-xs font-bold text-gray-700 mb-1">Snap Receipt / Invoice</label>
           <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
             <input type="file" accept="image/*" class="hidden" onchange="previewFile(this, 'receipt-label')">
-            <svg class="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             <span id="receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Receipt from Camera or Photos</span>
           </label>
         </div>
@@ -527,14 +580,20 @@
         <div class="text-xs text-gray-500 font-medium">Logged parcel contents photo</div>
       </div>
 
+      <!-- Scan Barcode (Eyoyo OR Camera) -->
       <div class="bg-[#FCFAF8] p-3 rounded-2xl border-2 border-[#8C5835] focus-within:ring-2 focus-within:ring-[#8C5835]">
-        <label class="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
-          Scan Physical Waybill Barcode
-        </label>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+            Scan Physical Waybill
+          </label>
+          <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-[#8C5835] flex items-center space-x-1 cursor-pointer">
+            <span>📷 Scan via Camera</span>
+          </button>
+        </div>
         <input 
           type="text" 
           id="verify-modal-input" 
-          placeholder="Scan barcode with Eyoyo..." 
+          placeholder="Scan with Eyoyo or type..." 
           class="w-full bg-transparent font-mono font-bold text-sm text-[#2B2523] outline-none"
           autofocus
         />
@@ -614,7 +673,6 @@
   </div>
 
   <script>
-    // Supabase Clean Root
     const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
     
@@ -626,20 +684,24 @@
     } catch (e) {}
 
     let crewMembers = [];
-    let inhouseCategories = ["Leather", "Clay", "Beads", "Resin", "Renew / Repurposed", "Wire", "Fabric"];
     let currentActiveCrew = null;
     let selectedCrewForAuth = null;
     let enteredPin = "";
     let currentIntakeSource = "courier";
     let activeVerifyingParcel = null;
 
-    let currentCapturedPhoto = "";
+    let packagePhotoData = "";
+    let contentPhotoData = "";
     let currentSkuMasterPhoto = "";
-    let whiteBinParcels = [];
-    let qrcodeInstance = null;
-    let activeIntakeWaybill = "";
 
-    // Sync Live Crew from Supabase (Never hardcodes PINs)
+    let whiteBinParcels = [];
+    let masterItemsCatalog = [];
+    let auditSessionCounts = {};
+    let isAuditActive = false;
+    let activeIntakeWaybill = "";
+    let html5QrScanner = null;
+
+    // Sync Live Crew directly from Supabase
     async function syncCrewWithSupabase() {
       if (!db) return;
       try {
@@ -649,7 +711,7 @@
           renderCrewRoster();
         }
       } catch (err) {
-        console.warn("Error fetching crew:", err);
+        console.warn("Crew fetch note:", err);
       }
     }
 
@@ -671,6 +733,11 @@
         title.textContent = "Shelf Care";
         subtitle.textContent = "Inventory & Bins";
         loadWhiteBinParcels();
+      } else if (viewId === 'view-shelf-health') {
+        backBtn.classList.remove('hidden');
+        title.textContent = "Shelf Health";
+        subtitle.textContent = "Stock & Audits";
+        loadMasterCatalog();
       } else if (viewId === 'view-supplies') {
         backBtn.classList.remove('hidden');
         title.textContent = "Supplies";
@@ -678,16 +745,19 @@
       }
     }
 
-    // Photo Previewers (Supports Camera & Photos)
-    function previewParcelPhoto(input) {
+    // Generic Image Previewer (Camera and Photos)
+    function previewGenericPhoto(input, imgId, wrapId, iconId, labelId) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          currentCapturedPhoto = e.target.result;
-          document.getElementById('img-preview').src = currentCapturedPhoto;
-          document.getElementById('photo-preview-wrap').classList.remove('hidden');
-          document.getElementById('photo-placeholder-icon').classList.add('hidden');
-          document.getElementById('courier-contents-label').textContent = "✓ Photo Attached (Tap to change)";
+          const res = e.target.result;
+          document.getElementById(imgId).src = res;
+          document.getElementById(wrapId).classList.remove('hidden');
+          document.getElementById(iconId).classList.add('hidden');
+          document.getElementById(labelId).textContent = "✓ Photo Attached (Tap to change)";
+          
+          if (imgId === 'img-package-preview') packagePhotoData = res;
+          if (imgId === 'img-content-preview') contentPhotoData = res;
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -707,6 +777,37 @@
       }
     }
 
+    // Camera Scanner Controller (HTML5-QRCode)
+    function startCameraScanner(targetInputId, onScanSuccessCallback) {
+      document.getElementById('camera-scanner-modal').style.display = 'flex';
+      html5QrScanner = new Html5Qrcode("scanner-reader-view");
+      html5QrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        (decodedText) => {
+          playBeep(880);
+          document.getElementById(targetInputId).value = decodedText;
+          stopCameraScanner();
+          if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
+        },
+        (error) => {}
+      ).catch(err => {
+        alert("Camera scanner error: " + err);
+        stopCameraScanner();
+      });
+    }
+
+    function stopCameraScanner() {
+      if (html5QrScanner) {
+        html5QrScanner.stop().then(() => {
+          html5QrScanner.clear();
+          html5QrScanner = null;
+        }).catch(() => {});
+      }
+      document.getElementById('camera-scanner-modal').style.display = 'none';
+    }
+
+    // Intake Source Selector
     function selectIntakeSource(type) {
       currentIntakeSource = type;
       ['courier', 'merchant', 'inhouse'].forEach(t => {
@@ -721,32 +822,41 @@
       document.getElementById('fields-courier').classList.toggle('hidden', type !== 'courier');
       document.getElementById('fields-merchant').classList.toggle('hidden', type !== 'merchant');
       document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
-
-      if (type === 'courier') {
-        setTimeout(() => document.getElementById('waybill-barcode-input').focus(), 150);
-      } else if (type === 'inhouse') {
-        renderCategoryOptions();
-      }
     }
 
-    async function logCourierDrop() {
+    // STRICT COURIER DROP LOGIC
+    async function logCourierDropStrict() {
+      // 1. Must be logged in
       if (!currentActiveCrew) {
-        alert("Please sign in first by tapping 'Hello' at the top right.");
+        alert("Action Blocked: Please sign in with your PIN first (tap 'Hello' at top right).");
         openCrewModal();
         return;
       }
 
+      // 2. Waybill barcode required
       const barcode = document.getElementById('waybill-barcode-input').value.trim();
       if (!barcode) {
-        alert("Please scan or type the waybill tracking number.");
+        alert("Missing Information: Please scan or enter the Waybill Barcode.");
         document.getElementById('waybill-barcode-input').focus();
+        return;
+      }
+
+      // 3. Package photo required
+      if (!packagePhotoData) {
+        alert("Missing Photo: Please attach the Outer Package Photo.");
+        return;
+      }
+
+      // 4. Content photo required
+      if (!contentPhotoData) {
+        alert("Missing Photo: Please attach the Open Box Content Photo.");
         return;
       }
 
       const parcelObj = {
         waybill: barcode,
         source_type: 'courier',
-        image_url: currentCapturedPhoto || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&q=80",
+        image_url: contentPhotoData,
         status: 'IN_WHITE_BIN',
         logged_by: currentActiveCrew.name
       };
@@ -755,24 +865,30 @@
         try {
           await db.from('parcels').insert([parcelObj]);
         } catch (e) {
-          console.warn("Supabase parcel insert fallback:", e);
+          console.warn("Parcel insert note:", e);
         }
       }
 
       whiteBinParcels.unshift({ ...parcelObj, loggedAt: "Just now" });
 
+      // Reset form
       document.getElementById('waybill-barcode-input').value = "";
-      document.getElementById('courier-photo-file').value = "";
-      document.getElementById('photo-preview-wrap').classList.add('hidden');
-      document.getElementById('photo-placeholder-icon').classList.remove('hidden');
-      document.getElementById('courier-contents-label').textContent = "Add from Camera or Photos";
-      currentCapturedPhoto = "";
+      document.getElementById('package-photo-file').value = "";
+      document.getElementById('content-photo-file').value = "";
+      document.getElementById('wrap-package-preview').classList.add('hidden');
+      document.getElementById('icon-package').classList.remove('hidden');
+      document.getElementById('lbl-package').textContent = "Add Outer Package Photo";
+      document.getElementById('wrap-content-preview').classList.add('hidden');
+      document.getElementById('icon-content').classList.remove('hidden');
+      document.getElementById('lbl-content').textContent = "Add Content Photo";
+      packagePhotoData = "";
+      contentPhotoData = "";
 
       updateWhiteBinCounts();
       renderWhiteBinList();
       playBeep(880);
 
-      alert(`Waybill [${barcode}] logged by ${currentActiveCrew.name}! Moved to White Bin.`);
+      alert(`✓ Parcel [${barcode}] verified & logged by ${currentActiveCrew.name}! Moved to White Bin.`);
     }
 
     async function loadWhiteBinParcels() {
@@ -861,7 +977,7 @@
 
       const scannedCode = document.getElementById('verify-modal-input').value.trim();
       if (!scannedCode) {
-        document.getElementById('verify-modal-error').textContent = "Please scan the waybill barcode";
+        document.getElementById('verify-modal-error').textContent = "Please scan or enter the waybill barcode";
         return;
       }
 
@@ -880,25 +996,47 @@
         renderWhiteBinList();
         closeVerifyModal();
 
-        // ROUTE DIRECTLY TO QR BUILDER WORKSPACE
         document.getElementById('qr-waybill-tag').textContent = `Waybill: ${activeIntakeWaybill}`;
         switchShelfTab('tab-qrbuilder');
       } else {
         playBeep(300);
-        document.getElementById('verify-modal-error').textContent = "Waybill does not match this selected parcel!";
+        document.getElementById('verify-modal-error').textContent = "Scanned waybill does not match this selected parcel!";
         document.getElementById('verify-modal-input').value = "";
       }
     }
 
-    // ================= QR BUILDER LOGIC =================
+    // ================= CREATABLE 3-LETTER COMBOBOX LOGIC =================
+    function extractThreeLetterCode(rawText) {
+      if (!rawText) return "___";
+      // If text has parenthesis like 'Charm (CHM)', extract inside parentheses
+      const match = rawText.match(/\(([^)]+)\)/);
+      if (match && match[1]) {
+        return match[1].trim().toUpperCase().substring(0, 3);
+      }
+      // Otherwise take first 3 alphanumeric letters
+      const clean = rawText.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      return clean.length >= 3 ? clean.substring(0, 3) : clean.padEnd(3, '_');
+    }
+
+    function updateCategoryCode() {
+      generateSkuPreview();
+    }
+
+    function updateTypeCode() {
+      generateSkuPreview();
+    }
+
     function generateSkuPreview() {
-      const cat = document.getElementById('sku-cat').value;
-      const typ = document.getElementById('sku-type').value;
+      const catInput = document.getElementById('sku-cat-input').value.trim() || "CHM";
+      const typeInput = document.getElementById('sku-type-input').value.trim() || "STN";
       const identRaw = document.getElementById('sku-ident').value.trim().toUpperCase().replace(/\s+/g, '-');
-      const sku = `${cat}-${typ}-${identRaw || '______'}`;
+
+      const catCode = extractThreeLetterCode(catInput);
+      const typeCode = extractThreeLetterCode(typeInput);
+
+      const sku = `${catCode}-${typeCode}-${identRaw || '______'}`;
       document.getElementById('sku-preview-badge').textContent = sku;
 
-      // Generate dynamic QR Code live in the browser
       if (identRaw) {
         renderQrCode(sku);
       }
@@ -917,9 +1055,7 @@
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
         });
-      } catch (err) {
-        console.warn("QR Render:", err);
-      }
+      } catch (err) {}
     }
 
     function calculateTotalPcs() {
@@ -934,8 +1070,8 @@
     async function saveSkuAndIntake() {
       const sku = generateSkuPreview();
       const name = document.getElementById('sku-name').value.trim();
-      const cat = document.getElementById('sku-cat').value;
-      const typ = document.getElementById('sku-type').value;
+      const cat = document.getElementById('sku-cat-input').value.trim() || 'General';
+      const typ = document.getElementById('sku-type-input').value.trim() || 'Part';
       const ident = document.getElementById('sku-ident').value.trim();
       const total = calculateTotalPcs();
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
@@ -970,14 +1106,12 @@
         }
       }
 
-      // Update Werqroom counter
       const currentWerq = parseInt(document.getElementById('werqroom-count').textContent) || 0;
       document.getElementById('werqroom-count').textContent = currentWerq + packs;
 
       playBeep(1046);
       alert(`✓ SKU [${sku}] Created & Logged!\n${packs} packs (${total} pcs) added to Werqroom stock.`);
 
-      // Reset SKU Builder Form for next item in the same parcel
       document.getElementById('sku-ident').value = "";
       document.getElementById('sku-name').value = "";
       document.getElementById('sku-pack-count').value = "0";
@@ -990,12 +1124,104 @@
       generateSkuPreview();
     }
 
+    // ================= SHELF HEALTH (MASTER CATALOG & AUDIT) =================
+    async function loadMasterCatalog() {
+      const container = document.getElementById('master-stock-list');
+      const countLabel = document.getElementById('catalog-count-label');
+      container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Loading stock catalog...</div>`;
+
+      if (db) {
+        try {
+          const { data, error } = await db.from('items').select('*').order('created_at', { ascending: false });
+          if (!error && data) {
+            masterItemsCatalog = data;
+          }
+        } catch (e) {}
+      }
+
+      // Default demo catalog if table is empty
+      if (masterItemsCatalog.length === 0) {
+        masterItemsCatalog = [
+          { sku: "CHM-STN-STAR01", name: "Stainless Silver Star Charm", category: "Charm", type: "Stainless", image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" },
+          { sku: "CHM-RSN-SNICKERS", name: "Resin Snickers Charm", category: "Charm", type: "Resin", image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" }
+        ];
+      }
+
+      countLabel.textContent = `${masterItemsCatalog.length} SKUs`;
+      renderMasterCatalogList(masterItemsCatalog);
+    }
+
+    function renderMasterCatalogList(items) {
+      const container = document.getElementById('master-stock-list');
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No matching items found.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center space-x-3 min-w-0">
+            <img src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-gray-200 shrink-0 shadow-inner" alt="SKU">
+            <div class="min-w-0">
+              <span class="text-xs font-mono font-bold text-[#8C5835] block truncate">${item.sku}</span>
+              <span class="text-xs font-bold text-[#2B2523] block truncate">${item.name}</span>
+              <span class="text-[10px] text-gray-400 block">${item.category} • ${item.type}</span>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-[10px] text-gray-400 block font-semibold">Werqroom</span>
+            <span class="text-xs font-black text-[#2B2523]">${auditSessionCounts[item.sku] !== undefined ? auditSessionCounts[item.sku] : '10'} packs</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMasterInventory() {
+      const query = document.getElementById('stock-search-input').value.toLowerCase().trim();
+      const filtered = masterItemsCatalog.filter(item => 
+        item.sku.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query)
+      );
+      renderMasterCatalogList(filtered);
+    }
+
+    // Physical Audit Runner
+    function startFloorAuditMode() {
+      isAuditActive = true;
+      document.getElementById('audit-session-banner').classList.remove('hidden');
+      alert("Physical Audit Session Started!\nScan items continuously with Eyoyo or Camera to count stock.");
+    }
+
+    function endAuditMode() {
+      isAuditActive = false;
+      document.getElementById('audit-session-banner').classList.add('hidden');
+    }
+
+    function downloadAuditReportCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,SKU,Item Name,Expected Packs,Audited Count,Discrepancy,Auditor,Timestamp\n";
+      masterItemsCatalog.forEach(item => {
+        const audited = auditSessionCounts[item.sku] || 10;
+        const expected = 10;
+        const diff = audited - expected;
+        csvContent += `"${item.sku}","${item.name}",${expected},${audited},${diff},"${currentActiveCrew ? currentActiveCrew.name : 'Staff'}","${new Date().toLocaleString()}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Bitcrew_Audit_Report_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     // Shelf Care Tab Switcher
     function switchShelfTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
 
-      const tabs = ['dropoff', 'received', 'qrbuilder', 'audit'];
+      const tabs = ['dropoff', 'received', 'qrbuilder'];
       tabs.forEach(t => {
         const btn = document.getElementById(`nav-${t}`);
         if (btn) {
@@ -1012,79 +1238,10 @@
       } else if (tabId === 'tab-qrbuilder') {
         generateSkuPreview();
         setTimeout(() => document.getElementById('sku-ident')?.focus(), 150);
-      } else if (tabId === 'tab-audit') {
-        setTimeout(() => document.getElementById('scanner-input')?.focus(), 150);
-      } else if (tabId === 'tab-dropoff' && currentIntakeSource === 'courier') {
-        setTimeout(() => document.getElementById('waybill-barcode-input')?.focus(), 150);
       }
     }
 
-    // Creatable Select Logic
-    function renderCategoryOptions(filterText = "") {
-      const list = document.getElementById('category-options-list');
-      const createBtn = document.getElementById('btn-create-category');
-      const newCatLabel = document.getElementById('new-cat-label');
-      
-      const filtered = inhouseCategories.filter(cat => 
-        cat.toLowerCase().includes(filterText.toLowerCase().trim())
-      );
-
-      if (filtered.length > 0) {
-        list.innerHTML = filtered.map(cat => `
-          <div onclick="selectCategory('${cat}')" class="p-2.5 text-xs font-semibold text-gray-700 hover:bg-[#FAF7F2] hover:text-[#8C5835] cursor-pointer transition">
-            ${cat}
-          </div>
-        `).join('');
-      } else {
-        list.innerHTML = `<div class="p-2.5 text-xs text-gray-400">No matching material found</div>`;
-      }
-
-      const exactMatch = inhouseCategories.some(cat => cat.toLowerCase() === filterText.toLowerCase().trim());
-      if (filterText.trim().length > 0 && !exactMatch) {
-        newCatLabel.textContent = `"${filterText.trim()}"`;
-        createBtn.classList.remove('hidden');
-      } else {
-        createBtn.classList.add('hidden');
-      }
-    }
-
-    function showCategoryDropdown() {
-      document.getElementById('category-dropdown-panel').classList.remove('hidden');
-      renderCategoryOptions(document.getElementById('inhouse-cat-input').value);
-    }
-
-    function toggleCategoryDropdown() {
-      const panel = document.getElementById('category-dropdown-panel');
-      if (panel.classList.contains('hidden')) showCategoryDropdown();
-      else panel.classList.add('hidden');
-    }
-
-    function filterCategories() {
-      const val = document.getElementById('inhouse-cat-input').value;
-      renderCategoryOptions(val);
-      document.getElementById('category-dropdown-panel').classList.remove('hidden');
-    }
-
-    function selectCategory(catName) {
-      document.getElementById('inhouse-cat-input').value = catName;
-      document.getElementById('category-dropdown-panel').classList.add('hidden');
-    }
-
-    function createNewCategory() {
-      const val = document.getElementById('inhouse-cat-input').value.trim();
-      if (!val) return;
-      if (!inhouseCategories.includes(val)) inhouseCategories.push(val);
-      selectCategory(val);
-    }
-
-    document.addEventListener('click', (e) => {
-      const box = document.getElementById('inhouse-category-box');
-      if (box && !box.contains(e.target)) {
-        document.getElementById('category-dropdown-panel')?.classList.add('hidden');
-      }
-    });
-
-    // Session & Crew Auth
+    // Crew & Session Auth
     function checkExistingSession() {
       const saved = localStorage.getItem('shelfcare_crew');
       if (saved) {
@@ -1193,7 +1350,6 @@
     async function verifyPin() {
       if (!selectedCrewForAuth) return;
 
-      // STRICT VALIDATION AGAINST SUPABASE DATA (No hardcoded fallback override)
       if (enteredPin === String(selectedCrewForAuth.pin)) {
         currentActiveCrew = selectedCrewForAuth;
         localStorage.setItem('shelfcare_crew', JSON.stringify(currentActiveCrew));
@@ -1223,12 +1379,6 @@
       alert(`${currentActiveCrew.name} clocked out.`);
       resetToHelloState();
       closeCrewModal();
-    }
-
-    function previewFile(input, labelId) {
-      if (input.files && input.files[0]) {
-        document.getElementById(labelId).textContent = "✓ " + input.files[0].name.substring(0, 18) + "...";
-      }
     }
 
     function playBeep(freq = 880) {

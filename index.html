@@ -115,8 +115,8 @@
         ?
       </div>
       <div class="text-left">
-        <span id="crew-name" class="text-xs font-semibold text-[#2B2523] block leading-none">Crew</span>
-        <span id="crew-role-badge" class="text-[9px] text-[#8C5835] font-bold block leading-none mt-0.5">Role</span>
+        <span id="crew-name" class="text-xs font-semibold text-[#2B2523] block leading-none">Bitcrew</span>
+        <span id="crew-role-badge" class="text-[9px] text-[#8C5835] font-bold block leading-none mt-0.5">Floor</span>
       </div>
     </button>
   </header>
@@ -133,21 +133,26 @@
     </div>
   </div>
 
-  <!-- VIDEO PLAYER MODAL -->
-  <div id="video-preview-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+  <!-- VIDEO / PROOF VIEWER MODAL -->
+  <div id="video-preview-modal" style="display: none;" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-4 space-y-3 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-2">
-        <h3 class="font-bold text-xs text-[#2B2523]">POS Error Proof Video</h3>
+        <h3 class="font-bold text-xs text-[#2B2523]">POS Error Attachment</h3>
         <button type="button" onclick="closeVideoModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
-      <video id="modal-video-player" controls class="w-full rounded-2xl bg-black max-h-72"></video>
+      
+      <div id="modal-proof-media-container" class="w-full rounded-2xl overflow-hidden bg-black max-h-72 flex items-center justify-center">
+        <video id="modal-video-player" controls class="w-full h-full max-h-72 hidden"></video>
+        <img id="modal-image-player" class="w-full h-full object-contain max-h-72 hidden" alt="Proof Photo">
+      </div>
+
       <a id="btn-download-video" href="#" download class="block w-full py-2.5 bg-[#8C5835] text-white text-center font-bold text-xs rounded-xl">
-        Download Proof Video
+        Download Proof File
       </a>
     </div>
   </div>
 
-  <!-- ==================== VIEW 1: BITCREW MAIN HUB (RESTORED IMAGE 2 LOOK) ==================== -->
+  <!-- ==================== VIEW 1: BITCREW MAIN HUB ==================== -->
   <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3">
     <div class="text-center space-y-1 mb-2">
       <span class="inline-block px-3 py-1 rounded-full text-[10px] font-extrabold bg-[#EFE9E0] text-[#8C5835] tracking-wide uppercase">Workspace</span>
@@ -155,7 +160,7 @@
       <p class="text-xs text-gray-500 font-medium">Select an operational module to begin.</p>
     </div>
 
-    <!-- ORIGINAL PILLOWY NEON YELLOW BUTTONS -->
+    <!-- ORIGINAL PILLOWY BUTTON LAYOUT -->
     <div class="space-y-3">
       <!-- 1. SHELF CARE -->
       <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-5 rounded-[28px] font-extrabold shadow-sm border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
@@ -193,7 +198,7 @@
         <span class="text-2xl text-gray-400 group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- 5. REPORTS -->
+      <!-- 5. REPORTS (RESTRICTED IF "Bitcrew") -->
       <button type="button" onclick="openReportsModule()" class="w-full bg-white hover:bg-[#FAF7F2] text-[#2B2523] p-5 rounded-[28px] font-extrabold shadow-sm border border-[#D9D1C7] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-black tracking-tight leading-snug">Reports</div>
@@ -210,7 +215,7 @@
   </main>
 
 
-  <!-- ==================== VIEW 2: SHELF HEALTH (WITH COLLAPSIBLE CATALOG) ==================== -->
+  <!-- ==================== VIEW 2: SHELF HEALTH ==================== -->
   <main id="view-shelf-health" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-[32px] border border-[#E6E0D8] shadow-sm space-y-4">
       
@@ -280,7 +285,7 @@
   </main>
 
 
-  <!-- ==================== VIEW 3: CARD TRANSACTIONS LOGGER ==================== -->
+  <!-- ==================== VIEW 3: CARD TRANSACTIONS (WITH MULTI-SELECT UPLOAD) ==================== -->
   <main id="view-card-logger" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-[32px] border border-[#E6E0D8] shadow-sm space-y-4">
       
@@ -290,7 +295,6 @@
         <p class="text-xs text-gray-500 font-medium">Replaces manual notebook tracking.</p>
       </div>
 
-      <!-- INPUT FORM -->
       <div class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">Customer Name <span class="text-red-500">*</span></label>
@@ -320,15 +324,20 @@
           </div>
         </div>
 
-        <!-- CONDITIONAL PROOF UPLOAD (VIDEO / PHOTOS FROM CAMERA OR GALLERY) -->
+        <!-- CONDITIONAL MULTI-SELECT PROOF UPLOAD (VIDEOS / PHOTOS) -->
         <div id="card-failed-proof-box" class="hidden space-y-1 p-3 bg-red-50/60 rounded-2xl border border-red-200">
-          <label class="block text-[11px] font-black text-red-900">Upload Terminal Error Proof (Video / Photo) <span class="text-red-600">*</span></label>
-          <p class="text-[10px] text-gray-500">Attach terminal screen error video or declined slip from camera or library.</p>
+          <div class="flex items-center justify-between">
+            <label class="block text-[11px] font-black text-red-900">Upload Proof Files <span class="text-red-600">*</span></label>
+            <span class="text-[9px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Multi-select enabled</span>
+          </div>
+          <p class="text-[10px] text-gray-500">Attach terminal screen video, declined slip, or banking app screenshots.</p>
           
           <label class="border-2 border-dashed border-red-300 hover:border-red-500 rounded-xl p-3 text-center cursor-pointer bg-white block transition mt-1.5">
-            <input type="file" id="card-proof-file" accept="video/*,image/*" class="hidden" onchange="previewCardProof(this)">
-            <span id="card-proof-label" class="text-xs font-bold text-red-700">📹 Record Video or Select File</span>
+            <!-- MULTIPLE ATTRIBUTE ADDED HERE -->
+            <input type="file" id="card-proof-file" accept="video/*,image/*" multiple class="hidden" onchange="previewCardMultiProof(this)">
+            <span id="card-proof-label" class="text-xs font-bold text-red-700">📹 Record / Select Multiple Videos or Photos</span>
           </label>
+          <div id="card-proof-thumbnails" class="flex flex-wrap gap-1.5 pt-2"></div>
         </div>
 
         <button type="button" onclick="submitCardTransaction()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-xs shadow-md transition active:scale-[0.98] cursor-pointer">
@@ -336,11 +345,11 @@
         </button>
       </div>
 
-      <!-- RECENT SUBMISSIONS (QUICK EDIT / CORRECTION WINDOW) -->
+      <!-- RECENT SUBMISSIONS -->
       <div class="pt-3 border-t border-gray-100 space-y-2">
         <div class="flex items-center justify-between text-xs font-bold text-gray-600 px-1">
           <span>Today's Logged Swipes</span>
-          <span class="text-[10px] text-gray-400">Tap to edit recent</span>
+          <span class="text-[10px] text-gray-400">Shift History</span>
         </div>
         <div id="recent-card-swipes-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
       </div>
@@ -349,7 +358,7 @@
   </main>
 
 
-  <!-- ==================== VIEW 4: REPORTS (LEADERSHIP WORKSPACE) ==================== -->
+  <!-- ==================== VIEW 4: REPORTS (GATED IF NOT BITCREW) ==================== -->
   <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-[32px] border border-[#E6E0D8] shadow-sm space-y-4">
       
@@ -360,7 +369,6 @@
         </div>
       </div>
 
-      <!-- 3 TABS: ATTENDANCE, STOCK AUDITS, CARD TRANSACTIONS -->
       <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold">
         <button type="button" onclick="switchReportTab('attendance')" id="btn-rep-attendance" class="py-2 rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer text-center">
           Attendance
@@ -397,7 +405,7 @@
         </button>
       </div>
 
-      <!-- TAB 2: AUDITS HISTORY (WITH DATE DROPDOWN) -->
+      <!-- TAB 2: AUDITS HISTORY (DATE DROPDOWN) -->
       <div id="rep-tab-audits" class="space-y-3 hidden">
         <div>
           <label class="block text-[11px] font-bold text-gray-600 mb-1">Select Audit Run Date</label>
@@ -411,9 +419,8 @@
         </div>
       </div>
 
-      <!-- TAB 3: CARD TRANSACTIONS LEDGER (SEARCH & VIDEO PLAYBACK) -->
+      <!-- TAB 3: CARD LEDGER WITH MULTI-ATTACHMENT VIEWER -->
       <div id="rep-tab-cards" class="space-y-3 hidden">
-        <!-- Date Filter -->
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-0.5">Start Date</label>
@@ -841,7 +848,7 @@
     let packagePhotoData = "";
     let contentPhotoData = "";
     let currentSkuMasterPhoto = "";
-    let cardProofDataUrl = "";
+    let cardProofUrlsArray = [];
     let currentCardStatus = "SUCCESS";
 
     let whiteBinParcels = [];
@@ -856,7 +863,7 @@
     let currentExpenseSource = "petty_cash";
     let pendingIntakeData = null;
 
-    // ================= APP INITIALIZATION & GATE =================
+    // ================= INITIALIZATION =================
     async function initApp() {
       if (db) {
         try {
@@ -940,7 +947,7 @@
     }
 
     function promptSwitchShift() {
-      if (confirm(`Clock out & lock station for ${currentActiveCrew.name}?`)) {
+      if (confirm(`Clock out & lock station for ${currentActiveCrew ? currentActiveCrew.name : 'Crew'}?`)) {
         if (db && currentActiveCrew) {
           try {
             db.from('time_logs').insert([{ crew_name: currentActiveCrew.name, action: 'clock_out' }]);
@@ -953,7 +960,7 @@
       }
     }
 
-    // ================= ROUTER =================
+    // ================= NAVIGATION ROUTER =================
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -990,11 +997,10 @@
       }
     }
 
+    // REPORTS GATE: CANNOT OPEN IF BITCREW
     function openReportsModule() {
-      if (!currentActiveCrew) return;
-      const allowed = ['admin', 'lead', 'payroll'];
-      if (!allowed.includes(currentActiveCrew.role)) {
-        alert("Restricted Access: The Reports workspace is reserved for Management, Leads, and Payroll.");
+      if (!currentActiveCrew || currentActiveCrew.name.toLowerCase() === 'bitcrew' || currentActiveCrew.role === 'crew') {
+        alert("Restricted Access: Reports are locked. Please sign in as Management or Lead to view.");
         return;
       }
       goToView('view-reports');
@@ -1018,7 +1024,6 @@
       const body = document.getElementById('catalog-collapsible-body');
       const arrow = document.getElementById('catalog-accordion-arrow');
       
-      // Auto-expand accordion if user starts searching
       if (query.length > 0) {
         body.classList.remove('hidden');
         arrow.textContent = "▲ Collapse";
@@ -1078,7 +1083,7 @@
       }).join('');
     }
 
-    // ================= CARD TRANSACTIONS MODULE =================
+    // ================= CARD LOGGER WITH MULTI-SELECT PROOF =================
     function setCardSwipeStatus(status) {
       currentCardStatus = status;
       const btnSuccess = document.getElementById('card-status-success');
@@ -1096,15 +1101,31 @@
       }
     }
 
-    function previewCardProof(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          cardProofDataUrl = e.target.result;
-          document.getElementById('card-proof-label').textContent = "✓ Video / Photo Attached";
-        };
-        reader.readAsDataURL(file);
+    function previewCardMultiProof(input) {
+      cardProofUrlsArray = [];
+      const thumbBox = document.getElementById('card-proof-thumbnails');
+      thumbBox.innerHTML = "";
+
+      if (input.files && input.files.length > 0) {
+        document.getElementById('card-proof-label').textContent = `✓ ${input.files.length} File(s) Attached`;
+        
+        Array.from(input.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            cardProofUrlsArray.push({ type: file.type.startsWith('video') ? 'video' : 'image', url: dataUrl });
+            
+            const thumb = document.createElement('div');
+            thumb.className = "w-12 h-12 rounded-lg border border-red-200 bg-white flex items-center justify-center text-[10px] font-bold text-red-700 overflow-hidden";
+            if (file.type.startsWith('video')) {
+              thumb.innerHTML = "▶ VID";
+            } else {
+              thumb.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
+            }
+            thumbBox.appendChild(thumb);
+          };
+          reader.readAsDataURL(file);
+        });
       }
     }
 
@@ -1114,35 +1135,37 @@
       const amount = parseFloat(document.getElementById('card-amount').value);
 
       if (!name || !contact || isNaN(amount) || amount <= 0) {
-        alert("Please provide Customer Name, Contact (Mobile/IG), and valid Amount.");
+        alert("Please provide Customer Name, Contact, and valid Amount.");
         return;
       }
 
-      if (currentCardStatus === 'FAILED' && !cardProofDataUrl) {
-        alert("Transaction marked as Failed: Please attach video proof or error screen.");
+      if (currentCardStatus === 'FAILED' && cardProofUrlsArray.length === 0) {
+        alert("Please attach at least one proof video or photo for failed transactions.");
         return;
       }
 
-      const record = {
+      const payload = {
         customer_name: name,
         contact_info: contact,
         amount: amount,
         status: currentCardStatus,
-        proof_url: cardProofDataUrl || null,
-        logged_by: currentActiveCrew.name
+        proof_url: cardProofUrlsArray.length > 0 ? JSON.stringify(cardProofUrlsArray) : null,
+        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
       };
 
       if (db) {
         try {
-          await db.from('card_transactions').insert([record]);
+          await db.from('card_transactions').insert([payload]);
         } catch (e) {}
       }
 
-      alert(`✓ Card swipe for ₱${amount.toFixed(2)} logged (${currentCardStatus})!`);
+      alert(`✓ Card swipe logged (${currentCardStatus})!`);
       document.getElementById('card-cust-name').value = "";
       document.getElementById('card-contact-info').value = "";
       document.getElementById('card-amount').value = "";
-      cardProofDataUrl = "";
+      document.getElementById('card-proof-thumbnails').innerHTML = "";
+      document.getElementById('card-proof-label').textContent = "📹 Record / Select Multiple Videos or Photos";
+      cardProofUrlsArray = [];
       setCardSwipeStatus('SUCCESS');
       loadRecentCardSwipes();
     }
@@ -1171,18 +1194,40 @@
             <span class="px-2 py-0.5 text-[9px] font-black rounded-full ${c.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
               ${c.status}
             </span>
-            ${c.proof_url ? `<button type="button" onclick="playProofVideo('${c.proof_url}')" class="text-[10px] text-[#8C5835] font-bold block mt-0.5 hover:underline">▶ View Video</button>` : ''}
+            ${c.proof_url ? `<button type="button" onclick="playProofMedia('${encodeURIComponent(c.proof_url)}')" class="text-[10px] text-[#8C5835] font-bold block mt-0.5 hover:underline">▶ View Files</button>` : ''}
           </div>
         </div>
       `).join('');
     }
 
-    function playProofVideo(url) {
+    function playProofMedia(encoded) {
+      const raw = decodeURIComponent(encoded);
       const modal = document.getElementById('video-preview-modal');
-      const player = document.getElementById('modal-video-player');
-      const dl = document.getElementById('btn-download-video');
-      player.src = url;
-      dl.href = url;
+      const vPlayer = document.getElementById('modal-video-player');
+      const imgPlayer = document.getElementById('modal-image-player');
+      const dlBtn = document.getElementById('btn-download-video');
+
+      let parsed = [];
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {
+        parsed = [{ type: 'video', url: raw }];
+      }
+
+      if (parsed.length > 0) {
+        const first = parsed[0];
+        if (first.type === 'video') {
+          vPlayer.src = first.url;
+          vPlayer.classList.remove('hidden');
+          imgPlayer.classList.add('hidden');
+        } else {
+          imgPlayer.src = first.url;
+          imgPlayer.classList.remove('hidden');
+          vPlayer.classList.add('hidden');
+        }
+        dlBtn.href = first.url;
+      }
+
       modal.style.display = 'flex';
     }
 
@@ -1193,7 +1238,7 @@
       document.getElementById('video-preview-modal').style.display = 'none';
     }
 
-    // ================= REPORTS: CARD LEDGER & AUDITS =================
+    // ================= REPORTS HUB =================
     function switchReportTab(tab) {
       ['attendance', 'audits', 'cards'].forEach(t => {
         document.getElementById(`rep-tab-${t}`).classList.add('hidden');
@@ -1223,7 +1268,7 @@
       if (toVal) items = items.filter(i => new Date(i.created_at) <= new Date(toVal + "T23:59:59"));
 
       if (items.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No records found for selected dates.</div>`;
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No records found.</div>`;
         return;
       }
 
@@ -1237,7 +1282,7 @@
             <span>${c.contact_info} • ${new Date(c.created_at).toLocaleDateString()}</span>
             <span class="px-2 py-0.5 rounded-full text-[9px] font-black ${c.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${c.status}</span>
           </div>
-          ${c.proof_url ? `<button type="button" onclick="playProofVideo('${c.proof_url}')" class="text-[10px] text-[#8C5835] font-bold block hover:underline">▶ Watch POS Dispute Video</button>` : ''}
+          ${c.proof_url ? `<button type="button" onclick="playProofMedia('${encodeURIComponent(c.proof_url)}')" class="text-[10px] text-[#8C5835] font-bold block hover:underline">▶ View Dispute Files</button>` : ''}
         </div>
       `).join('');
     }
@@ -1320,7 +1365,7 @@
       }
     }
 
-    // ================= CLIENT-SIDE TESSERACT OCR =================
+    // ================= CLIENT-SIDE OCR =================
     async function processReceiptOCR(fileInput) {
       if (!fileInput.files || !fileInput.files[0]) return;
       const file = fileInput.files[0];
@@ -1373,7 +1418,7 @@
             merchant_name: document.getElementById('expense-merchant-name')?.value || '',
             merchant_tin: document.getElementById('expense-merchant-tin')?.value || '',
             receipt_no: document.getElementById('expense-receipt-no')?.value || '',
-            requested_by: currentActiveCrew.name
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }]);
         } catch (e) {}
       }
@@ -1436,7 +1481,7 @@
             item_name: name,
             qty_requested: qty,
             urgency: qty === 0 ? 'NEEDED_ASAP' : (qty <= 20 ? 'NEEDED_IN_1_WEEK' : 'NEEDED_IN_2_WEEKS'),
-            requested_by: currentActiveCrew.name,
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
             status: 'PENDING'
           }]);
         } catch (e) {}
@@ -1534,7 +1579,7 @@
           await db.from('intake_batches').insert([{
             waybill: 'MANUAL', sku: pendingIntakeData.sku, pack_count: pendingIntakeData.pack_count,
             pcs_per_pack: pendingIntakeData.pcs_per_pack, partial_pcs: pendingIntakeData.partial_pcs,
-            total_pcs: pendingIntakeData.total_pcs, intake_by: currentActiveCrew.name
+            total_pcs: pendingIntakeData.total_pcs, intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }]);
         } catch (e) {}
       }

@@ -45,13 +45,11 @@
         ← Hub
       </button>
       
-      <!-- ROUND BITCREW "B" LOGO BADGE -->
-      <div class="w-9 h-9 rounded-full bg-[#FA6900] p-0.5 shadow-sm flex items-center justify-center shrink-0 overflow-hidden border border-[#E05800]">
-        <svg viewBox="0 0 100 100" class="w-full h-full">
-          <!-- Starburst Sun Shape -->
-          <path d="M50 0 C53 12 60 15 70 12 C78 22 85 24 92 34 C90 46 95 50 100 50 C95 50 90 54 92 66 C85 76 78 78 70 88 C60 85 53 88 50 100 C47 88 40 85 30 88 C22 78 15 76 8 66 C10 54 5 50 0 50 C5 50 10 46 8 34 C15 24 22 22 30 12 C40 15 47 12 50 0 Z" fill="#FFE838"/>
-          <!-- Bold 'B' Glyph -->
-          <text x="50%" y="68%" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="52" fill="#B26800" transform="rotate(-6 50 50)">B</text>
+      <!-- CLEAN STARBURST LOGO (CLEAR BACKGROUND) -->
+      <div class="w-9 h-9 flex items-center justify-center shrink-0">
+        <svg viewBox="0 0 500 500" class="w-full h-full drop-shadow-xs">
+          <path d="M250 20 C265 90 310 110 380 95 C415 155 460 170 495 230 C470 295 490 325 500 360 C465 375 440 405 450 470 C390 475 350 495 300 500 C270 435 220 445 180 500 C120 475 95 440 40 450 C45 385 20 345 0 310 C35 285 25 240 10 190 C75 180 105 145 130 90 C190 120 220 85 250 20 Z" fill="#FFE600"/>
+          <text x="50%" y="68%" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="280" fill="#B26800" transform="rotate(-8 250 250)">B</text>
         </svg>
       </div>
 
@@ -92,7 +90,7 @@
     </div>
 
     <div class="space-y-3">
-      <!-- 1. SHELF HEALTH (AUDIT & STOCK VISIBILITY) -->
+      <!-- 1. SHELF HEALTH -->
       <button type="button" onclick="goToView('view-shelf-health')" class="w-full bg-[#FAF7F2] hover:bg-[#F3EFEA] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-sm border-2 border-[#8C5835] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="flex items-center space-x-2">
@@ -120,6 +118,11 @@
           <span class="text-xs font-medium text-gray-700 block mt-0.5">Petty Cash & Store Expenses</span>
         </div>
         <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 4. QUICK REQUEST RESTOCK / SUPPLIES -->
+      <button type="button" onclick="openRequestModal()" class="w-full bg-white hover:bg-[#FCFAF8] text-[#8C5835] p-3.5 rounded-2xl font-bold text-xs border border-[#D9D1C7] shadow-xs transition cursor-pointer flex items-center justify-center space-x-2">
+        <span>+ File Stock or Supply Request</span>
       </button>
     </div>
 
@@ -179,7 +182,6 @@
 
         <!-- 1. COURIER DROP FIELDS -->
         <div id="fields-courier" class="space-y-3">
-          <!-- Waybill Input with Eyoyo + Camera Option -->
           <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
             <div class="flex items-center justify-between mb-1">
               <label class="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
@@ -200,7 +202,6 @@
             </div>
           </div>
 
-          <!-- Required Photo 1: Outer Package / Waybill Photo -->
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">2. Outer Package Photo <span class="text-red-500">*</span></label>
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
@@ -213,7 +214,6 @@
             </label>
           </div>
 
-          <!-- Required Photo 2: Open Box / Content Photo -->
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">3. Content Photo <span class="text-red-500">*</span></label>
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
@@ -292,7 +292,6 @@
 
         <p class="text-xs text-gray-500">Tap a parcel below and match its physical waybill barcode using Eyoyo or camera.</p>
 
-        <!-- Parcel Cards List -->
         <div id="whitebin-list" class="space-y-3"></div>
       </div>
     </section>
@@ -310,7 +309,6 @@
         </div>
 
         <div class="space-y-3">
-          <!-- 1. Creatable Category Combobox (Always 3 Letters) -->
           <div class="grid grid-cols-2 gap-2">
             <div class="relative">
               <label class="block text-[11px] font-bold text-gray-600 mb-1">Category (3-LTR)</label>
@@ -333,7 +331,6 @@
               </datalist>
             </div>
 
-            <!-- 2. Creatable Type Combobox (Always 3 Letters) -->
             <div class="relative">
               <label class="block text-[11px] font-bold text-gray-600 mb-1">Type (3-LTR)</label>
               <input 
@@ -355,7 +352,6 @@
             </div>
           </div>
 
-          <!-- 3. Identifier & Name -->
           <div>
             <label class="block text-[11px] font-bold text-gray-600 mb-1">Identifier Code</label>
             <input type="text" id="sku-ident" oninput="generateSkuPreview()" placeholder="e.g. STAR-01 or HEART-RED" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-mono text-xs font-bold uppercase outline-none focus:border-[#8C5835]">
@@ -366,13 +362,11 @@
             <input type="text" id="sku-name" placeholder="e.g. Silver Mini Star Charm" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-semibold outline-none focus:border-[#8C5835]">
           </div>
 
-          <!-- 4. Generated SKU Banner -->
           <div class="bg-[#FAF7F2] p-3 rounded-2xl border-2 border-dashed border-[#8C5835] text-center">
             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5">Generated SKU</span>
             <span id="sku-preview-badge" class="font-mono font-black text-base text-[#8C5835] tracking-wider select-all">CHM-STN-______</span>
           </div>
 
-          <!-- 5. QR Code & Master Photo Side-by-Side -->
           <div class="grid grid-cols-2 gap-2">
             <div class="p-3 bg-white rounded-2xl border border-[#D9D1C7] flex flex-col items-center justify-center min-h-[120px] shadow-sm">
               <div id="qrcode-container" class="p-1 bg-white"></div>
@@ -389,7 +383,6 @@
             </label>
           </div>
 
-          <!-- 6. Repack Quantities -->
           <div class="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100">
             <div>
               <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
@@ -409,16 +402,76 @@
             Total Unboxed: <span id="sku-total-calc" class="text-sm font-black text-[#8C5835]">0</span> pcs
           </div>
 
-          <button type="button" onclick="saveSkuAndIntake()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-xs shadow-md transition active:scale-[0.98] cursor-pointer">
-            Save SKU & Add to Werqroom Stock →
+          <button type="button" onclick="initiateSkuSaveAndPrint()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-xs shadow-md transition active:scale-[0.98] cursor-pointer">
+            Save SKU & Print Labels →
           </button>
         </div>
 
       </div>
     </section>
 
-    <!-- 5-BUTTON BOTTOM NAVIGATION (DROPOFF, RECEIVED, QR BUILD, DELIVERED, REPLENISH) -->
-    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-lg border-t border-[#E6E0D8] z-20 px-2 py-2 max-w-md mx-auto flex items-center justify-between shadow-lg text-[9px] font-bold">
+    <!-- TAB 4: UNIFIED MOVEMENT STATION (DELIVERED & REPLENISHED) -->
+    <section id="tab-move" class="tab-pane hidden space-y-4">
+      <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
+        
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8C5835] text-white uppercase tracking-wide">Stock Logistics</span>
+          <h2 class="text-lg font-bold text-[#2B2523] mt-1">Movement Station</h2>
+          
+          <!-- Movement Toggle -->
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <button type="button" onclick="setMovementMode('DELIVERED_TO_SHOP')" id="btn-mode-delivered" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer">
+              Werqroom ➔ Shop
+            </button>
+            <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer">
+              Shop ➔ Display
+            </button>
+          </div>
+        </div>
+
+        <!-- Continuous Scan Listener for Movement -->
+        <div class="bg-[#FCFAF8] p-3 rounded-2xl border-2 border-[#8C5835] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
+          <div class="flex items-center justify-between mb-1">
+            <label id="move-scanner-label" class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+              Scan Bag QR (Eyoyo / HW)
+            </label>
+            <button type="button" onclick="startCameraScanner('move-scanner-input', handleMovementScan)" class="text-[11px] font-bold text-[#8C5835] flex items-center space-x-1 cursor-pointer">
+              <span>📷 Camera</span>
+            </button>
+          </div>
+          <input 
+            type="text" 
+            id="move-scanner-input" 
+            placeholder="Scan standard or -P partial bag..." 
+            class="w-full bg-transparent font-mono font-bold text-sm text-[#2B2523] outline-none"
+            autofocus
+          />
+        </div>
+
+        <!-- Last Moved Item Feedback -->
+        <div id="move-feedback-card" class="hidden bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#E6E0D8] space-y-2">
+          <div class="flex items-center justify-between">
+            <span id="move-badge-type" class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Standard Pack (10 pcs)</span>
+            <span class="text-[10px] text-gray-400 font-bold" id="move-timestamp">Just now</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center font-bold text-xs text-[#8C5835]">📦</div>
+            <div class="min-w-0">
+              <span id="move-display-sku" class="text-xs font-mono font-bold text-[#2B2523] block truncate">SKU-CODE</span>
+              <span id="move-display-action" class="text-[11px] text-[#8C5835] font-semibold block">Moved to Shop Storage</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-right text-[11px] font-bold text-gray-500">
+          Session Moved: <span id="session-move-count" class="text-sm font-black text-[#8C5835]">0</span> packs
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4-BUTTON BOTTOM NAVIGATION (DROPOFF, RECEIVED, QR BUILD, MOVE) -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-lg border-t border-[#E6E0D8] z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between shadow-lg text-[10px] font-bold">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-dropoff" class="flex flex-col items-center flex-1 text-[#8C5835] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <span>Drop-Off</span>
@@ -434,14 +487,9 @@
         <span>QR Build</span>
       </button>
 
-      <button type="button" onclick="alert('Delivered movement view coming next!')" class="flex flex-col items-center flex-1 text-gray-300 cursor-not-allowed">
+      <button type="button" onclick="switchShelfTab('tab-move')" id="nav-move" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-        <span>Delivered</span>
-      </button>
-
-      <button type="button" onclick="goToView('view-shelf-health')" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
-        <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        <span>Stock</span>
+        <span>Move</span>
       </button>
     </nav>
   </main>
@@ -456,25 +504,29 @@
           <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8C5835] text-white uppercase tracking-wide">Stock Intelligence</span>
           <h2 class="text-xl font-black text-[#2B2523] mt-1">Shelf Health</h2>
         </div>
-        <button type="button" onclick="startFloorAuditMode()" class="px-3 py-1.5 bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] font-extrabold text-xs rounded-xl shadow-sm cursor-pointer transition">
-          ⚡ Start Audit
-        </button>
+        <div class="flex gap-1.5">
+          <button type="button" onclick="openRequestModal()" class="px-2.5 py-1.5 bg-[#FAF7F2] text-[#8C5835] font-bold text-xs rounded-xl border border-[#D9D1C7] cursor-pointer">
+            + Request
+          </button>
+          <button type="button" onclick="startFloorAuditMode()" class="px-2.5 py-1.5 bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] font-extrabold text-xs rounded-xl shadow-sm cursor-pointer transition">
+            ⚡ Audit
+          </button>
+        </div>
       </div>
 
-      <!-- Live Search & Filter Bar -->
       <div class="bg-[#FCFAF8] p-2.5 rounded-2xl border border-[#D9D1C7] flex items-center space-x-2 focus-within:ring-2 focus-within:ring-[#8C5835]">
         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input 
           type="text" 
           id="stock-search-input" 
-          placeholder="Search by SKU, item name, or category..." 
+          placeholder="Search SKU or name..." 
           oninput="filterMasterInventory()"
           class="w-full bg-transparent text-xs font-semibold text-[#2B2523] outline-none"
         />
         <button type="button" onclick="startCameraScanner('stock-search-input', filterMasterInventory)" class="text-xs text-[#8C5835] font-bold">📷</button>
       </div>
 
-      <!-- AUDIT RUNNER PANEL (Visible when audit is running) -->
+      <!-- AUDIT RUNNER PANEL -->
       <div id="audit-session-banner" class="hidden bg-[#FAF7F2] p-4 rounded-2xl border-2 border-[#8C5835] space-y-3">
         <div class="flex items-center justify-between">
           <div>
@@ -494,29 +546,30 @@
         </div>
       </div>
 
-      <!-- Live Master Stock List -->
       <div class="space-y-2">
         <div class="flex items-center justify-between text-xs font-bold text-gray-500 px-1">
           <span>Active Catalog</span>
           <span id="catalog-count-label">0 SKUs</span>
         </div>
 
-        <div id="master-stock-list" class="space-y-2 max-h-96 overflow-y-auto pr-1">
-          <!-- Populated from Supabase items table -->
-        </div>
+        <div id="master-stock-list" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
       </div>
 
     </div>
   </main>
 
 
-  <!-- ==================== VIEW 4: SUPPLIES (PETTY CASH) ==================== -->
+  <!-- ==================== VIEW 4: SUPPLIES ==================== -->
   <main id="view-supplies" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
-      <div class="border-b border-gray-100 pb-3">
-        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-wide">Expense Logger</span>
-        <h2 class="text-lg font-bold text-[#2B2523] mt-1">Log Store Supply / Expense</h2>
-        <p class="text-xs text-gray-500">Record packaging, cleaning, or petty cash usage.</p>
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-wide">Expense Logger</span>
+          <h2 class="text-lg font-bold text-[#2B2523] mt-1">Log Store Expense</h2>
+        </div>
+        <button type="button" onclick="openRequestModal('SUPPLY_CONSUMABLE')" class="px-2.5 py-1.5 bg-[#FAF7F2] text-[#8C5835] font-bold text-xs rounded-xl border border-[#D9D1C7] cursor-pointer">
+          + Request Supplies
+        </button>
       </div>
 
       <div class="space-y-3">
@@ -549,22 +602,131 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Snap Receipt / Invoice</label>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Snap Official Receipt / Invoice (For Tax)</label>
           <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
             <input type="file" accept="image/*" class="hidden" onchange="previewFile(this, 'receipt-label')">
-            <span id="receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Receipt from Camera or Photos</span>
+            <span id="receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Official Receipt Photo</span>
           </label>
         </div>
       </div>
 
-      <button type="button" onclick="alert('Expense logged to database!')" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
+      <button type="button" onclick="alert('Expense & receipt logged to database!')" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
         Save Supply Expense
       </button>
     </div>
   </main>
 
 
-  <!-- ==================== PARCEL SCAN-TO-MATCH VERIFICATION MODAL ==================== -->
+  <!-- ==================== NIIMBOT PRINTING STATION MODAL ==================== -->
+  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 my-auto">
+      <div class="flex items-center justify-between border-b pb-2">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wide text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Niimbot Ready</span>
+          <h3 class="font-black text-base text-[#2B2523] mt-1">Print QR Labels</h3>
+        </div>
+        <button type="button" onclick="closePrintStation()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
+      </div>
+
+      <div class="text-xs text-gray-500 font-medium">
+        Scan each QR directly into your Niimbot app to print label copies.
+      </div>
+
+      <!-- CARD 1: STANDARD PACK QR -->
+      <div id="print-card-standard" class="bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#E6E0D8] space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold text-gray-500 uppercase">Standard Bags (10 pcs/bag)</span>
+          <span id="print-std-qty-badge" class="px-2 py-0.5 bg-[#8C5835] text-white text-[10px] font-extrabold rounded-full">Print 0x</span>
+        </div>
+        <div class="flex items-center space-x-3 bg-white p-2.5 rounded-xl border border-gray-200">
+          <div id="print-qr-standard" class="p-1 shrink-0"></div>
+          <div class="min-w-0">
+            <span id="print-std-sku-text" class="text-xs font-mono font-bold text-[#2B2523] block break-all">SKU</span>
+            <span class="text-[10px] text-gray-400 block font-medium">Full pack (10 pcs)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: PARTIAL PACK QR (🟡 Yellow Dot) -->
+      <div id="print-card-partial" class="hidden bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black text-amber-900 uppercase">🟡 Partial Pack (Yellow Dot)</span>
+          <span class="px-2 py-0.5 bg-amber-600 text-white text-[10px] font-extrabold rounded-full">Print 1x</span>
+        </div>
+        <div class="flex items-center space-x-3 bg-white p-2.5 rounded-xl border border-amber-200">
+          <div id="print-qr-partial" class="p-1 shrink-0"></div>
+          <div class="min-w-0">
+            <span id="print-partial-sku-text" class="text-xs font-mono font-bold text-amber-900 block break-all">SKU-P</span>
+            <span id="print-partial-pcs-text" class="text-[10px] text-amber-700 block font-bold">Contains 0 loose pieces</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" onclick="confirmLabelsPrintedAndFinish()" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white font-bold text-xs rounded-xl cursor-pointer shadow-md transition active:scale-95">
+        ✓ All Labels Printed & Stuck on Bags
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ==================== UNIVERSAL REQUEST MODAL ==================== -->
+  <div id="request-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100">
+      <div class="flex items-center justify-between border-b pb-2">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wide text-[#8C5835] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6E0D8]">Floor Operations</span>
+          <h3 class="font-bold text-base text-[#2B2523] mt-1">File Item Request</h3>
+        </div>
+        <button type="button" onclick="closeRequestModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-bold text-gray-600 mb-1">Request Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setRequestType('STOCK_RESTOCK')" id="req-type-stock" class="py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer">
+              Stock Restock
+            </button>
+            <button type="button" onclick="setRequestType('SUPPLY_CONSUMABLE')" id="req-type-supply" class="py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer">
+              Store Supply
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-gray-600 mb-1">Item SKU / Name</label>
+          <input type="text" id="req-item-name" placeholder="e.g. CHM-STN-STAR01 or 58mm Paper" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none focus:border-[#8C5835]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600 mb-1">Quantity Needed</label>
+            <input type="number" id="req-qty" value="5" min="1" class="w-full p-2 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold text-center outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600 mb-1">Urgency</label>
+            <select id="req-urgency" class="w-full p-2 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none">
+              <option value="TODAY">Urgent (Today)</option>
+              <option value="ROUTINE" selected>Routine</option>
+              <option value="NEXT_CUTOFF">Next Cutoff</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-gray-600 mb-1">Reason / Notes for Lead</label>
+          <textarea id="req-notes" rows="2" placeholder="e.g. Sold out during rush, down to last roll..." class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs outline-none focus:border-[#8C5835]"></textarea>
+        </div>
+
+        <button type="button" onclick="submitItemRequest()" class="w-full py-3 bg-[#8C5835] hover:bg-[#73472A] text-white font-bold text-xs rounded-xl cursor-pointer transition">
+          Submit Request to Team Lead →
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== PARCEL VERIFICATION MODAL ==================== -->
   <div id="verify-parcel-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100">
       <div class="flex items-center justify-between border-b pb-3">
@@ -580,14 +742,13 @@
         <div class="text-xs text-gray-500 font-medium">Logged parcel contents photo</div>
       </div>
 
-      <!-- Scan Barcode (Eyoyo OR Camera) -->
       <div class="bg-[#FCFAF8] p-3 rounded-2xl border-2 border-[#8C5835] focus-within:ring-2 focus-within:ring-[#8C5835]">
         <div class="flex items-center justify-between mb-1">
           <label class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
             Scan Physical Waybill
           </label>
           <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-[#8C5835] flex items-center space-x-1 cursor-pointer">
-            <span>📷 Scan via Camera</span>
+            <span>📷 Camera</span>
           </button>
         </div>
         <input 
@@ -613,7 +774,7 @@
   </div>
 
 
-  <!-- ==================== CREW MODAL (ROSTER + PIN PAD) ==================== -->
+  <!-- ==================== CREW MODAL ==================== -->
   <div id="crew-modal" style="display: none;" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 transition-all">
 
@@ -701,7 +862,13 @@
     let activeIntakeWaybill = "";
     let html5QrScanner = null;
 
-    // Sync Live Crew directly from Supabase
+    let currentMovementMode = "DELIVERED_TO_SHOP";
+    let currentRequestType = "STOCK_RESTOCK";
+    let sessionPacksMoved = 0;
+
+    // Temporary storage for items waiting label printing
+    let pendingIntakeData = null;
+
     async function syncCrewWithSupabase() {
       if (!db) return;
       try {
@@ -710,12 +877,9 @@
           crewMembers = data;
           renderCrewRoster();
         }
-      } catch (err) {
-        console.warn("Crew fetch note:", err);
-      }
+      } catch (err) {}
     }
 
-    // Navigation Router
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -745,7 +909,6 @@
       }
     }
 
-    // Generic Image Previewer (Camera and Photos)
     function previewGenericPhoto(input, imgId, wrapId, iconId, labelId) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -777,7 +940,6 @@
       }
     }
 
-    // Camera Scanner Controller (HTML5-QRCode)
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
       document.getElementById('camera-scanner-modal').style.display = 'flex';
       html5QrScanner = new Html5Qrcode("scanner-reader-view");
@@ -807,7 +969,6 @@
       document.getElementById('camera-scanner-modal').style.display = 'none';
     }
 
-    // Intake Source Selector
     function selectIntakeSource(type) {
       currentIntakeSource = type;
       ['courier', 'merchant', 'inhouse'].forEach(t => {
@@ -824,16 +985,13 @@
       document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
     }
 
-    // STRICT COURIER DROP LOGIC
     async function logCourierDropStrict() {
-      // 1. Must be logged in
       if (!currentActiveCrew) {
         alert("Action Blocked: Please sign in with your PIN first (tap 'Hello' at top right).");
         openCrewModal();
         return;
       }
 
-      // 2. Waybill barcode required
       const barcode = document.getElementById('waybill-barcode-input').value.trim();
       if (!barcode) {
         alert("Missing Information: Please scan or enter the Waybill Barcode.");
@@ -841,13 +999,11 @@
         return;
       }
 
-      // 3. Package photo required
       if (!packagePhotoData) {
         alert("Missing Photo: Please attach the Outer Package Photo.");
         return;
       }
 
-      // 4. Content photo required
       if (!contentPhotoData) {
         alert("Missing Photo: Please attach the Open Box Content Photo.");
         return;
@@ -864,14 +1020,11 @@
       if (db) {
         try {
           await db.from('parcels').insert([parcelObj]);
-        } catch (e) {
-          console.warn("Parcel insert note:", e);
-        }
+        } catch (e) {}
       }
 
       whiteBinParcels.unshift({ ...parcelObj, loggedAt: "Just now" });
 
-      // Reset form
       document.getElementById('waybill-barcode-input').value = "";
       document.getElementById('package-photo-file').value = "";
       document.getElementById('content-photo-file').value = "";
@@ -1005,26 +1158,18 @@
       }
     }
 
-    // ================= CREATABLE 3-LETTER COMBOBOX LOGIC =================
     function extractThreeLetterCode(rawText) {
       if (!rawText) return "___";
-      // If text has parenthesis like 'Charm (CHM)', extract inside parentheses
       const match = rawText.match(/\(([^)]+)\)/);
       if (match && match[1]) {
         return match[1].trim().toUpperCase().substring(0, 3);
       }
-      // Otherwise take first 3 alphanumeric letters
       const clean = rawText.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
       return clean.length >= 3 ? clean.substring(0, 3) : clean.padEnd(3, '_');
     }
 
-    function updateCategoryCode() {
-      generateSkuPreview();
-    }
-
-    function updateTypeCode() {
-      generateSkuPreview();
-    }
+    function updateCategoryCode() { generateSkuPreview(); }
+    function updateTypeCode() { generateSkuPreview(); }
 
     function generateSkuPreview() {
       const catInput = document.getElementById('sku-cat-input').value.trim() || "CHM";
@@ -1038,19 +1183,19 @@
       document.getElementById('sku-preview-badge').textContent = sku;
 
       if (identRaw) {
-        renderQrCode(sku);
+        renderQrCode('qrcode-container', sku, 84);
       }
       return sku;
     }
 
-    function renderQrCode(textToEncode) {
-      const container = document.getElementById('qrcode-container');
+    function renderQrCode(containerId, textToEncode, size = 84) {
+      const container = document.getElementById(containerId);
       container.innerHTML = "";
       try {
         new QRCode(container, {
           text: textToEncode,
-          width: 84,
-          height: 84,
+          width: size,
+          height: size,
           colorDark: "#2B2523",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M
@@ -1067,7 +1212,8 @@
       return total;
     }
 
-    async function saveSkuAndIntake() {
+    // ================= NIIMBOT PRINTING STATION INTERFACE =================
+    function initiateSkuSaveAndPrint() {
       const sku = generateSkuPreview();
       const name = document.getElementById('sku-name').value.trim();
       const cat = document.getElementById('sku-cat-input').value.trim() || 'General';
@@ -1075,43 +1221,86 @@
       const ident = document.getElementById('sku-ident').value.trim();
       const total = calculateTotalPcs();
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
+      const partialPcs = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
 
       if (!ident || !name) {
         alert("Please provide both an Identifier Code and an Item Display Name.");
         return;
       }
 
+      // Store in memory ready to finalize
+      pendingIntakeData = {
+        sku: sku,
+        name: name,
+        category: cat,
+        type: typ,
+        identifier: ident,
+        total_pcs: total,
+        pack_count: packs,
+        pcs_per_pack: parseInt(document.getElementById('sku-pcs-per-pack').value) || 10,
+        partial_pcs: partialPcs,
+        image_url: currentSkuMasterPhoto || null
+      };
+
+      // Populate Niimbot Printing Station
+      document.getElementById('print-std-sku-text').textContent = sku;
+      document.getElementById('print-std-qty-badge').textContent = `Print ${packs}x`;
+      renderQrCode('print-qr-standard', sku, 96);
+
+      const partialCard = document.getElementById('print-card-partial');
+      if (partialPcs > 0) {
+        const partialSkuCode = `${sku}-P${partialPcs}`;
+        document.getElementById('print-partial-sku-text').textContent = partialSkuCode;
+        document.getElementById('print-partial-pcs-text').textContent = `Contains ${partialPcs} loose pieces`;
+        renderQrCode('print-qr-partial', partialSkuCode, 96);
+        partialCard.classList.remove('hidden');
+      } else {
+        partialCard.classList.add('hidden');
+      }
+
+      document.getElementById('print-station-modal').style.display = 'flex';
+      playBeep(1046);
+    }
+
+    function closePrintStation() {
+      document.getElementById('print-station-modal').style.display = 'none';
+    }
+
+    async function confirmLabelsPrintedAndFinish() {
+      if (!pendingIntakeData) return;
+
       if (db) {
         try {
           await db.from('items').upsert([{
-            sku: sku,
-            name: name,
-            category: cat,
-            type: typ,
-            identifier: ident,
-            image_url: currentSkuMasterPhoto || null
+            sku: pendingIntakeData.sku,
+            name: pendingIntakeData.name,
+            category: pendingIntakeData.category,
+            type: pendingIntakeData.type,
+            identifier: pendingIntakeData.identifier,
+            image_url: pendingIntakeData.image_url
           }]);
 
           await db.from('intake_batches').insert([{
             waybill: activeIntakeWaybill || 'MANUAL-INTAKE',
-            sku: sku,
-            pack_count: packs,
-            pcs_per_pack: parseInt(document.getElementById('sku-pcs-per-pack').value) || 10,
-            partial_pcs: parseInt(document.getElementById('sku-partial-pcs').value) || 0,
-            total_pcs: total,
+            sku: pendingIntakeData.sku,
+            pack_count: pendingIntakeData.pack_count,
+            pcs_per_pack: pendingIntakeData.pcs_per_pack,
+            partial_pcs: pendingIntakeData.partial_pcs,
+            total_pcs: pendingIntakeData.total_pcs,
             intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }]);
-        } catch (e) {
-          console.warn("Intake Batch DB insert:", e);
-        }
+        } catch (e) {}
       }
 
+      // Increment Werqroom counter
       const currentWerq = parseInt(document.getElementById('werqroom-count').textContent) || 0;
-      document.getElementById('werqroom-count').textContent = currentWerq + packs;
+      document.getElementById('werqroom-count').textContent = currentWerq + pendingIntakeData.pack_count;
 
-      playBeep(1046);
-      alert(`✓ SKU [${sku}] Created & Logged!\n${packs} packs (${total} pcs) added to Werqroom stock.`);
+      playBeep(1200);
+      alert(`✓ Batch Complete!\n${pendingIntakeData.pack_count} packs labeled and added to Werqroom stock.`);
+      closePrintStation();
 
+      // Reset SKU Builder Form
       document.getElementById('sku-ident').value = "";
       document.getElementById('sku-name').value = "";
       document.getElementById('sku-pack-count').value = "0";
@@ -1121,7 +1310,103 @@
       document.getElementById('sku-photo-icon').classList.remove('hidden');
       document.getElementById('sku-photo-label').textContent = "Add from Camera / Photos";
       currentSkuMasterPhoto = "";
+      pendingIntakeData = null;
       generateSkuPreview();
+    }
+
+    // ================= MOVEMENT STATION LOGIC =================
+    function setMovementMode(mode) {
+      currentMovementMode = mode;
+      const btnDelivered = document.getElementById('btn-mode-delivered');
+      const btnReplenish = document.getElementById('btn-mode-replenish');
+
+      if (mode === 'DELIVERED_TO_SHOP') {
+        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      } else {
+        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      }
+      setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
+    }
+
+    const moveScannerInput = document.getElementById('move-scanner-input');
+    moveScannerInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = moveScannerInput.value.trim();
+        if (code) {
+          handleMovementScan(code);
+          moveScannerInput.value = '';
+        }
+      }
+    });
+
+    async function handleMovementScan(scannedCode) {
+      if (!currentActiveCrew) {
+        alert("Please sign in with your PIN before moving stock.");
+        openCrewModal();
+        return;
+      }
+
+      // Check for partial pack suffix (-P or -P7)
+      const isPartial = scannedCode.toUpperCase().includes('-P');
+      let pcsMoved = 10;
+      let cleanSku = scannedCode;
+
+      if (isPartial) {
+        const parts = scannedCode.split(/-P/i);
+        cleanSku = parts[0];
+        const parsedPcs = parseInt(parts[1]);
+        pcsMoved = !isNaN(parsedPcs) ? parsedPcs : 5;
+      }
+
+      const bagType = isPartial ? 'PARTIAL' : 'STANDARD';
+
+      // Update counters based on mode
+      const werqroomEl = document.getElementById('werqroom-count');
+      const storageEl = document.getElementById('storage-count');
+      let currentWerq = parseInt(werqroomEl.textContent) || 0;
+      let currentStore = parseInt(storageEl.textContent) || 0;
+
+      if (currentMovementMode === 'DELIVERED_TO_SHOP') {
+        if (currentWerq > 0) werqroomEl.textContent = currentWerq - 1;
+        storageEl.textContent = currentStore + 1;
+      } else {
+        if (currentStore > 0) storageEl.textContent = currentStore - 1;
+      }
+
+      sessionPacksMoved++;
+      document.getElementById('session-move-count').textContent = sessionPacksMoved;
+
+      // Save Movement to Supabase
+      if (db) {
+        try {
+          await db.from('stock_movements').insert([{
+            sku: cleanSku,
+            action: currentMovementMode,
+            bag_type: bagType,
+            pcs_moved: pcsMoved,
+            source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
+            dest_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
+            moved_by: currentActiveCrew.name
+          }]);
+        } catch (e) {}
+      }
+
+      if (isPartial) {
+        playBeep(1200);
+        setTimeout(() => playBeep(1400), 100);
+      } else {
+        playBeep(1046);
+      }
+
+      const card = document.getElementById('move-feedback-card');
+      card.classList.remove('hidden');
+      document.getElementById('move-display-sku').textContent = scannedCode;
+      document.getElementById('move-display-action').textContent = currentMovementMode === 'DELIVERED_TO_SHOP' ? `Delivered to Shop Storage (+${pcsMoved} pcs)` : `Replenished to Display Peg (-${pcsMoved} pcs)`;
+      document.getElementById('move-badge-type').textContent = isPartial ? `🟡 Partial Pack (${pcsMoved} pcs)` : 'Standard Pack (10 pcs)';
+      document.getElementById('move-badge-type').className = isPartial ? 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800' : 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
     }
 
     // ================= SHELF HEALTH (MASTER CATALOG & AUDIT) =================
@@ -1139,11 +1424,10 @@
         } catch (e) {}
       }
 
-      // Default demo catalog if table is empty
       if (masterItemsCatalog.length === 0) {
         masterItemsCatalog = [
-          { sku: "CHM-STN-STAR01", name: "Stainless Silver Star Charm", category: "Charm", type: "Stainless", image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" },
-          { sku: "CHM-RSN-SNICKERS", name: "Resin Snickers Charm", category: "Charm", type: "Resin", image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" }
+          { sku: "CHM-STN-STAR01", name: "Stainless Silver Star Charm", category: "Charm", type: "Stainless", stock_werq: 4, stock_shop: 1, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" },
+          { sku: "CHM-RSN-SNICKERS", name: "Resin Snickers Charm", category: "Charm", type: "Resin", stock_werq: 0, stock_shop: 0, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" }
         ];
       }
 
@@ -1158,22 +1442,26 @@
         return;
       }
 
-      container.innerHTML = items.map(item => `
-        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between gap-3 shadow-xs">
-          <div class="flex items-center space-x-3 min-w-0">
-            <img src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-gray-200 shrink-0 shadow-inner" alt="SKU">
-            <div class="min-w-0">
-              <span class="text-xs font-mono font-bold text-[#8C5835] block truncate">${item.sku}</span>
-              <span class="text-xs font-bold text-[#2B2523] block truncate">${item.name}</span>
-              <span class="text-[10px] text-gray-400 block">${item.category} • ${item.type}</span>
+      container.innerHTML = items.map(item => {
+        const isLow = (item.stock_werq || 0) + (item.stock_shop || 0) <= 1;
+        return `
+          <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between gap-3 shadow-xs">
+            <div class="flex items-center space-x-3 min-w-0">
+              <img src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-gray-200 shrink-0 shadow-inner" alt="SKU">
+              <div class="min-w-0">
+                <span class="text-xs font-mono font-bold text-[#8C5835] block truncate">${item.sku}</span>
+                <span class="text-xs font-bold text-[#2B2523] block truncate">${item.name}</span>
+                <span class="text-[10px] text-gray-400 block">${item.category} • ${item.type}</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-[10px] text-gray-400 block font-semibold">In Stock</span>
+              <span class="text-xs font-black ${isLow ? 'text-red-600' : 'text-[#2B2523]'}">${(item.stock_werq || 0) + (item.stock_shop || 0)} packs</span>
+              ${isLow ? `<button type="button" onclick="quickRequestItem('${item.sku}', '${item.name}')" class="mt-1 px-2 py-0.5 bg-red-100 hover:bg-red-200 text-red-800 text-[9px] font-black rounded-md block ml-auto cursor-pointer">+ Restock</button>` : ''}
             </div>
           </div>
-          <div class="text-right shrink-0">
-            <span class="text-[10px] text-gray-400 block font-semibold">Werqroom</span>
-            <span class="text-xs font-black text-[#2B2523]">${auditSessionCounts[item.sku] !== undefined ? auditSessionCounts[item.sku] : '10'} packs</span>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function filterMasterInventory() {
@@ -1186,7 +1474,6 @@
       renderMasterCatalogList(filtered);
     }
 
-    // Physical Audit Runner
     function startFloorAuditMode() {
       isAuditActive = true;
       document.getElementById('audit-session-banner').classList.remove('hidden');
@@ -1216,12 +1503,78 @@
       document.body.removeChild(link);
     }
 
+    // ================= UNIVERSAL REQUEST DRAWER =================
+    function openRequestModal(type = 'STOCK_RESTOCK', presetName = '') {
+      currentRequestType = type;
+      setRequestType(type);
+      document.getElementById('req-item-name').value = presetName;
+      document.getElementById('request-modal').style.display = 'flex';
+    }
+
+    function closeRequestModal() {
+      document.getElementById('request-modal').style.display = 'none';
+    }
+
+    function setRequestType(type) {
+      currentRequestType = type;
+      const btnStock = document.getElementById('req-type-stock');
+      const btnSupply = document.getElementById('req-type-supply');
+
+      if (type === 'STOCK_RESTOCK') {
+        btnStock.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnSupply.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+      } else {
+        btnSupply.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnStock.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+      }
+    }
+
+    function quickRequestItem(sku, name) {
+      openRequestModal('STOCK_RESTOCK', `${sku} - ${name}`);
+    }
+
+    async function submitItemRequest() {
+      if (!currentActiveCrew) {
+        alert("Please sign in before submitting requests.");
+        openCrewModal();
+        return;
+      }
+
+      const itemName = document.getElementById('req-item-name').value.trim();
+      const qty = parseInt(document.getElementById('req-qty').value) || 1;
+      const urgency = document.getElementById('req-urgency').value;
+      const notes = document.getElementById('req-notes').value.trim();
+
+      if (!itemName) {
+        alert("Please enter the item SKU or supply name.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: currentRequestType,
+            item_sku_or_code: itemName,
+            item_name: itemName,
+            qty_requested: qty,
+            urgency: urgency,
+            reason: notes,
+            requested_by: currentActiveCrew.name
+          }]);
+        } catch (e) {}
+      }
+
+      playBeep(1046);
+      alert(`✓ Request for [${itemName}] submitted to Team Lead!`);
+      closeRequestModal();
+    }
+
     // Shelf Care Tab Switcher
     function switchShelfTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
 
-      const tabs = ['dropoff', 'received', 'qrbuilder'];
+      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
       tabs.forEach(t => {
         const btn = document.getElementById(`nav-${t}`);
         if (btn) {
@@ -1238,10 +1591,11 @@
       } else if (tabId === 'tab-qrbuilder') {
         generateSkuPreview();
         setTimeout(() => document.getElementById('sku-ident')?.focus(), 150);
+      } else if (tabId === 'tab-move') {
+        setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
       }
     }
 
-    // Crew & Session Auth
     function checkExistingSession() {
       const saved = localStorage.getItem('shelfcare_crew');
       if (saved) {

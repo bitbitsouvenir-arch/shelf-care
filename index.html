@@ -40,15 +40,69 @@
 </head>
 <body class="bg-[#F9F6F0] text-[#2B2523] font-sans min-h-screen flex flex-col antialiased selection:bg-[#8C5835] selection:text-white relative">
 
-  <!-- TOP HEADER / CREW BAR -->
+  <!-- ==================== LAUNCH PIN GATE (APP LOCKOUT) ==================== -->
+  <div id="gate-lockscreen" class="fixed inset-0 bg-[#F9F6F0] z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 space-y-5 shadow-xl border border-[#E6E0D8]">
+      
+      <!-- Logo & Store Header -->
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 mx-auto flex items-center justify-center">
+          <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitcrew">
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-[#2B2523]">Bitcrew Portal</h2>
+          <p id="gate-subtitle" class="text-xs text-gray-500 font-medium">Select your name to sign in</p>
+        </div>
+      </div>
+
+      <!-- STEP 1: ROSTER SELECTION -->
+      <div id="gate-roster-view" class="space-y-3">
+        <div id="gate-crew-grid" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1"></div>
+      </div>
+
+      <!-- STEP 2: PIN PAD ENTRY -->
+      <div id="gate-pin-view" class="space-y-4 hidden">
+        <div class="flex items-center justify-between border-b pb-2">
+          <button type="button" onclick="showGateRoster()" class="text-xs font-bold text-[#8C5835] cursor-pointer">← Back to Roster</button>
+          <span id="gate-target-name" class="font-bold text-sm text-[#2B2523]">Enter PIN</span>
+        </div>
+
+        <div class="flex justify-center space-x-3 py-2">
+          <span id="gate-pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="gate-pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="gate-pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+          <span id="gate-pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
+        </div>
+
+        <div id="gate-pin-error" class="text-center text-xs font-bold text-red-500 h-4"></div>
+
+        <div class="grid grid-cols-3 gap-2 pt-1 font-mono">
+          <button type="button" onclick="enterGateDigit('1')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">1</button>
+          <button type="button" onclick="enterGateDigit('2')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">2</button>
+          <button type="button" onclick="enterGateDigit('3')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">3</button>
+          <button type="button" onclick="enterGateDigit('4')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">4</button>
+          <button type="button" onclick="enterGateDigit('5')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">5</button>
+          <button type="button" onclick="enterGateDigit('6')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">6</button>
+          <button type="button" onclick="enterGateDigit('7')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">7</button>
+          <button type="button" onclick="enterGateDigit('8')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">8</button>
+          <button type="button" onclick="enterGateDigit('9')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">9</button>
+          <button type="button" onclick="clearGatePin()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-xs rounded-2xl cursor-pointer">Clear</button>
+          <button type="button" onclick="enterGateDigit('0')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">0</button>
+          <button type="button" onclick="deleteGateDigit()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-2xl cursor-pointer">⌫</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOP HEADER / ACTIVE USER BAR -->
   <header class="bg-white/90 backdrop-blur-md border-b border-[#E6E0D8] sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-sm">
     <div class="flex items-center space-x-2.5">
       <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden mr-1 text-[#8C5835] font-bold text-xs bg-[#F3EFEA] hover:bg-[#EAE4DC] px-2.5 py-1.5 rounded-full transition cursor-pointer">
         ← Hub
       </button>
       
-      <!-- LOGO: Uses uploaded logo.png -->
-      <div class="w-9 h-9 flex items-center justify-center shrink-0">
+      <div class="w-8 h-8 flex items-center justify-center shrink-0">
         <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitcrew Logo">
       </div>
 
@@ -59,12 +113,14 @@
     </div>
 
     <!-- Active Crew Profile Switcher Button -->
-    <button type="button" id="btn-crew-pill" onclick="openCrewModal()" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3.5 py-1.5 rounded-full transition active:scale-95 cursor-pointer shadow-sm">
-      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-[#D9D1C7] text-white flex items-center justify-center text-[10px] font-bold">
+    <button type="button" onclick="promptSwitchShift()" class="flex items-center space-x-2 bg-[#F3EFEA] hover:bg-[#EAE4DC] border border-[#E0D8CE] px-3 py-1.5 rounded-full transition active:scale-95 cursor-pointer shadow-sm">
+      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-[#8C5835] text-white flex items-center justify-center text-[10px] font-bold">
         ?
       </div>
-      <span id="crew-name" class="text-xs font-semibold text-[#2B2523]">Hello</span>
-      <span id="clock-badge" class="w-2 h-2 rounded-full bg-gray-300"></span>
+      <div class="text-left">
+        <span id="crew-name" class="text-xs font-semibold text-[#2B2523] block leading-none">Crew</span>
+        <span id="crew-role-badge" class="text-[9px] text-[#8C5835] font-bold block leading-none mt-0.5">Role</span>
+      </div>
     </button>
   </header>
 
@@ -81,8 +137,8 @@
   </div>
 
   <!-- ==================== VIEW 1: BITCREW MAIN HUB ==================== -->
-  <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-4">
-    <div class="text-center space-y-1 mb-2">
+  <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3.5">
+    <div class="text-center space-y-1 mb-1">
       <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EFE9E0] text-[#8C5835] tracking-wide uppercase">Workspace</span>
       <h2 class="text-2xl font-black text-[#2B2523]">Bitcrew Portal</h2>
       <p class="text-xs text-gray-500">Select an operational module to begin.</p>
@@ -90,43 +146,51 @@
 
     <div class="space-y-3">
       <!-- 1. SHELF HEALTH -->
-      <button type="button" onclick="goToView('view-shelf-health')" class="w-full bg-[#FAF7F2] hover:bg-[#F3EFEA] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-sm border-2 border-[#8C5835] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-health')" class="w-full bg-[#FAF7F2] hover:bg-[#F3EFEA] text-[#2B2523] p-4.5 rounded-3xl font-extrabold shadow-sm border-2 border-[#8C5835] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="flex items-center space-x-2">
             <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#8C5835] text-white uppercase">Master View</span>
-            <div class="text-lg font-black tracking-tight text-[#8C5835]">Shelf Health</div>
+            <div class="text-base font-black tracking-tight text-[#8C5835]">Shelf Health</div>
           </div>
-          <span class="text-xs font-semibold text-gray-600 block mt-1">Live Stock, Search, Audit & Trend Reports</span>
+          <span class="text-xs font-semibold text-gray-600 block mt-1">Live Stock, Search & Continuous Audit</span>
         </div>
         <span class="text-xl text-[#8C5835] group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
       <!-- 2. SHELF CARE -->
-      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-4.5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-black tracking-tight">Shelf Care</div>
+          <div class="text-base font-black tracking-tight">Shelf Care</div>
           <span class="text-xs font-medium text-gray-700 block mt-0.5">Intake, White Bin, QR Builder & Movement</span>
         </div>
         <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
       <!-- 3. SUPPLIES -->
-      <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#D8EB3B] text-[#2B2523] p-4.5 rounded-3xl font-extrabold shadow-md border border-[#D5E838] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-black tracking-tight">Supplies</div>
-          <span class="text-xs font-medium text-gray-700 block mt-0.5">Petty Cash, OCR Invoices & Tax Tracking</span>
+          <div class="text-base font-black tracking-tight">Supplies</div>
+          <span class="text-xs font-medium text-gray-700 block mt-0.5">Petty Cash, OCR Invoices & Requests</span>
         </div>
         <span class="text-xl group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- 4. QUICK REQUEST RESTOCK / SUPPLIES -->
-      <button type="button" onclick="openRequestModal()" class="w-full bg-white hover:bg-[#FCFAF8] text-[#8C5835] p-3.5 rounded-2xl font-bold text-xs border border-[#D9D1C7] shadow-xs transition cursor-pointer flex items-center justify-center space-x-2">
+      <!-- 4. REPORTS (LEADERSHIP & PAYROLL GATED) -->
+      <button type="button" onclick="openReportsModule()" id="btn-reports-menu" class="w-full bg-white hover:bg-[#FAF7F2] text-[#2B2523] p-4.5 rounded-3xl font-extrabold shadow-sm border border-[#D9D1C7] transition active:scale-[0.98] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-100 text-purple-800 uppercase">Leadership</span>
+            <div class="text-base font-black tracking-tight text-[#2B2523]">Reports</div>
+          </div>
+          <span class="text-xs font-semibold text-gray-500 block mt-1">Attendance Shift Logs & Completed Audits</span>
+        </div>
+        <span class="text-xl text-gray-400 group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 5. QUICK REQUEST RESTOCK / SUPPLIES -->
+      <button type="button" onclick="openRequestModal()" class="w-full bg-white hover:bg-[#FCFAF8] text-[#8C5835] p-3 rounded-2xl font-bold text-xs border border-[#D9D1C7] shadow-xs transition cursor-pointer flex items-center justify-center space-x-2">
         <span>+ File Floor Request (Stock / Supplies)</span>
       </button>
-    </div>
-
-    <div class="text-center pt-6 text-[11px] text-gray-400">
-      Tap the top right pill to switch crew member
     </div>
   </main>
 
@@ -134,7 +198,6 @@
   <!-- ==================== VIEW 2: SHELF CARE (INVENTORY PIPELINE) ==================== -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28">
 
-    <!-- OVERVIEW STATUS CARDS -->
     <div class="grid grid-cols-3 gap-2.5 mb-5">
       <div class="bg-white p-3 rounded-2xl border border-[#E6E0D8] shadow-sm flex flex-col justify-between">
         <span class="text-[11px] font-semibold text-gray-500">Werqroom</span>
@@ -159,7 +222,7 @@
       </div>
     </div>
 
-    <!-- TAB 1: DROP-OFF SCREEN -->
+    <!-- TAB 1: DROP-OFF -->
     <section id="tab-dropoff" class="tab-pane space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         
@@ -179,7 +242,6 @@
           </div>
         </div>
 
-        <!-- 1. COURIER DROP FIELDS -->
         <div id="fields-courier" class="space-y-3">
           <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#D9D1C7] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
             <div class="flex items-center justify-between mb-1">
@@ -230,7 +292,6 @@
           </button>
         </div>
 
-        <!-- 2. MERCHANT DELIVERY FIELDS -->
         <div id="fields-merchant" class="space-y-3 hidden">
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">1. Merchant Receipt / Sheet</label>
@@ -239,7 +300,6 @@
               <span id="merchant-receipt-label" class="text-xs font-semibold text-[#8C5835]">Add Receipt Photo</span>
             </label>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">2. Delivered Goods Photo</label>
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
@@ -247,19 +307,16 @@
               <span id="merchant-batch-label" class="text-xs font-semibold text-[#8C5835]">Add Goods Photo</span>
             </label>
           </div>
-
           <button type="button" onclick="switchShelfTab('tab-qrbuilder')" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
             Proceed to QR Builder →
           </button>
         </div>
 
-        <!-- 3. IN-HOUSE CRAFT & RENEW FIELDS -->
         <div id="fields-inhouse" class="space-y-3 hidden">
           <div class="space-y-1">
             <label class="block text-xs font-bold text-gray-700">Material / Production Batch</label>
             <input type="text" id="inhouse-cat-input" placeholder="e.g. Leather, Clay, Beads..." class="w-full p-3 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-semibold text-xs text-[#2B2523] outline-none">
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">Finished Craft Photo</label>
             <label class="border-2 border-dashed border-[#D9D1C7] hover:border-[#8C5835] rounded-2xl p-3 text-center cursor-pointer bg-[#FCFAF8] block transition">
@@ -267,7 +324,6 @@
               <span id="inhouse-photo-label" class="text-xs font-semibold text-[#8C5835]">Add Finished Item Photo</span>
             </label>
           </div>
-
           <button type="button" onclick="switchShelfTab('tab-qrbuilder')" class="w-full py-3.5 bg-[#8C5835] hover:bg-[#73472A] text-white rounded-2xl font-bold text-sm shadow-md transition active:scale-[0.98] cursor-pointer">
             Proceed to QR Builder →
           </button>
@@ -276,7 +332,7 @@
       </div>
     </section>
 
-    <!-- TAB 2: RECEIVED (WHITE BIN QUEUE) -->
+    <!-- TAB 2: RECEIVED (WHITE BIN) -->
     <section id="tab-received" class="tab-pane hidden space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -288,17 +344,14 @@
             <span id="whitebin-badge-count">0</span> in Bin
           </span>
         </div>
-
         <p class="text-xs text-gray-500">Tap a parcel below and match its physical waybill barcode using Eyoyo or camera.</p>
-
         <div id="whitebin-list" class="space-y-3"></div>
       </div>
     </section>
 
-    <!-- TAB 3: QR BUILDER WORKSPACE -->
+    <!-- TAB 3: QR BUILDER -->
     <section id="tab-qrbuilder" class="tab-pane hidden space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
-        
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
             <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase tracking-wide text-[#8C5835] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6E0D8]">Direct Intake</span>
@@ -309,16 +362,9 @@
 
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-2">
-            <div class="relative">
+            <div>
               <label class="block text-[11px] font-bold text-gray-600 mb-1">Category (3-LTR)</label>
-              <input 
-                type="text" 
-                id="sku-cat-input" 
-                list="cat-suggestions"
-                placeholder="CHM, LNK, CLY..." 
-                oninput="updateCategoryCode()"
-                class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]"
-              />
+              <input type="text" id="sku-cat-input" list="cat-suggestions" placeholder="CHM, LNK, CLY..." oninput="updateCategoryCode()" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]">
               <datalist id="cat-suggestions">
                 <option value="Charm (CHM)"></option>
                 <option value="Link/Chain (LNK)"></option>
@@ -329,17 +375,9 @@
                 <option value="Beads (BDS)"></option>
               </datalist>
             </div>
-
-            <div class="relative">
+            <div>
               <label class="block text-[11px] font-bold text-gray-600 mb-1">Type (3-LTR)</label>
-              <input 
-                type="text" 
-                id="sku-type-input" 
-                list="type-suggestions"
-                placeholder="SS, RSN, ENM..." 
-                oninput="updateTypeCode()"
-                class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]"
-              />
+              <input type="text" id="sku-type-input" list="type-suggestions" placeholder="SS, RSN, ENM..." oninput="updateTypeCode()" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold uppercase outline-none focus:border-[#8C5835]">
               <datalist id="type-suggestions">
                 <option value="Stainless (STN)"></option>
                 <option value="Resin (RSN)"></option>
@@ -409,7 +447,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: UNIFIED MOVEMENT STATION -->
+    <!-- TAB 4: MOVEMENT STATION -->
     <section id="tab-move" class="tab-pane hidden space-y-4">
       <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
         
@@ -429,7 +467,7 @@
 
         <div class="bg-[#FCFAF8] p-3 rounded-2xl border-2 border-[#8C5835] focus-within:ring-2 focus-within:ring-[#8C5835] transition">
           <div class="flex items-center justify-between mb-1">
-            <label id="move-scanner-label" class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+            <label class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
               Scan Bag QR (Eyoyo / HW)
             </label>
             <button type="button" onclick="startCameraScanner('move-scanner-input', handleMovementScan)" class="text-[11px] font-bold text-[#8C5835] flex items-center space-x-1 cursor-pointer">
@@ -472,17 +510,14 @@
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <span>Drop-Off</span>
       </button>
-
       <button type="button" onclick="switchShelfTab('tab-received')" id="nav-received" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
         <span>Received</span>
       </button>
-
       <button type="button" onclick="switchShelfTab('tab-qrbuilder')" id="nav-qrbuilder" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
         <span>QR Build</span>
       </button>
-
       <button type="button" onclick="switchShelfTab('tab-move')" id="nav-move" class="flex flex-col items-center flex-1 text-gray-400 hover:text-[#2B2523] cursor-pointer">
         <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
         <span>Move</span>
@@ -522,7 +557,6 @@
         <button type="button" onclick="startCameraScanner('stock-search-input', filterMasterInventory)" class="text-xs text-[#8C5835] font-bold">📷</button>
       </div>
 
-      <!-- AUDIT RUNNER PANEL -->
       <div id="audit-session-banner" class="hidden bg-[#FAF7F2] p-4 rounded-2xl border-2 border-[#8C5835] space-y-3">
         <div class="flex items-center justify-between">
           <div>
@@ -531,7 +565,6 @@
           </div>
           <span id="audit-scan-counter" class="text-2xl font-black text-[#8C5835]">0</span>
         </div>
-        
         <div class="flex gap-2">
           <button type="button" onclick="downloadAuditReportCSV()" class="flex-1 py-2 bg-[#2B2523] text-white font-bold text-xs rounded-xl cursor-pointer">
             Download CSV Report
@@ -547,7 +580,6 @@
           <span>Active Catalog</span>
           <span id="catalog-count-label">0 SKUs</span>
         </div>
-
         <div id="master-stock-list" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
       </div>
 
@@ -555,10 +587,9 @@
   </main>
 
 
-  <!-- ==================== VIEW 4: SUPPLIES (EXPENSE LOGGER & OCR TAX SYSTEM) ==================== -->
+  <!-- ==================== VIEW 4: SUPPLIES ==================== -->
   <main id="view-supplies" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     
-    <!-- SECTION 1: LOG AN EXPENSE WITH AUTO OCR -->
     <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
       <div class="flex items-center justify-between border-b border-gray-100 pb-3">
         <div>
@@ -571,14 +602,12 @@
       </div>
 
       <div class="space-y-3">
-        <!-- 1. SNAP RECEIPT FIRST (AUTO-OCR) -->
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="text-xs font-bold text-gray-700">Vendor Official Receipt (OR) / Invoice</label>
             <span class="text-[10px] font-bold text-[#8C5835]">Smart OCR Auto-Fill</span>
           </div>
           <label class="border-2 border-dashed border-[#8C5835] hover:bg-[#FAF7F2] rounded-2xl p-4 text-center cursor-pointer bg-[#FCFAF8] block transition">
-            <!-- TRIGGER OCR HANDLER ON IMAGE UPLOAD -->
             <input type="file" accept="image/*" class="hidden" onchange="processReceiptOCR(this)">
             <svg class="w-6 h-6 mx-auto text-[#8C5835] mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             <span id="receipt-label" class="text-xs font-bold text-[#8C5835]">📷 Snap Receipt to Auto-Fill Tax & Amount</span>
@@ -590,7 +619,6 @@
           <input type="text" id="expense-item-name" placeholder="e.g. 58mm Thermal Paper Rolls, Tape" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] font-semibold text-xs outline-none focus:border-[#8C5835]">
         </div>
 
-        <!-- AUTO-FILLED OCR TAX FIELDS -->
         <div class="space-y-2 pt-1 border-t border-gray-100">
           <div>
             <label class="block text-[11px] font-bold text-gray-600 mb-1">Merchant / Registered Trade Name</label>
@@ -644,18 +672,77 @@
       </div>
     </div>
 
-    <!-- SECTION 2: PENDING FLOOR REQUESTS QUEUE (REVIEW & ACTION) -->
+    <!-- PENDING REQUESTS QUEUE (CLEANED) -->
     <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-3">
       <div class="flex items-center justify-between border-b pb-2">
         <h3 class="font-bold text-sm text-[#2B2523]">Pending Request Queue</h3>
         <span id="pending-requests-count" class="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-black rounded-full">0 Pending</span>
       </div>
-
       <div id="requests-queue-list" class="space-y-2.5">
         <div class="text-xs text-gray-400 text-center py-4">No pending requests right now.</div>
       </div>
     </div>
 
+  </main>
+
+
+  <!-- ==================== VIEW 5: REPORTS (LEADERSHIP WORKSPACE) ==================== -->
+  <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-3xl border border-[#E6E0D8] shadow-sm space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 uppercase tracking-wide">Management</span>
+          <h2 class="text-xl font-black text-[#2B2523] mt-1">Reports Hub</h2>
+        </div>
+        <button type="button" onclick="downloadAttendancePayrollCSV()" class="px-3 py-1.5 bg-[#8C5835] hover:bg-[#73472A] text-white font-bold text-xs rounded-xl shadow-xs cursor-pointer">
+          📥 Export CSV
+        </button>
+      </div>
+
+      <!-- Report Tabs: Attendance vs Audits -->
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="switchReportTab('attendance')" id="btn-rep-attendance" class="py-2.5 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer">
+          Attendance & Shifts
+        </button>
+        <button type="button" onclick="switchReportTab('audits')" id="btn-rep-audits" class="py-2.5 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer">
+          Stock Audits Log
+        </button>
+      </div>
+
+      <!-- TAB 1: ATTENDANCE CUTOFFS -->
+      <div id="rep-tab-attendance" class="space-y-3">
+        <!-- Two Fixed Salary Cutoff Pills -->
+        <div>
+          <label class="block text-[11px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Salary Payout Cutoff</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setSalaryCutoff('15th')" id="cutoff-btn-15" class="py-2 text-[11px] font-extrabold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer text-center">
+              15th Payout<br><span class="text-[9px] font-normal text-gray-500">Prev 30/1st – 14th</span>
+            </button>
+            <button type="button" onclick="setSalaryCutoff('30th')" id="cutoff-btn-30" class="py-2 text-[11px] font-extrabold rounded-xl border border-gray-200 text-gray-600 cursor-pointer text-center">
+              30th Payout<br><span class="text-[9px] font-normal text-gray-500">15th – 29th</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Shift Attendance Ledger Table -->
+        <div class="space-y-2 pt-2 border-t border-gray-100">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-600 px-1">
+            <span>Crew Member</span>
+            <span>First In / Last Out (Hours)</span>
+          </div>
+
+          <div id="attendance-summary-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: STOCK AUDITS SUMMARY (READ ONLY) -->
+      <div id="rep-tab-audits" class="space-y-3 hidden">
+        <p class="text-xs text-gray-500">Completed physical continuous counts and discrepancy records from Shelf Health.</p>
+        <div id="audits-history-list" class="space-y-2"></div>
+      </div>
+
+    </div>
   </main>
 
 
@@ -688,7 +775,7 @@
           <input type="text" id="req-item-name" placeholder="e.g. CHM-STN-STAR01 or 58mm Paper" class="w-full p-2.5 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none focus:border-[#8C5835]">
         </div>
 
-        <!-- CURRENT IN-STORE QUANTITY + OUT OF STOCK TOGGLE -->
+        <!-- CURRENT IN-STORE COUNT & AUTOMATED URGENCY -->
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="text-[11px] font-bold text-gray-600">Current In-Store Quantity</label>
@@ -697,16 +784,15 @@
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="req-current-qty" value="0" min="0" class="w-full p-2 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold text-center outline-none">
-            <select id="req-urgency" class="w-full p-2 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold outline-none">
-              <option value="TODAY">Urgent (Today)</option>
-              <option value="ROUTINE" selected>Routine</option>
-              <option value="NEXT_CUTOFF">Next Cutoff</option>
-            </select>
+            <input type="number" id="req-current-qty" value="0" min="0" oninput="updateCalculatedUrgencyBadge()" class="w-full p-2 bg-[#FCFAF8] rounded-xl border border-[#D9D1C7] text-xs font-bold text-center outline-none">
+            
+            <!-- AUTOMATED STATUS BADGE (NO MANUAL GUESSING) -->
+            <div id="req-urgency-auto-badge" class="flex items-center justify-center p-2 rounded-xl text-[10px] font-black bg-red-100 text-red-800">
+              Needed ASAP
+            </div>
           </div>
         </div>
 
-        <!-- STRICT FLOOR VALIDATION CHECKBOX -->
         <div class="p-2.5 bg-amber-50/70 border border-amber-200 rounded-xl">
           <label class="flex items-start space-x-2 cursor-pointer">
             <input type="checkbox" id="req-validated-check" class="mt-0.5 w-4 h-4 text-[#8C5835] rounded border-gray-300 focus:ring-[#8C5835]">
@@ -729,7 +815,7 @@
   </div>
 
 
-  <!-- ==================== ACTION PROMPT: PURCHASE / REJECT REQUEST MODAL ==================== -->
+  <!-- ==================== ACTION PROMPT: PURCHASE / REJECT MODAL ==================== -->
   <div id="request-action-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100">
       <div class="flex items-center justify-between border-b pb-2">
@@ -782,7 +868,6 @@
         Scan each QR directly into your Niimbot app to print label copies.
       </div>
 
-      <!-- CARD 1: STANDARD PACK QR -->
       <div id="print-card-standard" class="bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#E6E0D8] space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[10px] font-bold text-gray-500 uppercase">Standard Bags (10 pcs/bag)</span>
@@ -797,7 +882,6 @@
         </div>
       </div>
 
-      <!-- CARD 2: PARTIAL PACK QR (🟡 Yellow Dot) -->
       <div id="print-card-partial" class="hidden bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[10px] font-black text-amber-900 uppercase">🟡 Partial Pack (Yellow Dot)</span>
@@ -866,66 +950,6 @@
     </div>
   </div>
 
-
-  <!-- ==================== CREW MODAL ==================== -->
-  <div id="crew-modal" style="display: none;" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl border border-gray-100 transition-all">
-
-      <div id="modal-roster-view" class="space-y-4">
-        <div class="flex items-center justify-between border-b pb-3">
-          <div>
-            <h3 class="font-bold text-base text-[#2B2523]">Store Crew</h3>
-            <span class="text-[11px] text-gray-400">Select your name to sign in</span>
-          </div>
-          <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
-        </div>
-
-        <div id="crew-list" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1"></div>
-
-        <div id="active-shift-actions" class="pt-2 border-t hidden">
-          <button type="button" onclick="clockOutCurrentCrew()" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs rounded-xl cursor-pointer transition">
-            Clock Out Active Shift
-          </button>
-        </div>
-      </div>
-
-      <div id="modal-pin-view" class="space-y-4 hidden">
-        <div class="flex items-center justify-between border-b pb-3">
-          <div class="flex items-center space-x-2">
-            <button type="button" onclick="showRosterView()" class="text-xs text-[#8C5835] font-bold cursor-pointer">← Back</button>
-            <h3 id="pin-target-name" class="font-bold text-base text-[#2B2523]">Enter PIN</h3>
-          </div>
-          <button type="button" onclick="closeCrewModal()" class="text-gray-400 hover:text-gray-700 text-lg font-bold p-1 cursor-pointer">✕</button>
-        </div>
-
-        <div class="flex justify-center space-x-3 py-2">
-          <span id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
-          <span id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
-          <span id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
-          <span id="pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-gray-300"></span>
-        </div>
-
-        <div id="pin-error" class="text-center text-xs font-bold text-red-500 h-4"></div>
-
-        <div class="grid grid-cols-3 gap-2 pt-1 font-mono">
-          <button type="button" onclick="enterPinDigit('1')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">1</button>
-          <button type="button" onclick="enterPinDigit('2')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">2</button>
-          <button type="button" onclick="enterPinDigit('3')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">3</button>
-          <button type="button" onclick="enterPinDigit('4')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">4</button>
-          <button type="button" onclick="enterPinDigit('5')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">5</button>
-          <button type="button" onclick="enterPinDigit('6')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">6</button>
-          <button type="button" onclick="enterPinDigit('7')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">7</button>
-          <button type="button" onclick="enterPinDigit('8')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">8</button>
-          <button type="button" onclick="enterPinDigit('9')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">9</button>
-          <button type="button" onclick="clearPin()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-xs rounded-2xl cursor-pointer">Clear</button>
-          <button type="button" onclick="enterPinDigit('0')" class="py-3.5 bg-[#FAF7F2] hover:bg-[#EFE9E0] font-bold text-lg rounded-2xl text-[#2B2523] cursor-pointer active:scale-95 transition">0</button>
-          <button type="button" onclick="deletePinDigit()" class="py-3.5 bg-gray-100 text-gray-500 font-bold text-sm rounded-2xl cursor-pointer">⌫</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <script>
     const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
@@ -939,8 +963,8 @@
 
     let crewMembers = [];
     let currentActiveCrew = null;
-    let selectedCrewForAuth = null;
-    let enteredPin = "";
+    let selectedCrewForGate = null;
+    let enteredGatePin = "";
     let currentIntakeSource = "courier";
     let activeVerifyingParcel = null;
 
@@ -951,7 +975,8 @@
     let whiteBinParcels = [];
     let masterItemsCatalog = [];
     let pendingRequests = [];
-    let auditSessionCounts = {};
+    let attendanceLogs = [];
+    let currentCutoff = "15th"; // or '30th'
     let isAuditActive = false;
     let activeIntakeWaybill = "";
     let html5QrScanner = null;
@@ -963,17 +988,126 @@
     let pendingIntakeData = null;
     let resolvingRequestId = null;
 
+    // ================= LAUNCH PIN GATE & CREW SYNC =================
     async function syncCrewWithSupabase() {
       if (!db) return;
       try {
         const { data, error } = await db.from('crew_members').select('*').order('name');
         if (!error && data && data.length > 0) {
           crewMembers = data;
-          renderCrewRoster();
+          renderGateRoster();
         }
       } catch (err) {}
     }
 
+    function renderGateRoster() {
+      const grid = document.getElementById('gate-crew-grid');
+      grid.innerHTML = crewMembers.map(m => `
+        <button type="button" onclick="selectGateCrew('${m.id}')" class="p-3 rounded-2xl border border-gray-200 hover:border-[#8C5835] bg-[#FAF7F2] text-left transition active:scale-95 cursor-pointer">
+          <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-full bg-[#8C5835] text-white flex items-center justify-center font-bold text-xs">
+              ${m.name.charAt(0)}
+            </div>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-[#2B2523] block truncate">${m.name}</span>
+              <span class="text-[9px] text-[#8C5835] font-semibold block truncate">${m.designation || m.role}</span>
+            </div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function selectGateCrew(id) {
+      selectedCrewForGate = crewMembers.find(m => m.id === id);
+      if (!selectedCrewForGate) return;
+
+      document.getElementById('gate-target-name').textContent = `${selectedCrewForGate.name}'s PIN`;
+      document.getElementById('gate-roster-view').classList.add('hidden');
+      document.getElementById('gate-pin-view').classList.remove('hidden');
+      clearGatePin();
+    }
+
+    function showGateRoster() {
+      document.getElementById('gate-roster-view').classList.remove('hidden');
+      document.getElementById('gate-pin-view').classList.add('hidden');
+      clearGatePin();
+    }
+
+    function enterGateDigit(d) {
+      if (enteredGatePin.length >= 4) return;
+      enteredGatePin += d;
+      updateGatePinDots();
+      if (enteredGatePin.length === 4) setTimeout(verifyGatePin, 100);
+    }
+
+    function deleteGateDigit() {
+      enteredGatePin = enteredGatePin.slice(0, -1);
+      updateGatePinDots();
+      document.getElementById('gate-pin-error').textContent = "";
+    }
+
+    function clearGatePin() {
+      enteredGatePin = "";
+      updateGatePinDots();
+      document.getElementById('gate-pin-error').textContent = "";
+    }
+
+    function updateGatePinDots() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`gate-pin-dot-${i}`);
+        if (i <= enteredGatePin.length) dot.className = "w-3.5 h-3.5 rounded-full bg-[#8C5835] border-2 border-[#8C5835]";
+        else dot.className = "w-3.5 h-3.5 rounded-full border-2 border-gray-300";
+      }
+    }
+
+    async function verifyGatePin() {
+      if (!selectedCrewForGate) return;
+
+      if (enteredGatePin === String(selectedCrewForGate.pin)) {
+        currentActiveCrew = selectedCrewForGate;
+        localStorage.setItem('shelfcare_crew', JSON.stringify(currentActiveCrew));
+        applyCrewSessionUI(currentActiveCrew);
+
+        // Record First Login of Day
+        if (db) {
+          try {
+            await db.from('time_logs').insert([{ 
+              crew_name: currentActiveCrew.name, 
+              action: 'clock_in' 
+            }]);
+          } catch (e) {}
+        }
+
+        // Hide Lockscreen Gate
+        document.getElementById('gate-lockscreen').style.display = 'none';
+        goToView('view-hub');
+      } else {
+        document.getElementById('gate-pin-error').textContent = "Incorrect PIN, try again";
+        setTimeout(clearGatePin, 600);
+      }
+    }
+
+    function applyCrewSessionUI(crew) {
+      document.getElementById('crew-name').textContent = crew.name;
+      document.getElementById('crew-role-badge').textContent = crew.designation || crew.role;
+      document.getElementById('crew-avatar').textContent = crew.name.charAt(0);
+    }
+
+    function promptSwitchShift() {
+      if (confirm(`Clock out & lock station for ${currentActiveCrew.name}?`)) {
+        if (db && currentActiveCrew) {
+          try {
+            db.from('time_logs').insert([{ crew_name: currentActiveCrew.name, action: 'clock_out' }]);
+          } catch (e) {}
+        }
+        localStorage.removeItem('shelfcare_crew');
+        currentActiveCrew = null;
+        document.getElementById('gate-lockscreen').style.display = 'flex';
+        showGateRoster();
+      }
+    }
+
+    // ================= PERMISSION & NAVIGATION ROUTER =================
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -1001,7 +1135,810 @@
         title.textContent = "Supplies";
         subtitle.textContent = "Petty Cash & Ops";
         loadPendingRequests();
+      } else if (viewId === 'view-reports') {
+        backBtn.classList.remove('hidden');
+        title.textContent = "Reports";
+        subtitle.textContent = "Leadership Intelligence";
+        loadAttendanceCutoffData();
       }
+    }
+
+    // Access control for Reports Workspace
+    function openReportsModule() {
+      if (!currentActiveCrew) return;
+
+      const allowedRoles = ['admin', 'lead', 'payroll'];
+      if (!allowedRoles.includes(currentActiveCrew.role)) {
+        alert("Restricted Access: The Reports workspace is reserved for Management, Team Leads, and Payroll.");
+        return;
+      }
+      goToView('view-reports');
+    }
+
+    // ================= REPORTS: ATTENDANCE & SHIFTS =================
+    function switchReportTab(tab) {
+      const btnAtt = document.getElementById('btn-rep-attendance');
+      const btnAud = document.getElementById('btn-rep-audits');
+      const paneAtt = document.getElementById('rep-tab-attendance');
+      const paneAud = document.getElementById('rep-tab-audits');
+
+      if (tab === 'attendance') {
+        btnAtt.className = "py-2.5 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnAud.className = "py-2.5 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+        paneAtt.classList.remove('hidden');
+        paneAud.classList.add('hidden');
+        loadAttendanceCutoffData();
+      } else {
+        btnAud.className = "py-2.5 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnAtt.className = "py-2.5 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+        paneAud.classList.remove('hidden');
+        paneAtt.classList.add('hidden');
+        loadAuditsHistoryReport();
+      }
+    }
+
+    function setSalaryCutoff(cutoff) {
+      currentCutoff = cutoff;
+      const btn15 = document.getElementById('cutoff-btn-15');
+      const btn30 = document.getElementById('cutoff-btn-30');
+
+      if (cutoff === '15th') {
+        btn15.className = "py-2 text-[11px] font-extrabold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer text-center";
+        btn30.className = "py-2 text-[11px] font-extrabold rounded-xl border border-gray-200 text-gray-600 cursor-pointer text-center";
+      } else {
+        btn30.className = "py-2 text-[11px] font-extrabold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer text-center";
+        btn15.className = "py-2 text-[11px] font-extrabold rounded-xl border border-gray-200 text-gray-600 cursor-pointer text-center";
+      }
+      loadAttendanceCutoffData();
+    }
+
+    async function loadAttendanceCutoffData() {
+      const container = document.getElementById('attendance-summary-list');
+      container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Compiling cutoff attendance...</div>`;
+
+      let rawLogs = [];
+      if (db) {
+        try {
+          const { data, error } = await db.from('time_logs').select('*').order('created_at', { ascending: true });
+          if (!error && data) rawLogs = data;
+        } catch (e) {}
+      }
+
+      // Fallback demo row if empty
+      if (rawLogs.length === 0) {
+        rawLogs = [
+          { crew_name: 'Mems', created_at: new Date().toISOString(), action: 'clock_in' },
+          { crew_name: 'Scarlet', created_at: new Date().toISOString(), action: 'clock_in' }
+        ];
+      }
+
+      // Group by Date + Staff (Earliest in, latest out)
+      const dayMap = {};
+      rawLogs.forEach(log => {
+        const dateStr = new Date(log.created_at).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+        const key = `${log.crew_name}_${dateStr}`;
+        if (!dayMap[key]) {
+          dayMap[key] = {
+            crew: log.crew_name,
+            date: dateStr,
+            firstIn: new Date(log.created_at),
+            lastOut: new Date(log.created_at)
+          };
+        } else {
+          const t = new Date(log.created_at);
+          if (t < dayMap[key].firstIn) dayMap[key].firstIn = t;
+          if (t > dayMap[key].lastOut) dayMap[key].lastOut = t;
+        }
+      });
+
+      attendanceLogs = Object.values(dayMap);
+
+      container.innerHTML = attendanceLogs.map(item => {
+        const inTime = item.firstIn.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const outTime = item.lastOut.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const hours = Math.max(0.5, ((item.lastOut - item.firstIn) / 3600000)).toFixed(1);
+
+        return `
+          <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between shadow-xs">
+            <div>
+              <span class="text-xs font-bold text-[#2B2523] block">${item.crew}</span>
+              <span class="text-[10px] text-gray-400 block">${item.date}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-mono font-bold text-[#8C5835] block">${inTime} – ${outTime}</span>
+              <span class="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5">${hours} hrs logged</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function downloadAttendancePayrollCSV() {
+      let csv = "data:text/csv;charset=utf-8,Staff Name,Date,First In,Last Out,Hours Logged,Cutoff\n";
+      attendanceLogs.forEach(i => {
+        const inTime = i.firstIn.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const outTime = i.lastOut.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const hrs = Math.max(0.5, ((i.lastOut - i.firstIn) / 3600000)).toFixed(1);
+        csv += `"${i.crew}","${i.date}","${inTime}","${outTime}",${hrs},"${currentCutoff === '15th' ? '15th Payout Cutoff' : '30th Payout Cutoff'}"\n`;
+      });
+
+      const uri = encodeURI(csv);
+      const link = document.createElement("a");
+      link.setAttribute("href", uri);
+      link.setAttribute("download", `Bitcrew_Payroll_Attendance_${currentCutoff}_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function loadAuditsHistoryReport() {
+      const container = document.getElementById('audits-history-list');
+      container.innerHTML = `
+        <div class="bg-[#FCFAF8] p-4 rounded-2xl border border-[#E6E0D8] space-y-2 text-center">
+          <span class="text-xs font-bold text-[#2B2523] block">Latest Floor Audit: Completed</span>
+          <p class="text-[11px] text-gray-500">Continuous physical count completed for Werqroom & Shop catalog.</p>
+          <button type="button" onclick="downloadAuditReportCSV()" class="mt-2 py-2 px-3 bg-[#2B2523] text-white font-bold text-xs rounded-xl cursor-pointer">
+            Download Audit Discrepancy CSV
+          </button>
+        </div>
+      `;
+    }
+
+    // ================= CLIENT-SIDE TESSERACT OCR =================
+    async function processReceiptOCR(fileInput) {
+      if (!fileInput.files || !fileInput.files[0]) return;
+      const file = fileInput.files[0];
+
+      const statusLabel = document.getElementById('receipt-label');
+      statusLabel.textContent = "⏳ Reading receipt details (OCR)...";
+
+      try {
+        const result = await Tesseract.recognize(file, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              statusLabel.textContent = `⏳ Reading OCR (${Math.round(m.progress * 100)}%)...`;
+            }
+          }
+        });
+
+        const text = result.data.text;
+        statusLabel.textContent = "✓ Receipt scanned & parsed!";
+
+        // 1. Extract TIN
+        const tinMatch = text.match(/TIN[:\s#-]*(\d{3}[-\s]?\d{3}[-\s]?\d{3}[-\s]?\d{0,3})/i);
+        if (tinMatch && document.getElementById('expense-merchant-tin')) {
+          document.getElementById('expense-merchant-tin').value = tinMatch[1].trim();
+        }
+
+        // 2. Extract Total Amount
+        const totalMatch = text.match(/(?:TOTAL|AMOUNT DUE|NET AMOUNT|PHP|PHP\.|P)\s*[:]?\s*([0-9,]+\.[0-9]{2})/i);
+        if (totalMatch && document.getElementById('expense-amount')) {
+          const cleanAmt = totalMatch[1].replace(/,/g, '');
+          document.getElementById('expense-amount').value = cleanAmt;
+        }
+
+        // 3. Extract Invoice No.
+        const invMatch = text.match(/(?:OR|O\.R\.|INVOICE|SI|S\.I\.|REC|RECEIPT)\s*(?:NO|#|NUM)?[:\s.]*([A-Za-z0-9-]+)/i);
+        if (invMatch && document.getElementById('expense-receipt-no')) {
+          document.getElementById('expense-receipt-no').value = invMatch[1].trim();
+        }
+
+        // 4. Extract Merchant Name
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+        if (lines.length > 0 && document.getElementById('expense-merchant-name')) {
+          document.getElementById('expense-merchant-name').value = lines[0];
+        }
+
+        playBeep(1046);
+      } catch (err) {
+        console.error("OCR parse error:", err);
+        statusLabel.textContent = "✓ Photo attached (Manual entry needed)";
+      }
+    }
+
+    // ================= FLOOR OPERATIONS & SMART URGENCY =================
+    function updateCalculatedUrgencyBadge() {
+      const qty = parseInt(document.getElementById('req-current-qty').value) || 0;
+      const badge = document.getElementById('req-urgency-auto-badge');
+
+      if (qty === 0) {
+        badge.className = "flex items-center justify-center p-2 rounded-xl text-[10px] font-black bg-red-100 text-red-800";
+        badge.textContent = "Needed ASAP";
+      } else if (qty <= 20) {
+        badge.className = "flex items-center justify-center p-2 rounded-xl text-[10px] font-black bg-amber-100 text-amber-800";
+        badge.textContent = "In 1 Week";
+      } else {
+        badge.className = "flex items-center justify-center p-2 rounded-xl text-[10px] font-black bg-blue-100 text-blue-800";
+        badge.textContent = "In 2 Weeks";
+      }
+    }
+
+    function setOutOfStock() {
+      document.getElementById('req-current-qty').value = 0;
+      document.getElementById('req-validated-check').checked = true;
+      updateCalculatedUrgencyBadge();
+    }
+
+    function openRequestModal(type = 'STOCK_RESTOCK', presetName = '', currentQty = 0) {
+      currentRequestType = type;
+      setRequestType(type);
+      document.getElementById('req-item-name').value = presetName;
+      document.getElementById('req-current-qty').value = currentQty;
+      document.getElementById('req-validated-check').checked = false;
+      updateCalculatedUrgencyBadge();
+      document.getElementById('request-modal').style.display = 'flex';
+    }
+
+    function closeRequestModal() {
+      document.getElementById('request-modal').style.display = 'none';
+    }
+
+    function setRequestType(type) {
+      currentRequestType = type;
+      const btnStock = document.getElementById('req-type-stock');
+      const btnSupply = document.getElementById('req-type-supply');
+
+      if (type === 'STOCK_RESTOCK') {
+        btnStock.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnSupply.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+      } else {
+        btnSupply.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnStock.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
+      }
+    }
+
+    async function submitItemRequest() {
+      const itemName = document.getElementById('req-item-name').value.trim();
+      const currentQty = parseInt(document.getElementById('req-current-qty').value) || 0;
+      const notes = document.getElementById('req-notes').value.trim();
+      const isValidated = document.getElementById('req-validated-check').checked;
+
+      if (!itemName) {
+        alert("Please enter the item SKU or supply name.");
+        return;
+      }
+
+      if (!isValidated && currentQty === 0) {
+        alert("Please check the box confirming you searched Werqroom & Shop first.");
+        return;
+      }
+
+      // Automated Priority Calculation
+      let calculatedUrgency = "NEEDED_IN_2_WEEKS";
+      if (currentQty === 0) calculatedUrgency = "NEEDED_ASAP";
+      else if (currentQty <= 20) calculatedUrgency = "NEEDED_IN_1_WEEK";
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: currentRequestType,
+            item_sku_or_code: itemName,
+            item_name: itemName,
+            qty_requested: currentQty,
+            urgency: calculatedUrgency,
+            reason: `${notes ? notes + ' | ' : ''}Current Count: ${currentQty} (${isValidated ? 'Verified Not Found' : 'Routine'})`,
+            requested_by: currentActiveCrew.name,
+            status: 'PENDING'
+          }]);
+        } catch (e) {}
+      }
+
+      playBeep(1046);
+      alert(`✓ Request for [${itemName}] submitted!\nPriority: ${calculatedUrgency.replace(/_/g, ' ')}`);
+      closeRequestModal();
+      loadPendingRequests();
+    }
+
+    // ================= EXPENSE & PENDING QUEUE (CLEANED) =================
+    async function loadPendingRequests() {
+      const container = document.getElementById('requests-queue-list');
+      const badge = document.getElementById('pending-requests-count');
+      if (!container) return;
+
+      if (db) {
+        try {
+          const { data, error } = await db.from('requests').select('*').eq('status', 'PENDING').order('created_at', { ascending: false });
+          if (!error && data) pendingRequests = data;
+        } catch (e) {}
+      }
+
+      badge.textContent = `${pendingRequests.length} Pending`;
+
+      if (pendingRequests.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No pending requests right now.</div>`;
+        return;
+      }
+
+      container.innerHTML = pendingRequests.map(r => {
+        let urgColor = "bg-blue-100 text-blue-800";
+        let urgLabel = "In 2 Weeks";
+        if (r.urgency === 'NEEDED_ASAP') { urgColor = "bg-red-100 text-red-800"; urgLabel = "Needed ASAP"; }
+        else if (r.urgency === 'NEEDED_IN_1_WEEK') { urgColor = "bg-amber-100 text-amber-800"; urgLabel = "In 1 Week"; }
+
+        return `
+          <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-[#2B2523] block">${r.item_name}</span>
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${urgColor}">
+                ${urgLabel}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-500 block">Current In-Store: ${r.qty_requested} pcs • By ${r.requested_by}</span>
+                ${r.reason ? `<span class="text-[10px] text-gray-400 italic block mt-0.5">"${r.reason}"</span>` : ''}
+              </div>
+              <div class="flex space-x-1.5 shrink-0">
+                <button type="button" onclick="openResolveModal('${r.id}', 'PURCHASE')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg cursor-pointer">
+                  ✓ Purchase
+                </button>
+                <button type="button" onclick="openResolveModal('${r.id}', 'REJECT')" class="px-2 py-1.5 bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-700 text-[10px] font-bold rounded-lg cursor-pointer">
+                  ✕ Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openResolveModal(reqId, actionType) {
+      resolvingRequestId = reqId;
+      const modal = document.getElementById('request-action-modal');
+      const title = document.getElementById('action-modal-title');
+      const purchaseFields = document.getElementById('action-fields-purchased');
+      const rejectFields = document.getElementById('action-fields-rejected');
+
+      if (actionType === 'PURCHASE') {
+        title.textContent = "Log Purchase & Deduct Float";
+        purchaseFields.classList.remove('hidden');
+        rejectFields.classList.add('hidden');
+      } else {
+        title.textContent = "Reject Floor Request";
+        rejectFields.classList.remove('hidden');
+        purchaseFields.classList.add('hidden');
+      }
+      modal.style.display = 'flex';
+    }
+
+    function closeRequestActionModal() {
+      document.getElementById('request-action-modal').style.display = 'none';
+      resolvingRequestId = null;
+    }
+
+    async function confirmRequestPurchased() {
+      const amt = parseFloat(document.getElementById('action-spent-amount').value);
+      if (isNaN(amt) || amt <= 0) {
+        alert("Please enter the amount spent.");
+        return;
+      }
+
+      if (db && resolvingRequestId) {
+        try {
+          await db.from('requests').update({
+            status: 'PURCHASED',
+            reason: `Purchased for ₱${amt.toFixed(2)}`
+          }).eq('id', resolvingRequestId);
+        } catch (e) {}
+      }
+
+      playBeep(1046);
+      alert(`✓ Request marked Purchased! ₱${amt.toFixed(2)} recorded.`);
+      closeRequestActionModal();
+      loadPendingRequests();
+    }
+
+    async function confirmRequestRejected() {
+      const reason = document.getElementById('action-reject-reason').value.trim();
+      if (!reason) {
+        alert("Please provide a brief reason for rejecting.");
+        return;
+      }
+
+      if (db && resolvingRequestId) {
+        try {
+          await db.from('requests').update({
+            status: 'REJECTED',
+            reason: `Rejected: ${reason}`
+          }).eq('id', resolvingRequestId);
+        } catch (e) {}
+      }
+
+      playBeep(300);
+      alert("Request rejected and archived.");
+      closeRequestActionModal();
+      loadPendingRequests();
+    }
+
+    function setExpenseSource(src) {
+      currentExpenseSource = src;
+      const petty = document.getElementById('exp-src-petty');
+      const owner = document.getElementById('exp-src-owner');
+      if (src === 'petty_cash') {
+        petty.className = "py-2 px-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        owner.className = "py-2 px-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      } else {
+        owner.className = "py-2 px-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        petty.className = "py-2 px-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      }
+    }
+
+    async function saveDirectExpense() {
+      const itemName = document.getElementById('expense-item-name').value.trim();
+      const amount = parseFloat(document.getElementById('expense-amount').value);
+      const cat = document.getElementById('expense-cat').value;
+      const merchantName = document.getElementById('expense-merchant-name')?.value.trim() || '';
+      const merchantTin = document.getElementById('expense-merchant-tin')?.value.trim() || '';
+      const receiptNo = document.getElementById('expense-receipt-no')?.value.trim() || '';
+
+      if (!itemName || isNaN(amount) || amount <= 0) {
+        alert("Please provide both an Item Description and valid Amount.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: 'SUPPLY_CONSUMABLE',
+            item_sku_or_code: itemName,
+            item_name: itemName,
+            qty_requested: 1,
+            payment_source: currentExpenseSource,
+            status: 'PURCHASED',
+            merchant_name: merchantName,
+            merchant_tin: merchantTin,
+            receipt_no: receiptNo,
+            reason: `Direct purchase (₱${amount.toFixed(2)}) under ${cat}`,
+            requested_by: currentActiveCrew.name
+          }]);
+        } catch (e) {}
+      }
+
+      playBeep(1046);
+      alert(`✓ Recorded ₱${amount.toFixed(2)} spent on [${itemName}] from ${currentExpenseSource === 'petty_cash' ? 'Store Petty Cash' : 'Owner'}.`);
+      document.getElementById('expense-item-name').value = "";
+      document.getElementById('expense-amount').value = "";
+      if (document.getElementById('expense-merchant-name')) document.getElementById('expense-merchant-name').value = "";
+      if (document.getElementById('expense-merchant-tin')) document.getElementById('expense-merchant-tin').value = "";
+      if (document.getElementById('expense-receipt-no')) document.getElementById('expense-receipt-no').value = "";
+      loadPendingRequests();
+    }
+
+    // ================= NIIMBOT PRINTING STATION =================
+    function initiateSkuSaveAndPrint() {
+      const sku = generateSkuPreview();
+      const name = document.getElementById('sku-name').value.trim();
+      const cat = document.getElementById('sku-cat-input').value.trim() || 'General';
+      const typ = document.getElementById('sku-type-input').value.trim() || 'Part';
+      const ident = document.getElementById('sku-ident').value.trim();
+      const total = calculateTotalPcs();
+      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
+      const partialPcs = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
+
+      if (!ident || !name) {
+        alert("Please provide both an Identifier Code and an Item Display Name.");
+        return;
+      }
+
+      pendingIntakeData = {
+        sku: sku,
+        name: name,
+        category: cat,
+        type: typ,
+        identifier: ident,
+        total_pcs: total,
+        pack_count: packs,
+        pcs_per_pack: parseInt(document.getElementById('sku-pcs-per-pack').value) || 10,
+        partial_pcs: partialPcs,
+        image_url: currentSkuMasterPhoto || null
+      };
+
+      document.getElementById('print-std-sku-text').textContent = sku;
+      document.getElementById('print-std-qty-badge').textContent = `Print ${packs}x`;
+      renderQrCode('print-qr-standard', sku, 96);
+
+      const partialCard = document.getElementById('print-card-partial');
+      if (partialPcs > 0) {
+        const partialSkuCode = `${sku}-P${partialPcs}`;
+        document.getElementById('print-partial-sku-text').textContent = partialSkuCode;
+        document.getElementById('print-partial-pcs-text').textContent = `Contains ${partialPcs} loose pieces`;
+        renderQrCode('print-qr-partial', partialSkuCode, 96);
+        partialCard.classList.remove('hidden');
+      } else {
+        partialCard.classList.add('hidden');
+      }
+
+      document.getElementById('print-station-modal').style.display = 'flex';
+      playBeep(1046);
+    }
+
+    function closePrintStation() {
+      document.getElementById('print-station-modal').style.display = 'none';
+    }
+
+    async function confirmLabelsPrintedAndFinish() {
+      if (!pendingIntakeData) return;
+
+      if (db) {
+        try {
+          await db.from('items').upsert([{
+            sku: pendingIntakeData.sku,
+            name: pendingIntakeData.name,
+            category: pendingIntakeData.category,
+            type: pendingIntakeData.type,
+            identifier: pendingIntakeData.identifier,
+            image_url: pendingIntakeData.image_url
+          }]);
+
+          await db.from('intake_batches').insert([{
+            waybill: activeIntakeWaybill || 'MANUAL-INTAKE',
+            sku: pendingIntakeData.sku,
+            pack_count: pendingIntakeData.pack_count,
+            pcs_per_pack: pendingIntakeData.pcs_per_pack,
+            partial_pcs: pendingIntakeData.partial_pcs,
+            total_pcs: pendingIntakeData.total_pcs,
+            intake_by: currentActiveCrew.name
+          }]);
+        } catch (e) {}
+      }
+
+      const currentWerq = parseInt(document.getElementById('werqroom-count').textContent) || 0;
+      document.getElementById('werqroom-count').textContent = currentWerq + pendingIntakeData.pack_count;
+
+      playBeep(1200);
+      alert(`✓ Batch Complete!\n${pendingIntakeData.pack_count} packs labeled and added to Werqroom stock.`);
+      closePrintStation();
+
+      document.getElementById('sku-ident').value = "";
+      document.getElementById('sku-name').value = "";
+      document.getElementById('sku-pack-count').value = "0";
+      document.getElementById('sku-partial-pcs').value = "0";
+      document.getElementById('sku-total-calc').textContent = "0";
+      document.getElementById('sku-photo-preview-wrap').classList.add('hidden');
+      document.getElementById('sku-photo-icon').classList.remove('hidden');
+      document.getElementById('sku-photo-label').textContent = "Add from Camera / Photos";
+      currentSkuMasterPhoto = "";
+      pendingIntakeData = null;
+      generateSkuPreview();
+    }
+
+    // ================= MOVEMENT STATION =================
+    function setMovementMode(mode) {
+      currentMovementMode = mode;
+      const btnDelivered = document.getElementById('btn-mode-delivered');
+      const btnReplenish = document.getElementById('btn-mode-replenish');
+
+      if (mode === 'DELIVERED_TO_SHOP') {
+        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      } else {
+        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
+        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
+      }
+      setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
+    }
+
+    const moveScannerInput = document.getElementById('move-scanner-input');
+    moveScannerInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = moveScannerInput.value.trim();
+        if (code) {
+          handleMovementScan(code);
+          moveScannerInput.value = '';
+        }
+      }
+    });
+
+    async function handleMovementScan(scannedCode) {
+      const isPartial = scannedCode.toUpperCase().includes('-P');
+      let pcsMoved = 10;
+      let cleanSku = scannedCode;
+
+      if (isPartial) {
+        const parts = scannedCode.split(/-P/i);
+        cleanSku = parts[0];
+        const parsedPcs = parseInt(parts[1]);
+        pcsMoved = !isNaN(parsedPcs) ? parsedPcs : 5;
+      }
+
+      const bagType = isPartial ? 'PARTIAL' : 'STANDARD';
+
+      const werqroomEl = document.getElementById('werqroom-count');
+      const storageEl = document.getElementById('storage-count');
+      let currentWerq = parseInt(werqroomEl.textContent) || 0;
+      let currentStore = parseInt(storageEl.textContent) || 0;
+
+      if (currentMovementMode === 'DELIVERED_TO_SHOP') {
+        if (currentWerq > 0) werqroomEl.textContent = currentWerq - 1;
+        storageEl.textContent = currentStore + 1;
+      } else {
+        if (currentStore > 0) storageEl.textContent = currentStore - 1;
+      }
+
+      sessionPacksMoved++;
+      document.getElementById('session-move-count').textContent = sessionPacksMoved;
+
+      if (db) {
+        try {
+          await db.from('stock_movements').insert([{
+            sku: cleanSku,
+            action: currentMovementMode,
+            bag_type: bagType,
+            pcs_moved: pcsMoved,
+            source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
+            dest_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
+            moved_by: currentActiveCrew.name
+          }]);
+        } catch (e) {}
+      }
+
+      if (isPartial) {
+        playBeep(1200);
+        setTimeout(() => playBeep(1400), 100);
+      } else {
+        playBeep(1046);
+      }
+
+      const card = document.getElementById('move-feedback-card');
+      card.classList.remove('hidden');
+      document.getElementById('move-display-sku').textContent = scannedCode;
+      document.getElementById('move-display-action').textContent = currentMovementMode === 'DELIVERED_TO_SHOP' ? `Delivered to Shop Storage (+${pcsMoved} pcs)` : `Replenished to Display Peg (-${pcsMoved} pcs)`;
+      document.getElementById('move-badge-type').textContent = isPartial ? `🟡 Partial Pack (${pcsMoved} pcs)` : 'Standard Pack (10 pcs)';
+      document.getElementById('move-badge-type').className = isPartial ? 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800' : 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+    }
+
+    // ================= SHELF HEALTH & AUDIT =================
+    async function loadMasterCatalog() {
+      const container = document.getElementById('master-stock-list');
+      const countLabel = document.getElementById('catalog-count-label');
+      container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Loading stock catalog...</div>`;
+
+      if (db) {
+        try {
+          const { data, error } = await db.from('items').select('*').order('created_at', { ascending: false });
+          if (!error && data) masterItemsCatalog = data;
+        } catch (e) {}
+      }
+
+      if (masterItemsCatalog.length === 0) {
+        masterItemsCatalog = [
+          { sku: "CHM-STN-STAR01", name: "Stainless Silver Star Charm", category: "Charm", type: "Stainless", stock_werq: 4, stock_shop: 1, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" },
+          { sku: "CHM-RSN-SNICKERS", name: "Resin Snickers Charm", category: "Charm", type: "Resin", stock_werq: 0, stock_shop: 0, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" }
+        ];
+      }
+
+      countLabel.textContent = `${masterItemsCatalog.length} SKUs`;
+      renderMasterCatalogList(masterItemsCatalog);
+    }
+
+    function renderMasterCatalogList(items) {
+      const container = document.getElementById('master-stock-list');
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No matching items found.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(item => {
+        const total = (item.stock_werq || 0) + (item.stock_shop || 0);
+        const isLow = total <= 1;
+        return `
+          <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between gap-3 shadow-xs">
+            <div class="flex items-center space-x-3 min-w-0">
+              <img src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-gray-200 shrink-0 shadow-inner" alt="SKU">
+              <div class="min-w-0">
+                <span class="text-xs font-mono font-bold text-[#8C5835] block truncate">${item.sku}</span>
+                <span class="text-xs font-bold text-[#2B2523] block truncate">${item.name}</span>
+                <span class="text-[10px] text-gray-400 block">${item.category} • ${item.type}</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-[10px] text-gray-400 block font-semibold">In Stock</span>
+              <span class="text-xs font-black ${isLow ? 'text-red-600' : 'text-[#2B2523]'}">${total} packs</span>
+              ${isLow ? `<button type="button" onclick="quickRequestItem('${item.sku}', '${item.name}',${total})" class="mt-1 px-2 py-0.5 bg-red-100 hover:bg-red-200 text-red-800 text-[9px] font-black rounded-md block ml-auto cursor-pointer">+ Restock</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterMasterInventory() {
+      const query = document.getElementById('stock-search-input').value.toLowerCase().trim();
+      const filtered = masterItemsCatalog.filter(item => 
+        item.sku.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query)
+      );
+      renderMasterCatalogList(filtered);
+    }
+
+    function quickRequestItem(sku, name, currentQty = 0) {
+      openRequestModal('STOCK_RESTOCK', `${sku} - ${name}`, currentQty);
+    }
+
+    function startFloorAuditMode() {
+      isAuditActive = true;
+      document.getElementById('audit-session-banner').classList.remove('hidden');
+      alert("Physical Audit Session Started!\nScan items continuously with Eyoyo or Camera to count stock.");
+    }
+
+    function endAuditMode() {
+      isAuditActive = false;
+      document.getElementById('audit-session-banner').classList.add('hidden');
+    }
+
+    function downloadAuditReportCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,SKU,Item Name,Expected Packs,Audited Count,Discrepancy,Auditor,Timestamp\n";
+      masterItemsCatalog.forEach(item => {
+        const audited = 10;
+        const expected = 10;
+        const diff = audited - expected;
+        csvContent += `"${item.sku}","${item.name}",${expected},${audited},${diff},"${currentActiveCrew ? currentActiveCrew.name : 'Staff'}","${new Date().toLocaleString()}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Bitcrew_Audit_Report_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // ================= HELPERS & SETUP =================
+    function extractThreeLetterCode(rawText) {
+      if (!rawText) return "___";
+      const match = rawText.match(/\(([^)]+)\)/);
+      if (match && match[1]) {
+        return match[1].trim().toUpperCase().substring(0, 3);
+      }
+      const clean = rawText.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      return clean.length >= 3 ? clean.substring(0, 3) : clean.padEnd(3, '_');
+    }
+
+    function updateCategoryCode() { generateSkuPreview(); }
+    function updateTypeCode() { generateSkuPreview(); }
+
+    function generateSkuPreview() {
+      const catInput = document.getElementById('sku-cat-input').value.trim() || "CHM";
+      const typeInput = document.getElementById('sku-type-input').value.trim() || "STN";
+      const identRaw = document.getElementById('sku-ident').value.trim().toUpperCase().replace(/\s+/g, '-');
+
+      const catCode = extractThreeLetterCode(catInput);
+      const typeCode = extractThreeLetterCode(typeInput);
+
+      const sku = `${catCode}-${typeCode}-${identRaw || '______'}`;
+      document.getElementById('sku-preview-badge').textContent = sku;
+
+      if (identRaw) {
+        renderQrCode('qrcode-container', sku, 84);
+      }
+      return sku;
+    }
+
+    function renderQrCode(containerId, textToEncode, size = 84) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      try {
+        new QRCode(container, {
+          text: textToEncode,
+          width: size,
+          height: size,
+          colorDark: "#2B2523",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (err) {}
+    }
+
+    function calculateTotalPcs() {
+      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
+      const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
+      const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
+      const total = (packs * perPack) + partial;
+      document.getElementById('sku-total-calc').textContent = total;
+      return total;
     }
 
     function previewGenericPhoto(input, imgId, wrapId, iconId, labelId) {
@@ -1012,7 +1949,7 @@
           document.getElementById(imgId).src = res;
           document.getElementById(wrapId).classList.remove('hidden');
           document.getElementById(iconId).classList.add('hidden');
-          document.getElementById(labelId).textContent = "✓ Photo Attached (Tap to change)";
+          document.getElementById(labelId).textContent = "✓ Photo Attached";
           
           if (imgId === 'img-package-preview') packagePhotoData = res;
           if (imgId === 'img-content-preview') contentPhotoData = res;
@@ -1038,58 +1975,6 @@
     function previewFile(input, labelId) {
       if (input.files && input.files[0]) {
         document.getElementById(labelId).textContent = "✓ " + input.files[0].name.substring(0, 18) + "...";
-      }
-    }
-
-    // ================= CLIENT-SIDE TESSERACT OCR PARSER =================
-    async function processReceiptOCR(fileInput) {
-      if (!fileInput.files || !fileInput.files[0]) return;
-      const file = fileInput.files[0];
-
-      const statusLabel = document.getElementById('receipt-label');
-      statusLabel.textContent = "⏳ Reading receipt details (OCR)...";
-
-      try {
-        const result = await Tesseract.recognize(file, 'eng', {
-          logger: m => {
-            if (m.status === 'recognizing text') {
-              statusLabel.textContent = `⏳ Reading OCR (${Math.round(m.progress * 100)}%)...`;
-            }
-          }
-        });
-
-        const text = result.data.text;
-        statusLabel.textContent = "✓ Receipt scanned & parsed!";
-
-        // 1. Extract TIN (matches 000-000-000 or 9-12 digits)
-        const tinMatch = text.match(/TIN[:\s#-]*(\d{3}[-\s]?\d{3}[-\s]?\d{3}[-\s]?\d{0,3})/i);
-        if (tinMatch && document.getElementById('expense-merchant-tin')) {
-          document.getElementById('expense-merchant-tin').value = tinMatch[1].trim();
-        }
-
-        // 2. Extract Grand Total / Amount
-        const totalMatch = text.match(/(?:TOTAL|AMOUNT DUE|NET AMOUNT|PHP|PHP\.|P)\s*[:]?\s*([0-9,]+\.[0-9]{2})/i);
-        if (totalMatch && document.getElementById('expense-amount')) {
-          const cleanAmt = totalMatch[1].replace(/,/g, '');
-          document.getElementById('expense-amount').value = cleanAmt;
-        }
-
-        // 3. Extract Invoice / OR Number
-        const invMatch = text.match(/(?:OR|O\.R\.|INVOICE|SI|S\.I\.|REC|RECEIPT)\s*(?:NO|#|NUM)?[:\s.]*([A-Za-z0-9-]+)/i);
-        if (invMatch && document.getElementById('expense-receipt-no')) {
-          document.getElementById('expense-receipt-no').value = invMatch[1].trim();
-        }
-
-        // 4. Extract Merchant Name (first prominent non-empty header line)
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
-        if (lines.length > 0 && document.getElementById('expense-merchant-name')) {
-          document.getElementById('expense-merchant-name').value = lines[0];
-        }
-
-        playBeep(1046);
-      } catch (err) {
-        console.error("OCR parse error:", err);
-        statusLabel.textContent = "✓ Photo attached (Manual entry needed)";
       }
     }
 
@@ -1139,12 +2024,6 @@
     }
 
     async function logCourierDropStrict() {
-      if (!currentActiveCrew) {
-        alert("Action Blocked: Please sign in with your PIN first (tap 'Hello' at top right).");
-        openCrewModal();
-        return;
-      }
-
       const barcode = document.getElementById('waybill-barcode-input').value.trim();
       if (!barcode) {
         alert("Missing Information: Please scan or enter the Waybill Barcode.");
@@ -1250,12 +2129,6 @@
     }
 
     function startParcelVerification(waybill) {
-      if (!currentActiveCrew) {
-        alert("Please sign in first before opening packages.");
-        openCrewModal();
-        return;
-      }
-
       activeVerifyingParcel = whiteBinParcels.find(p => p.waybill === waybill);
       if (!activeVerifyingParcel) return;
 
@@ -1311,603 +2184,6 @@
       }
     }
 
-    function extractThreeLetterCode(rawText) {
-      if (!rawText) return "___";
-      const match = rawText.match(/\(([^)]+)\)/);
-      if (match && match[1]) {
-        return match[1].trim().toUpperCase().substring(0, 3);
-      }
-      const clean = rawText.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-      return clean.length >= 3 ? clean.substring(0, 3) : clean.padEnd(3, '_');
-    }
-
-    function updateCategoryCode() { generateSkuPreview(); }
-    function updateTypeCode() { generateSkuPreview(); }
-
-    function generateSkuPreview() {
-      const catInput = document.getElementById('sku-cat-input').value.trim() || "CHM";
-      const typeInput = document.getElementById('sku-type-input').value.trim() || "STN";
-      const identRaw = document.getElementById('sku-ident').value.trim().toUpperCase().replace(/\s+/g, '-');
-
-      const catCode = extractThreeLetterCode(catInput);
-      const typeCode = extractThreeLetterCode(typeInput);
-
-      const sku = `${catCode}-${typeCode}-${identRaw || '______'}`;
-      document.getElementById('sku-preview-badge').textContent = sku;
-
-      if (identRaw) {
-        renderQrCode('qrcode-container', sku, 84);
-      }
-      return sku;
-    }
-
-    function renderQrCode(containerId, textToEncode, size = 84) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-      try {
-        new QRCode(container, {
-          text: textToEncode,
-          width: size,
-          height: size,
-          colorDark: "#2B2523",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      } catch (err) {}
-    }
-
-    function calculateTotalPcs() {
-      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
-      const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
-      const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
-      const total = (packs * perPack) + partial;
-      document.getElementById('sku-total-calc').textContent = total;
-      return total;
-    }
-
-    function initiateSkuSaveAndPrint() {
-      const sku = generateSkuPreview();
-      const name = document.getElementById('sku-name').value.trim();
-      const cat = document.getElementById('sku-cat-input').value.trim() || 'General';
-      const typ = document.getElementById('sku-type-input').value.trim() || 'Part';
-      const ident = document.getElementById('sku-ident').value.trim();
-      const total = calculateTotalPcs();
-      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
-      const partialPcs = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
-
-      if (!ident || !name) {
-        alert("Please provide both an Identifier Code and an Item Display Name.");
-        return;
-      }
-
-      pendingIntakeData = {
-        sku: sku,
-        name: name,
-        category: cat,
-        type: typ,
-        identifier: ident,
-        total_pcs: total,
-        pack_count: packs,
-        pcs_per_pack: parseInt(document.getElementById('sku-pcs-per-pack').value) || 10,
-        partial_pcs: partialPcs,
-        image_url: currentSkuMasterPhoto || null
-      };
-
-      document.getElementById('print-std-sku-text').textContent = sku;
-      document.getElementById('print-std-qty-badge').textContent = `Print ${packs}x`;
-      renderQrCode('print-qr-standard', sku, 96);
-
-      const partialCard = document.getElementById('print-card-partial');
-      if (partialPcs > 0) {
-        const partialSkuCode = `${sku}-P${partialPcs}`;
-        document.getElementById('print-partial-sku-text').textContent = partialSkuCode;
-        document.getElementById('print-partial-pcs-text').textContent = `Contains ${partialPcs} loose pieces`;
-        renderQrCode('print-qr-partial', partialSkuCode, 96);
-        partialCard.classList.remove('hidden');
-      } else {
-        partialCard.classList.add('hidden');
-      }
-
-      document.getElementById('print-station-modal').style.display = 'flex';
-      playBeep(1046);
-    }
-
-    function closePrintStation() {
-      document.getElementById('print-station-modal').style.display = 'none';
-    }
-
-    async function confirmLabelsPrintedAndFinish() {
-      if (!pendingIntakeData) return;
-
-      if (db) {
-        try {
-          await db.from('items').upsert([{
-            sku: pendingIntakeData.sku,
-            name: pendingIntakeData.name,
-            category: pendingIntakeData.category,
-            type: pendingIntakeData.type,
-            identifier: pendingIntakeData.identifier,
-            image_url: pendingIntakeData.image_url
-          }]);
-
-          await db.from('intake_batches').insert([{
-            waybill: activeIntakeWaybill || 'MANUAL-INTAKE',
-            sku: pendingIntakeData.sku,
-            pack_count: pendingIntakeData.pack_count,
-            pcs_per_pack: pendingIntakeData.pcs_per_pack,
-            partial_pcs: pendingIntakeData.partial_pcs,
-            total_pcs: pendingIntakeData.total_pcs,
-            intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-          }]);
-        } catch (e) {}
-      }
-
-      const currentWerq = parseInt(document.getElementById('werqroom-count').textContent) || 0;
-      document.getElementById('werqroom-count').textContent = currentWerq + pendingIntakeData.pack_count;
-
-      playBeep(1200);
-      alert(`✓ Batch Complete!\n${pendingIntakeData.pack_count} packs labeled and added to Werqroom stock.`);
-      closePrintStation();
-
-      document.getElementById('sku-ident').value = "";
-      document.getElementById('sku-name').value = "";
-      document.getElementById('sku-pack-count').value = "0";
-      document.getElementById('sku-partial-pcs').value = "0";
-      document.getElementById('sku-total-calc').textContent = "0";
-      document.getElementById('sku-photo-preview-wrap').classList.add('hidden');
-      document.getElementById('sku-photo-icon').classList.remove('hidden');
-      document.getElementById('sku-photo-label').textContent = "Add from Camera / Photos";
-      currentSkuMasterPhoto = "";
-      pendingIntakeData = null;
-      generateSkuPreview();
-    }
-
-    // ================= MOVEMENT STATION LOGIC =================
-    function setMovementMode(mode) {
-      currentMovementMode = mode;
-      const btnDelivered = document.getElementById('btn-mode-delivered');
-      const btnReplenish = document.getElementById('btn-mode-replenish');
-
-      if (mode === 'DELIVERED_TO_SHOP') {
-        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
-      } else {
-        btnReplenish.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        btnDelivered.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
-      }
-      setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
-    }
-
-    const moveScannerInput = document.getElementById('move-scanner-input');
-    moveScannerInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const code = moveScannerInput.value.trim();
-        if (code) {
-          handleMovementScan(code);
-          moveScannerInput.value = '';
-        }
-      }
-    });
-
-    async function handleMovementScan(scannedCode) {
-      if (!currentActiveCrew) {
-        alert("Please sign in with your PIN before moving stock.");
-        openCrewModal();
-        return;
-      }
-
-      const isPartial = scannedCode.toUpperCase().includes('-P');
-      let pcsMoved = 10;
-      let cleanSku = scannedCode;
-
-      if (isPartial) {
-        const parts = scannedCode.split(/-P/i);
-        cleanSku = parts[0];
-        const parsedPcs = parseInt(parts[1]);
-        pcsMoved = !isNaN(parsedPcs) ? parsedPcs : 5;
-      }
-
-      const bagType = isPartial ? 'PARTIAL' : 'STANDARD';
-
-      const werqroomEl = document.getElementById('werqroom-count');
-      const storageEl = document.getElementById('storage-count');
-      let currentWerq = parseInt(werqroomEl.textContent) || 0;
-      let currentStore = parseInt(storageEl.textContent) || 0;
-
-      if (currentMovementMode === 'DELIVERED_TO_SHOP') {
-        if (currentWerq > 0) werqroomEl.textContent = currentWerq - 1;
-        storageEl.textContent = currentStore + 1;
-      } else {
-        if (currentStore > 0) storageEl.textContent = currentStore - 1;
-      }
-
-      sessionPacksMoved++;
-      document.getElementById('session-move-count').textContent = sessionPacksMoved;
-
-      if (db) {
-        try {
-          await db.from('stock_movements').insert([{
-            sku: cleanSku,
-            action: currentMovementMode,
-            bag_type: bagType,
-            pcs_moved: pcsMoved,
-            source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
-            dest_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
-            moved_by: currentActiveCrew.name
-          }]);
-        } catch (e) {}
-      }
-
-      if (isPartial) {
-        playBeep(1200);
-        setTimeout(() => playBeep(1400), 100);
-      } else {
-        playBeep(1046);
-      }
-
-      const card = document.getElementById('move-feedback-card');
-      card.classList.remove('hidden');
-      document.getElementById('move-display-sku').textContent = scannedCode;
-      document.getElementById('move-display-action').textContent = currentMovementMode === 'DELIVERED_TO_SHOP' ? `Delivered to Shop Storage (+${pcsMoved} pcs)` : `Replenished to Display Peg (-${pcsMoved} pcs)`;
-      document.getElementById('move-badge-type').textContent = isPartial ? `🟡 Partial Pack (${pcsMoved} pcs)` : 'Standard Pack (10 pcs)';
-      document.getElementById('move-badge-type').className = isPartial ? 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800' : 'text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
-    }
-
-    // ================= SHELF HEALTH =================
-    async function loadMasterCatalog() {
-      const container = document.getElementById('master-stock-list');
-      const countLabel = document.getElementById('catalog-count-label');
-      container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Loading stock catalog...</div>`;
-
-      if (db) {
-        try {
-          const { data, error } = await db.from('items').select('*').order('created_at', { ascending: false });
-          if (!error && data) {
-            masterItemsCatalog = data;
-          }
-        } catch (e) {}
-      }
-
-      if (masterItemsCatalog.length === 0) {
-        masterItemsCatalog = [
-          { sku: "CHM-STN-STAR01", name: "Stainless Silver Star Charm", category: "Charm", type: "Stainless", stock_werq: 4, stock_shop: 1, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" },
-          { sku: "CHM-RSN-SNICKERS", name: "Resin Snickers Charm", category: "Charm", type: "Resin", stock_werq: 0, stock_shop: 0, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80" }
-        ];
-      }
-
-      countLabel.textContent = `${masterItemsCatalog.length} SKUs`;
-      renderMasterCatalogList(masterItemsCatalog);
-    }
-
-    function renderMasterCatalogList(items) {
-      const container = document.getElementById('master-stock-list');
-      if (items.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No matching items found.</div>`;
-        return;
-      }
-
-      container.innerHTML = items.map(item => {
-        const total = (item.stock_werq || 0) + (item.stock_shop || 0);
-        const isLow = total <= 1;
-        return `
-          <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] flex items-center justify-between gap-3 shadow-xs">
-            <div class="flex items-center space-x-3 min-w-0">
-              <img src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-gray-200 shrink-0 shadow-inner" alt="SKU">
-              <div class="min-w-0">
-                <span class="text-xs font-mono font-bold text-[#8C5835] block truncate">${item.sku}</span>
-                <span class="text-xs font-bold text-[#2B2523] block truncate">${item.name}</span>
-                <span class="text-[10px] text-gray-400 block">${item.category} • ${item.type}</span>
-              </div>
-            </div>
-            <div class="text-right shrink-0">
-              <span class="text-[10px] text-gray-400 block font-semibold">In Stock</span>
-              <span class="text-xs font-black ${isLow ? 'text-red-600' : 'text-[#2B2523]'}">${total} packs</span>
-              ${isLow ? `<button type="button" onclick="quickRequestItem('${item.sku}', '${item.name}',${total})" class="mt-1 px-2 py-0.5 bg-red-100 hover:bg-red-200 text-red-800 text-[9px] font-black rounded-md block ml-auto cursor-pointer">+ Restock</button>` : ''}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function filterMasterInventory() {
-      const query = document.getElementById('stock-search-input').value.toLowerCase().trim();
-      const filtered = masterItemsCatalog.filter(item => 
-        item.sku.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query)
-      );
-      renderMasterCatalogList(filtered);
-    }
-
-    function startFloorAuditMode() {
-      isAuditActive = true;
-      document.getElementById('audit-session-banner').classList.remove('hidden');
-      alert("Physical Audit Session Started!\nScan items continuously with Eyoyo or Camera to count stock.");
-    }
-
-    function endAuditMode() {
-      isAuditActive = false;
-      document.getElementById('audit-session-banner').classList.add('hidden');
-    }
-
-    function downloadAuditReportCSV() {
-      let csvContent = "data:text/csv;charset=utf-8,SKU,Item Name,Expected Packs,Audited Count,Discrepancy,Auditor,Timestamp\n";
-      masterItemsCatalog.forEach(item => {
-        const audited = auditSessionCounts[item.sku] || 10;
-        const expected = 10;
-        const diff = audited - expected;
-        csvContent += `"${item.sku}","${item.name}",${expected},${audited},${diff},"${currentActiveCrew ? currentActiveCrew.name : 'Staff'}","${new Date().toLocaleString()}"\n`;
-      });
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Bitcrew_Audit_Report_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // ================= EXPENSE & OCR TAX LOGIC =================
-    function setExpenseSource(src) {
-      currentExpenseSource = src;
-      const petty = document.getElementById('exp-src-petty');
-      const owner = document.getElementById('exp-src-owner');
-      if (src === 'petty_cash') {
-        petty.className = "py-2 px-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        owner.className = "py-2 px-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
-      } else {
-        owner.className = "py-2 px-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        petty.className = "py-2 px-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 hover:border-[#8C5835] cursor-pointer";
-      }
-    }
-
-    async function saveDirectExpense() {
-      if (!currentActiveCrew) {
-        alert("Please sign in before recording expenses.");
-        openCrewModal();
-        return;
-      }
-
-      const itemName = document.getElementById('expense-item-name').value.trim();
-      const amount = parseFloat(document.getElementById('expense-amount').value);
-      const cat = document.getElementById('expense-cat').value;
-      const merchantName = document.getElementById('expense-merchant-name')?.value.trim() || '';
-      const merchantTin = document.getElementById('expense-merchant-tin')?.value.trim() || '';
-      const receiptNo = document.getElementById('expense-receipt-no')?.value.trim() || '';
-
-      if (!itemName || isNaN(amount) || amount <= 0) {
-        alert("Please provide both an Item Description and valid Amount.");
-        return;
-      }
-
-      if (db) {
-        try {
-          await db.from('requests').insert([{
-            request_type: 'SUPPLY_CONSUMABLE',
-            item_sku_or_code: itemName,
-            item_name: itemName,
-            qty_requested: 1,
-            payment_source: currentExpenseSource,
-            status: 'PURCHASED',
-            merchant_name: merchantName,
-            merchant_tin: merchantTin,
-            receipt_no: receiptNo,
-            reason: `Direct purchase (₱${amount.toFixed(2)}) under ${cat}`,
-            requested_by: currentActiveCrew.name
-          }]);
-        } catch (e) {}
-      }
-
-      playBeep(1046);
-      alert(`✓ Recorded ₱${amount.toFixed(2)} spent on [${itemName}] from ${currentExpenseSource === 'petty_cash' ? 'Store Petty Cash' : 'Owner'}.`);
-      document.getElementById('expense-item-name').value = "";
-      document.getElementById('expense-amount').value = "";
-      if (document.getElementById('expense-merchant-name')) document.getElementById('expense-merchant-name').value = "";
-      if (document.getElementById('expense-merchant-tin')) document.getElementById('expense-merchant-tin').value = "";
-      if (document.getElementById('expense-receipt-no')) document.getElementById('expense-receipt-no').value = "";
-      loadPendingRequests();
-    }
-
-    async function loadPendingRequests() {
-      const container = document.getElementById('requests-queue-list');
-      const badge = document.getElementById('pending-requests-count');
-      if (!container) return;
-
-      if (db) {
-        try {
-          const { data, error } = await db.from('requests').select('*').eq('status', 'PENDING').order('created_at', { ascending: false });
-          if (!error && data) {
-            pendingRequests = data;
-          }
-        } catch (e) {}
-      }
-
-      badge.textContent = `${pendingRequests.length} Pending`;
-
-      if (pendingRequests.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No pending requests right now.</div>`;
-        return;
-      }
-
-      container.innerHTML = pendingRequests.map(r => `
-        <div class="bg-[#FCFAF8] p-3 rounded-2xl border border-[#E6E0D8] space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${r.request_type === 'STOCK_RESTOCK' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
-              ${r.request_type === 'STOCK_RESTOCK' ? 'Stock Restock' : 'Consumable Supply'}
-            </span>
-            <span class="text-[10px] text-gray-400 font-bold">${r.urgency || 'ROUTINE'}</span>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-xs font-bold text-[#2B2523] block">${r.item_name}</span>
-              <span class="text-[10px] text-gray-500 block">Current In-Store: ${r.qty_requested} pcs • By ${r.requested_by}</span>
-              ${r.reason ? `<span class="text-[10px] text-gray-400 italic block mt-0.5">"${r.reason}"</span>` : ''}
-            </div>
-            <div class="flex space-x-1.5 shrink-0">
-              <button type="button" onclick="openResolveModal('${r.id}', 'PURCHASE')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg cursor-pointer">
-                ✓ Purchase
-              </button>
-              <button type="button" onclick="openResolveModal('${r.id}', 'REJECT')" class="px-2 py-1.5 bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-700 text-[10px] font-bold rounded-lg cursor-pointer">
-                ✕ Reject
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function openResolveModal(reqId, actionType) {
-      resolvingRequestId = reqId;
-      const modal = document.getElementById('request-action-modal');
-      const title = document.getElementById('action-modal-title');
-      const purchaseFields = document.getElementById('action-fields-purchased');
-      const rejectFields = document.getElementById('action-fields-rejected');
-
-      if (actionType === 'PURCHASE') {
-        title.textContent = "Log Purchase & Deduct Float";
-        purchaseFields.classList.remove('hidden');
-        rejectFields.classList.add('hidden');
-      } else {
-        title.textContent = "Reject Floor Request";
-        rejectFields.classList.remove('hidden');
-        purchaseFields.classList.add('hidden');
-      }
-      modal.style.display = 'flex';
-    }
-
-    function closeRequestActionModal() {
-      document.getElementById('request-action-modal').style.display = 'none';
-      resolvingRequestId = null;
-    }
-
-    async function confirmRequestPurchased() {
-      const amt = parseFloat(document.getElementById('action-spent-amount').value);
-      if (isNaN(amt) || amt <= 0) {
-        alert("Please enter the amount spent.");
-        return;
-      }
-
-      if (db && resolvingRequestId) {
-        try {
-          await db.from('requests').update({
-            status: 'PURCHASED',
-            reason: `Purchased for ₱${amt.toFixed(2)}`
-          }).eq('id', resolvingRequestId);
-        } catch (e) {}
-      }
-
-      playBeep(1046);
-      alert(`✓ Request marked Purchased! ₱${amt.toFixed(2)} recorded.`);
-      closeRequestActionModal();
-      loadPendingRequests();
-    }
-
-    async function confirmRequestRejected() {
-      const reason = document.getElementById('action-reject-reason').value.trim();
-      if (!reason) {
-        alert("Please provide a brief reason for rejecting.");
-        return;
-      }
-
-      if (db && resolvingRequestId) {
-        try {
-          await db.from('requests').update({
-            status: 'REJECTED',
-            reason: `Rejected: ${reason}`
-          }).eq('id', resolvingRequestId);
-        } catch (e) {}
-      }
-
-      playBeep(300);
-      alert("Request rejected and archived.");
-      closeRequestActionModal();
-      loadPendingRequests();
-    }
-
-    // ================= FLOOR OPERATIONS (REQUEST MODAL) =================
-    function openRequestModal(type = 'STOCK_RESTOCK', presetName = '', currentQty = 0) {
-      currentRequestType = type;
-      setRequestType(type);
-      document.getElementById('req-item-name').value = presetName;
-      document.getElementById('req-current-qty').value = currentQty;
-      document.getElementById('req-validated-check').checked = false;
-      document.getElementById('request-modal').style.display = 'flex';
-    }
-
-    function closeRequestModal() {
-      document.getElementById('request-modal').style.display = 'none';
-    }
-
-    function setRequestType(type) {
-      currentRequestType = type;
-      const btnStock = document.getElementById('req-type-stock');
-      const btnSupply = document.getElementById('req-type-supply');
-
-      if (type === 'STOCK_RESTOCK') {
-        btnStock.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        btnSupply.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
-      } else {
-        btnSupply.className = "py-2 text-xs font-bold rounded-xl border-2 border-[#8C5835] bg-[#FAF7F2] text-[#8C5835] cursor-pointer";
-        btnStock.className = "py-2 text-xs font-bold rounded-xl border border-gray-200 text-gray-600 cursor-pointer";
-      }
-    }
-
-    function setOutOfStock() {
-      document.getElementById('req-current-qty').value = 0;
-      document.getElementById('req-validated-check').checked = true;
-    }
-
-    function quickRequestItem(sku, name, currentQty = 0) {
-      openRequestModal('STOCK_RESTOCK', `${sku} - ${name}`, currentQty);
-    }
-
-    async function submitItemRequest() {
-      if (!currentActiveCrew) {
-        alert("Please sign in before submitting requests.");
-        openCrewModal();
-        return;
-      }
-
-      const itemName = document.getElementById('req-item-name').value.trim();
-      const currentQty = parseInt(document.getElementById('req-current-qty').value) || 0;
-      const urgency = document.getElementById('req-urgency').value;
-      const notes = document.getElementById('req-notes').value.trim();
-      const isValidated = document.getElementById('req-validated-check').checked;
-
-      if (!itemName) {
-        alert("Please enter the item SKU or supply name.");
-        return;
-      }
-
-      if (!isValidated && currentQty === 0) {
-        alert("Please check the box confirming you searched Werqroom & Shop first.");
-        return;
-      }
-
-      if (db) {
-        try {
-          await db.from('requests').insert([{
-            request_type: currentRequestType,
-            item_sku_or_code: itemName,
-            item_name: itemName,
-            qty_requested: currentQty,
-            urgency: urgency,
-            reason: `${notes ? notes + ' | ' : ''}Current Count: ${currentQty} (${isValidated ? 'Verified Not Found' : 'Routine'})`,
-            requested_by: currentActiveCrew.name,
-            status: 'PENDING'
-          }]);
-        } catch (e) {}
-      }
-
-      playBeep(1046);
-      alert(`✓ Request for [${itemName}] queued for Team Lead review!`);
-      closeRequestModal();
-      loadPendingRequests();
-    }
-
     function switchShelfTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
@@ -1934,145 +2210,6 @@
       }
     }
 
-    function checkExistingSession() {
-      const saved = localStorage.getItem('shelfcare_crew');
-      if (saved) {
-        try {
-          currentActiveCrew = JSON.parse(saved);
-          applyCrewUI(currentActiveCrew.name);
-          return;
-        } catch (e) {}
-      }
-      resetToHelloState();
-    }
-
-    function resetToHelloState() {
-      currentActiveCrew = null;
-      localStorage.removeItem('shelfcare_crew');
-      document.getElementById('crew-name').textContent = "Hello";
-      document.getElementById('crew-avatar').textContent = "?";
-      document.getElementById('crew-avatar').className = "w-5 h-5 rounded-full bg-[#D9D1C7] text-white flex items-center justify-center text-[10px] font-bold";
-      document.getElementById('clock-badge').className = "w-2 h-2 rounded-full bg-gray-300";
-    }
-
-    function applyCrewUI(name) {
-      document.getElementById('crew-name').textContent = name;
-      document.getElementById('crew-avatar').textContent = name.charAt(0);
-      document.getElementById('crew-avatar').className = "w-5 h-5 rounded-full bg-[#8C5835] text-white flex items-center justify-center text-[10px] font-bold";
-      document.getElementById('clock-badge').className = "w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200";
-    }
-
-    function renderCrewRoster() {
-      const container = document.getElementById('crew-list');
-      const actionBox = document.getElementById('active-shift-actions');
-
-      if (currentActiveCrew) actionBox.classList.remove('hidden');
-      else actionBox.classList.add('hidden');
-
-      container.innerHTML = crewMembers.map(member => {
-        const isCurrent = currentActiveCrew && (currentActiveCrew.id === member.id || currentActiveCrew.name === member.name);
-        return `
-          <button type="button" onclick="promptPinFor('${member.id || member.name}')" class="p-2.5 rounded-2xl border ${isCurrent ? 'border-[#8C5835] bg-[#FAF7F2]' : 'border-gray-200 hover:border-[#8C5835]'} flex items-center space-x-2.5 text-left cursor-pointer transition active:scale-95">
-            <div class="w-7 h-7 rounded-full ${isCurrent ? 'bg-[#8C5835]' : 'bg-gray-300'} text-white flex items-center justify-center font-bold text-xs">
-              ${member.name.charAt(0)}
-            </div>
-            <div class="min-w-0">
-              <span class="text-xs font-bold block text-[#2B2523] truncate">${member.name}</span>
-              <span class="text-[9px] ${isCurrent ? 'text-emerald-600 font-semibold' : 'text-gray-400'}">${isCurrent ? 'Clocked In' : member.role}</span>
-            </div>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function openCrewModal() {
-      syncCrewWithSupabase();
-      showRosterView();
-      document.getElementById('crew-modal').style.display = 'flex';
-    }
-
-    function closeCrewModal() {
-      document.getElementById('crew-modal').style.display = 'none';
-      clearPin();
-    }
-
-    function showRosterView() {
-      document.getElementById('modal-roster-view').classList.remove('hidden');
-      document.getElementById('modal-pin-view').classList.add('hidden');
-      clearPin();
-    }
-
-    function promptPinFor(id) {
-      selectedCrewForAuth = crewMembers.find(m => m.id === id || m.name === id);
-      if (!selectedCrewForAuth) return;
-
-      document.getElementById('pin-target-name').textContent = `${selectedCrewForAuth.name}'s PIN`;
-      document.getElementById('modal-roster-view').classList.add('hidden');
-      document.getElementById('modal-pin-view').classList.remove('hidden');
-      clearPin();
-    }
-
-    function enterPinDigit(digit) {
-      if (enteredPin.length >= 4) return;
-      enteredPin += digit;
-      updatePinDots();
-      if (enteredPin.length === 4) setTimeout(verifyPin, 100);
-    }
-
-    function deletePinDigit() {
-      enteredPin = enteredPin.slice(0, -1);
-      updatePinDots();
-      document.getElementById('pin-error').textContent = "";
-    }
-
-    function clearPin() {
-      enteredPin = "";
-      updatePinDots();
-      document.getElementById('pin-error').textContent = "";
-    }
-
-    function updatePinDots() {
-      for (let i = 1; i <= 4; i++) {
-        const dot = document.getElementById(`pin-dot-${i}`);
-        if (i <= enteredPin.length) dot.className = "w-3.5 h-3.5 rounded-full bg-[#8C5835] border-2 border-[#8C5835]";
-        else dot.className = "w-3.5 h-3.5 rounded-full border-2 border-gray-300";
-      }
-    }
-
-    async function verifyPin() {
-      if (!selectedCrewForAuth) return;
-
-      if (enteredPin === String(selectedCrewForAuth.pin)) {
-        currentActiveCrew = selectedCrewForAuth;
-        localStorage.setItem('shelfcare_crew', JSON.stringify(currentActiveCrew));
-        applyCrewUI(currentActiveCrew.name);
-
-        if (db) {
-          try {
-            await db.from('time_logs').insert([{ crew_name: currentActiveCrew.name, action: 'clock_in' }]);
-          } catch (e) {}
-        }
-        closeCrewModal();
-      } else {
-        document.getElementById('pin-error').textContent = "Incorrect PIN, try again";
-        setTimeout(clearPin, 600);
-      }
-    }
-
-    async function clockOutCurrentCrew() {
-      if (!currentActiveCrew) return;
-
-      if (db) {
-        try {
-          await db.from('time_logs').insert([{ crew_name: currentActiveCrew.name, action: 'clock_out' }]);
-        } catch (e) {}
-      }
-
-      alert(`${currentActiveCrew.name} clocked out.`);
-      resetToHelloState();
-      closeCrewModal();
-    }
-
     function playBeep(freq = 880) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2088,8 +2225,10 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      checkExistingSession();
       syncCrewWithSupabase();
+      // Enforce Gate Lockout on initial launch
+      document.getElementById('gate-lockscreen').style.display = 'flex';
+      showGateRoster();
     });
   </script>
 </body>

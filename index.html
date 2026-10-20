@@ -140,6 +140,2780 @@
     </div>
 
     <div class="space-y-3">
+      <!-- 1. SHELF HELP -->
+      <button type="button" onclick="goToView('view-shelf-help')" class="w-full bg-[#F5B731] hover:bg-[#e4a724] text-bitWalnut py-5 px-6 rounded-[28px] border border-[#dfa21c] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Help</div>
+          <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Check Live Stock, Locations & Master SKU</span>
+        </div>
+        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 2. SHELF CARE -->
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#78B828] hover:bg-[#6ba523] text-white py-5 px-6 rounded-[28px] border border-[#6ba523] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Care</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Intake, QR Builder & Movement Station</span>
+        </div>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 3. SHELF SERVICE -->
+      <button type="button" onclick="goToView('view-shelf-service')" class="w-full bg-[#9E64F2] hover:bg-[#8e52e4] text-white py-5 px-6 rounded-[28px] border border-[#8e52e4] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Service</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Requests Desk, OCR Logger & Petty Cash</span>
+        </div>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 4. CARD TRANSACTIONS -->
+      <button type="button" onclick="goToView('view-card-logger')" class="w-full bg-[#FF4E8D] hover:bg-[#eb3a7a] text-white py-5 px-6 rounded-[28px] border border-[#eb3a7a] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Card Transactions</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Failed/Delayed Swipes & BSP Protection</span>
+        </div>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 5. REPORTS -->
+      <button type="button" onclick="goToView('view-reports')" class="w-full bg-white hover:bg-bitCream text-bitWalnut py-5 px-6 rounded-[28px] border border-bitBorderDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Reports Hub</div>
+          <span class="text-xs font-medium text-gray-500 block mt-1">Attendance, Audits & Card Dispute Review</span>
+        </div>
+        <span class="text-2xl text-gray-400 group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- ==================== VIEW 2: SHELF HELP ==================== -->
+  <main id="view-shelf-help" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase tracking-wide">Stock Checker</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Shelf Help</h2>
+        </div>
+        <button type="button" onclick="goToView('view-shelf-care')" class="px-2.5 py-1 bg-bitGreen hover:bg-[#6ba523] text-white font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer">
+          <span>📦</span>
+          <span>Shelf Care ➔</span>
+        </button>
+      </div>
+
+      <!-- CATALOG & AUDIT BUTTONS -->
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="openStockCatalogModal()" class="py-2.5 px-2 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-bitWalnut font-bold text-xs rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
+          <span>📖</span>
+          <span>Open Stock Catalog</span>
+        </button>
+        <button type="button" onclick="startFloorAuditMode()" class="py-2.5 px-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
+          <span>⚡</span>
+          <span>Start Floor Audit</span>
+        </button>
+      </div>
+
+      <!-- SEARCH INPUT -->
+      <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-gray-600 uppercase">Search SKU or Item Name</label>
+          <button type="button" onclick="startCameraScanner('shelf-help-search-input', runShelfHelpSearch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+            <span>📷 Scan QR / Barcode</span>
+          </button>
+        </div>
+        <input type="text" id="shelf-help-search-input" oninput="runShelfHelpSearch(this.value)" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Solid E..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
+      </div>
+
+      <div id="shelf-help-result-area" class="space-y-3 pt-1">
+        <div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">
+          Search for an SKU or scan a label to verify inventory and shelf location.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== VIEW 3: SHELF CARE (FIXED CLICKABLE FOOTER) ==================== -->
+  <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-36 space-y-4">
+    <!-- TOP COUNTERS -->
+    <div class="grid grid-cols-3 gap-2">
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
+        <div class="mt-0.5 flex items-baseline space-x-1">
+          <span class="text-xl font-bold text-bitWalnut" id="werqroom-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">packs</span>
+        </div>
+      </div>
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop Storage</span>
+        <div class="mt-0.5 flex items-baseline space-x-1">
+          <span class="text-xl font-bold text-bitWalnut" id="storage-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">packs</span>
+        </div>
+      </div>
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
+        <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">White Bin</span>
+        <div class="mt-0.5 flex items-baseline space-x-1">
+          <span class="text-xl font-bold text-bitWalnut" id="whitebin-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">parcels</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: DROP-OFF -->
+    <section id="tab-dropoff" class="tab-pane space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase tracking-wide mb-1">Step 1: Intake Source</span>
+          <h2 class="text-lg font-bold text-bitWalnut">Select Incoming Type</h2>
+          
+          <div class="grid grid-cols-3 gap-1.5 mt-2.5">
+            <button type="button" onclick="selectIntakeSource('courier')" id="src-btn-courier" class="py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+              Courier Drop
+            </button>
+            <button type="button" onclick="selectIntakeSource('merchant')" id="src-btn-merchant" class="py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer">
+              Merchant
+            </button>
+            <button type="button" onclick="selectIntakeSource('inhouse')" id="src-btn-inhouse" class="py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer">
+              In-House
+            </button>
+          </div>
+        </div>
+
+        <!-- COURIER DROP -->
+        <div id="fields-courier" class="space-y-3">
+          <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[11px] font-bold text-gray-600 uppercase">1. Waybill Barcode</label>
+              <button type="button" onclick="startCameraScanner('waybill-barcode-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
+                <span>📷 Scan Barcode</span>
+              </button>
+            </div>
+            <input type="text" id="waybill-barcode-input" placeholder="Scan or enter waybill..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Outer Package Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" id="package-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-package-preview', 'wrap-package-preview', 'lbl-package')">
+              <div id="wrap-package-preview" class="hidden mb-1">
+                <img id="img-package-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Package">
+              </div>
+              <span id="lbl-package" class="text-xs font-bold text-gray-600">Attach Outer Photo</span>
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">3. Content Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" id="content-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-content-preview', 'wrap-content-preview', 'lbl-content')">
+              <div id="wrap-content-preview" class="hidden mb-1">
+                <img id="img-content-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Contents">
+              </div>
+              <span id="lbl-content" class="text-xs font-bold text-gray-600">Attach Content Photo</span>
+            </label>
+          </div>
+
+          <button type="button" onclick="logCourierDropStrict()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Send Parcel to Werqroom White Bin →
+          </button>
+        </div>
+
+        <!-- MERCHANT OVERHAUL: STORE NAME + 2 DISTINCT UPLOADS -->
+        <div id="fields-merchant" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Merchant / Store Name *</label>
+            <input type="text" id="merchant-name-input" placeholder="e.g. Binondo Findings Hub, Supplier A" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">1. Attached Item List Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" id="merchant-list-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-merch-list', 'wrap-merch-list', 'lbl-merch-list')">
+              <div id="wrap-merch-list" class="hidden mb-1">
+                <img id="img-merch-list" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Item List">
+              </div>
+              <span id="lbl-merch-list" class="text-xs font-bold text-gray-600">Upload Item List / Receipt Photo</span>
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Package Content Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" id="merchant-content-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-merch-content', 'wrap-merch-content', 'lbl-merch-content')">
+              <div id="wrap-merch-content" class="hidden mb-1">
+                <img id="img-merch-content" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Content">
+              </div>
+              <span id="lbl-merch-content" class="text-xs font-bold text-gray-600">Upload Package Content Photo</span>
+            </label>
+          </div>
+
+          <button type="button" onclick="logMerchantDrop()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Proceed to QR Builder →
+          </button>
+        </div>
+
+        <!-- IN-HOUSE -->
+        <div id="fields-inhouse" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Notes</label>
+            <input type="text" placeholder="e.g. Handmade Clay Batch 04" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+          </div>
+          <button type="button" onclick="switchShelfTab('tab-qrbuilder')" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Proceed to QR Builder →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: RECEIVED (WHITE BIN) -->
+    <section id="tab-received" class="tab-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Sorting Queue</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">White Bin Parcels</h2>
+          </div>
+          <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Parcels</span>
+        </div>
+        <div id="whitebin-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: QR BUILDER -->
+    <section id="tab-qrbuilder" class="tab-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+          <div>
+            <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Direct Intake</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">SKU & Label Generator</h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
+            <input type="text" id="sku-cat-input" value="BDS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">2. Sub-Cat</label>
+            <input type="text" id="sku-subcat-input" value="BOS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">3. Type</label>
+            <input type="text" id="sku-type-input" value="BIG" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">4. Identifier Code</label>
+          <input type="text" id="sku-ident-input" value="SOLID E" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none">
+        </div>
+
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between">
+          <div>
+            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
+            <span id="sku-preview-badge" class="font-mono font-bold text-sm text-bitWalnut tracking-wider select-all">BDS-BOS-BIG-SOLID-E</span>
+          </div>
+          <button type="button" onclick="copyMasterSkuText()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50">
+            📋 Copy
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-2 bg-white rounded-2xl border border-bitBorder flex flex-col items-center justify-center min-h-[110px]">
+            <div id="qrcode-container" class="p-1 bg-white"></div>
+            <span class="text-[9px] font-bold text-gray-400 mt-1 uppercase">Live QR Preview</span>
+          </div>
+
+          <div onclick="openPhotoPickerModal()" class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-2 text-center cursor-pointer bg-bitCream flex flex-col items-center justify-center transition">
+            <div id="sku-photo-preview-wrap" class="hidden mb-1">
+              <img id="sku-img-preview" class="w-16 h-16 object-cover rounded-xl border" alt="Master">
+            </div>
+            <span id="sku-photo-icon" class="text-2xl mb-1">📷</span>
+            <span id="sku-photo-label" class="text-[10px] font-bold text-gray-600">Add Master Photo</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
+            <input type="number" id="sku-pack-count" value="10" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Pcs / Pack</label>
+            <input type="number" id="sku-pcs-per-pack" value="10" min="1" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
+            <input type="number" id="sku-partial-pcs" value="7" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs font-bold pt-1">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" id="chk-print-only" class="w-4 h-4 rounded border-gray-300 text-bitWalnut focus:ring-0">
+            <span class="text-[11px] font-bold text-gray-600">Print Label Only (No stock intake)</span>
+          </label>
+          <div class="text-right text-gray-600">
+            Total Pcs: <span id="sku-total-calc" class="font-bold text-sm text-bitWalnut">107</span>
+          </div>
+        </div>
+
+        <button type="button" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+          Save SKU & Print Labels →
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 4: MOVEMENT STATION -->
+    <section id="tab-move" class="tab-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Logistics</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Movement Station</h2>
+          
+          <div class="grid grid-cols-2 gap-2 mt-2">
+            <button type="button" onclick="setMovementMode('DELIVERED_TO_SHOP')" id="btn-mode-delivered" class="py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+              Werqroom ➔ Shop
+            </button>
+            <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer">
+              Shop ➔ Display
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-[11px] font-bold text-gray-600 uppercase">Scan Bag QR (Eyoyo / HW)</label>
+            <button type="button" onclick="startCameraScanner('move-scanner-input', handleScannedMovement)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+              <span>📷 Camera</span>
+            </button>
+          </div>
+          <input type="text" id="move-scanner-input" placeholder="Scan standard or -P partial bag..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-600">
+            <span>Staged Batch Items</span>
+            <span id="batch-item-count" class="px-2 py-0.5 bg-bitCream border border-bitBorderDark rounded-full text-[10px]">0 items</span>
+          </div>
+
+          <div id="batch-movement-queue" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">
+              Scan bag QR codes to build your batch movement list.
+            </div>
+          </div>
+        </div>
+
+        <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen hover:bg-[#6ba523] text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition disabled:opacity-40" disabled>
+          Commit Batch Stock Movement →
+        </button>
+      </div>
+    </section>
+
+    <!-- 4-TAB BOTTOM NAVIGATION WITH ISOLATED CLICK TARGETS -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-30 pointer-events-auto px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
+      <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-tab-dropoff" class="nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer">
+        <span class="nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
+        <span>Drop-Off</span>
+      </button>
+      <button type="button" onclick="switchShelfTab('tab-received')" id="nav-tab-received" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
+        <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Received</span>
+      </button>
+      <button type="button" onclick="switchShelfTab('tab-qrbuilder')" id="nav-tab-qrbuilder" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
+        <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>QR Build</span>
+      </button>
+      <button type="button" onclick="switchShelfTab('tab-move')" id="nav-tab-move" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
+        <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Move</span>
+      </button>
+    </nav>
+  </main>
+
+  <!-- ==================== VIEW 4: SHELF SERVICE ==================== -->
+  <main id="view-shelf-service" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
+    <!-- SUB-TAB 1: REQUESTS DESK -->
+    <section id="supplies-subtab-requests" class="supplies-pane space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitViolet/20 text-bitViolet uppercase">Floor Queue</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Requested Items</h2>
+          </div>
+          <button type="button" onclick="openFloorRequestModal()" class="px-3 py-1.5 bg-bitWalnut text-white font-bold text-xs rounded-xl cursor-pointer">
+            + Restock Request
+          </button>
+        </div>
+
+        <div class="flex space-x-1.5 text-xs font-bold">
+          <button type="button" onclick="filterSupplyRequests('ALL')" id="pill-req-all" class="px-3 py-1.5 bg-bitWalnut text-white rounded-xl">All</button>
+          <button type="button" onclick="filterSupplyRequests('STOCK_RESTOCK')" id="pill-req-stock" class="px-3 py-1.5 bg-bitCream border border-bitBorderDark text-gray-600 rounded-xl">Stock</button>
+          <button type="button" onclick="filterSupplyRequests('SUPPLY_CONSUMABLE')" id="pill-req-supply" class="px-3 py-1.5 bg-bitCream border border-bitBorderDark text-gray-600 rounded-xl">Supply</button>
+        </div>
+
+        <div id="supplies-requests-list" class="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading pending requests...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-TAB 2: EXPENSE LOGGER -->
+    <section id="supplies-subtab-logger" class="supplies-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitGreen/20 text-bitGreen uppercase">Purchased Ledger</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Record Expense</h2>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Receipt Photo (Smart OCR Auto-Fill)</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3.5 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" accept="image/*" class="hidden" onchange="processReceiptOCR(this)">
+              <span id="receipt-label" class="text-xs font-bold text-bitWalnut">📷 Snap Receipt to Auto-Fill Tax & Amount</span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div class="col-span-2">
+              <label class="block text-xs font-bold text-gray-700 mb-1">Item Description *</label>
+              <input type="text" id="expense-item-name" placeholder="e.g. 58mm Thermal Paper" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Qty</label>
+              <input type="number" id="expense-qty" value="1" min="1" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-center outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Amount (₱) *</label>
+              <input type="number" id="expense-amount" placeholder="0.00" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold font-sans outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Delivery Fee (₱)</label>
+              <input type="number" id="expense-dfee" placeholder="0.00" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold font-sans outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 mb-1">Merchant / Store Name</label>
+              <input type="text" id="expense-merchant-name" placeholder="Store name" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 mb-1">Invoice / OR No.</label>
+              <input type="text" id="expense-receipt-no" placeholder="SI-99281" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Expense Category</label>
+            <select id="expense-category-select" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+              <option value="printing">Printing & Paper</option>
+              <option value="packaging">Packaging & Tape</option>
+              <option value="store_care">Cleaning & Store Care</option>
+              <option value="hardware">Tools & Hardware</option>
+              <option value="miscellaneous">Miscellaneous</option>
+            </select>
+          </div>
+
+          <button type="button" onclick="savePurchasedExpense()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Save Expense Record →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-TAB 3: PETTY CASH -->
+    <section id="supplies-subtab-petty" class="supplies-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitViolet/20 text-bitViolet uppercase">Fund Request</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Petty Cash Requisition</h2>
+          </div>
+          <span class="text-xs font-bold text-gray-400">Team Lead ➔ Admin</span>
+        </div>
+
+        <div class="bg-bitCream p-3.5 rounded-2xl border border-bitBorderDark space-y-3">
+          <span class="text-xs font-bold text-bitWalnut block">Request Bulk Store Funds</span>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-gray-600 mb-1">Amount (₱) *</label>
+              <input type="number" id="petty-req-amount" placeholder="2000.00" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-sans font-bold text-xs outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-gray-600 mb-1">Declared Cash Left (₱) *</label>
+              <input type="number" id="petty-declared-left" placeholder="350.00" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-sans font-bold text-xs outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-gray-600 mb-1">Purpose / Notes *</label>
+            <input type="text" id="petty-req-purpose" placeholder="e.g. Weekly paper rolls & packaging restock" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+          </div>
+
+          <button type="button" onclick="submitPettyCashRequest()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer">
+            Submit Requisition for Admin Approval
+          </button>
+        </div>
+
+        <div class="space-y-2 pt-1 border-t border-gray-100">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-700">
+            <span>Requisition Approvals & Reconcile</span>
+            <span class="text-[10px] text-gray-400">Expected vs Declared</span>
+          </div>
+          <div id="petty-cash-approval-queue" class="space-y-2.5">
+            <div class="text-xs text-gray-400 text-center py-4 font-bold">Loading fund requests...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRIPLE-TAB BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
+      <button type="button" onclick="switchSuppliesSubTab('requests')" id="nav-sup-requests" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
+        <span class="nav-sup-ind w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
+        <span>Requests</span>
+      </button>
+      <button type="button" onclick="switchSuppliesSubTab('logger')" id="nav-sup-logger" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-sup-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Expense Logger</span>
+      </button>
+      <button type="button" onclick="switchSuppliesSubTab('petty')" id="nav-sup-petty" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-sup-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Petty Cash</span>
+      </button>
+    </nav>
+  </main>
+
+  <!-- ==================== VIEW 5: CARD TRANSACTIONS ==================== -->
+  <main id="view-card-logger" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 uppercase tracking-wide">POS Exception</span>
+          <h2 class="text-xl font-bold text-bitWalnut mt-1">Card Transaction Issue</h2>
+        </div>
+        <span class="text-xs text-gray-400 font-bold">Failed / Delayed</span>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Reason for Log (Select or Type New) <span class="text-bitPink">*</span></label>
+          <div class="relative">
+            <input type="text" id="card-issue-reason-input" list="card-reason-presets" placeholder="e.g. Failed Transaction or Delay in Processing" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+            <datalist id="card-reason-presets">
+              <option value="Failed Transaction"></option>
+              <option value="Delay in Processing"></option>
+              <option value="POS Terminal Offline / Timeout"></option>
+              <option value="Incorrect Deducted Amount"></option>
+            </datalist>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Customer Name <span class="text-bitPink">*</span></label>
+          <input type="text" id="card-cust-name" placeholder="e.g. Maria Santos" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-semibold outline-none focus:border-bitWalnut">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Contact Info (Mobile / IG / Email) <span class="text-bitPink">*</span></label>
+          <input type="text" id="card-contact-info" placeholder="0917-xxx-xxxx, @instagram, or name@email.com" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Amount Swiped (₱) <span class="text-bitPink">*</span></label>
+          <input type="number" id="card-amount" placeholder="0.00" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-sm outline-none focus:border-bitWalnut">
+        </div>
+
+        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="toggleMaskedCardSection()" id="btn-toggle-masked-card" class="text-xs font-bold text-bitWalnut flex items-center space-x-1.5 cursor-pointer">
+              <span id="masked-card-toggle-icon" class="w-4 h-4 rounded-full bg-bitMarigold border border-bitBorder flex items-center justify-center text-[10px] font-bold">+</span>
+              <span>Add Masked Card Number</span>
+            </button>
+            <button type="button" onclick="openBspAdvisoryModal()" class="w-5 h-5 rounded-full bg-white border border-bitBorderDark text-[11px] font-bold text-bitViolet flex items-center justify-center cursor-pointer hover:bg-bitViolet hover:text-white" title="Customer Security Advisory">
+              i
+            </button>
+          </div>
+
+          <div id="masked-card-fields-container" class="hidden pt-2 border-t border-bitBorder space-y-2">
+            <span class="text-[10px] text-gray-500 font-bold block">BSP Mandated Investigation Rule (First 4 & Last 6 digits only)</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 uppercase">First 4 Digits (BIN)</label>
+                <input type="text" id="card-bin-first4" maxlength="4" placeholder="4111" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 uppercase">Last 6 Digits</label>
+                <input type="text" id="card-last6" maxlength="6" placeholder="123456" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Terminal Video or Error Photos *</label>
+          <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+            <input type="file" id="card-proof-file" accept="video/*,image/*" multiple class="hidden" onchange="previewCardMultiProof(this)">
+            <span id="card-proof-label" class="text-xs font-bold text-gray-600">📹 Record Video / Select Photos (Multi)</span>
+          </label>
+          <div id="card-proof-thumbnails" class="flex flex-wrap gap-1.5 pt-2"></div>
+        </div>
+
+        <button type="button" onclick="submitCardTransactionIssue()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+          Save Card Issue Record →
+        </button>
+      </div>
+
+      <div class="pt-3 border-t border-gray-100 space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-gray-600">
+          <span>Recent Shift Logs</span>
+          <span class="text-[10px] text-gray-400 font-bold">Today's Issues</span>
+        </div>
+        <div id="recent-card-issues-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== VIEW 6: REPORTS HUB (NEWEST-TO-OLDEST + DATE FILTER) ==================== -->
+  <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
+    <!-- SUB-TAB 1: ATTENDANCE -->
+    <section id="rep-subtab-attendance" class="rep-pane space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Payroll Cutoffs</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Shift Attendance</h2>
+          </div>
+          <button type="button" onclick="exportAttendanceCSV()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+            📥 Export CSV
+          </button>
+        </div>
+
+        <!-- DATE RANGE SELECTOR -->
+        <div class="flex items-center justify-between gap-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase">Date Range:</label>
+          <select id="report-date-range-select" onchange="onReportDateRangeChange()" class="flex-1 p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            <option value="TODAY">Today</option>
+            <option value="7D">This Week (Last 7 Days)</option>
+            <option value="15TH" selected>15th Cutoff (Prev 30th–14th)</option>
+            <option value="30TH">30th Cutoff (15th–29th)</option>
+            <option value="ALL">All Time</option>
+          </select>
+        </div>
+
+        <div id="attendance-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading attendance records...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-TAB 2: EXPENSES -->
+    <section id="rep-subtab-expenses" class="rep-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitGreen/20 text-bitGreen uppercase">BIR 2307 & Tax</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Expenses Ledger</h2>
+          </div>
+          <button type="button" onclick="exportExpensesCSV()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+            📥 Export CSV
+          </button>
+        </div>
+
+        <div class="flex space-x-1.5 text-xs font-bold">
+          <button type="button" onclick="filterReportExpenses('ALL')" id="pill-exprep-all" class="px-3 py-1 bg-bitWalnut text-white rounded-lg">All</button>
+          <button type="button" onclick="filterReportExpenses('WITH_OR')" id="pill-exprep-or" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">With OR</button>
+          <button type="button" onclick="filterReportExpenses('NO_OR')" id="pill-exprep-noor" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">Without OR</button>
+        </div>
+
+        <div id="expenses-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading expense entries...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-TAB 3: CARD POS -->
+    <section id="rep-subtab-cards" class="rep-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitPink/20 text-bitPink uppercase">Chargeback Proof</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Card POS Ledger</h2>
+          </div>
+          <button type="button" onclick="exportCardLedgerCSV()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+            📥 Export CSV
+          </button>
+        </div>
+
+        <div id="cards-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading card dispute records...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH -->
+    <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase">Stock Intelligence</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Weekly Stock Health</h2>
+          </div>
+          <button type="button" onclick="exportStockHealthMarkdown()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+            📋 Copy Markdown
+          </button>
+        </div>
+
+        <div id="weekly-health-content" class="space-y-4 text-xs">
+          <!-- 1. SNAPSHOT -->
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">1. Executive Snapshot</span>
+            <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-gray-700">
+              <div>Total Stock: <strong id="rep-health-total-units">1,420 pcs</strong></div>
+              <div>Retail Value: <strong id="rep-health-retail-val">₱142,000</strong></div>
+              <div>Units Sold (7D): <strong id="rep-health-units-sold">320 pcs</strong></div>
+              <div>STR: <strong id="rep-health-str">22.5%</strong></div>
+            </div>
+          </div>
+
+          <!-- 2. HARDWARE & ATTACHMENT -->
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">2. Hardware & Attachment Health</span>
+            <p class="text-gray-700 font-medium">Attachment Ratio: <strong class="text-bitGreen">3.8 charms / base</strong> (Target: 3.5:1)</p>
+            <ul class="text-[11px] space-y-0.5 text-gray-600 pl-2">
+              <li>• Starter Bracelets: <strong>4.2 weeks</strong> [Healthy]</li>
+              <li>• Necklaces / Chains: <strong>2.1 weeks</strong> [Warning]</li>
+              <li>• Keyrings & Extras: <strong>5.8 weeks</strong> [Healthy]</li>
+              <li>• Findings (Jump rings/clasps): <strong>Sufficient</strong></li>
+            </ul>
+          </div>
+
+          <!-- 3. TOP 5 VELOCITY SKUs -->
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">4. Top 5 Velocity SKUs (Stock-Out Risk)</span>
+            <div id="rep-top5-velocity" class="space-y-1 text-[11px]">
+              <div class="flex items-center justify-between">
+                <span>• BDS-BOS-BIG-SOLID-E</span>
+                <span class="text-bitPink font-bold">1.2 wks [Reorder ASAP]</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. BOTTOM 5 SLOW-MOVING SKUs -->
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">5. Bottom 5 Slow-Movers (Dead Stock)</span>
+            <div id="rep-bottom5-dead" class="space-y-1 text-[11px]">
+              <div class="flex items-center justify-between">
+                <span>• CHM-STN-OLD-01</span>
+                <span class="text-gray-500 font-bold">4 wks 0-sales [Bundle]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4-TAB BOTTOM NAVIGATION FOR REPORTS -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
+      <button type="button" onclick="switchReportsSubTab('attendance')" id="nav-rep-attendance" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
+        <span>Attendance</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('expenses')" id="nav-rep-expenses" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Expenses</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('cards')" id="nav-rep-cards" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Card POS</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Stock Health</span>
+      </button>
+    </nav>
+  </main>
+
+  <!-- ==================== STOCK CATALOG MODAL ==================== -->
+  <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitMarigold bg-amber-100 px-2 py-0.5 rounded-full">Catalog</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Master Item Catalog</h3>
+        </div>
+        <button type="button" onclick="closeStockCatalogModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="shrink-0">
+        <input type="text" id="catalog-filter-input" oninput="filterCatalogItems(this.value)" placeholder="Filter catalog..." class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+      </div>
+
+      <div id="catalog-items-scroll-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== CONTINUOUS FLOOR AUDIT SCAN MODAL ==================== -->
+  <div id="floor-audit-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-red-800 bg-red-100 px-2 py-0.5 rounded-full">Floor Audit</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Continuous Scan Mode</h3>
+        </div>
+        <button type="button" onclick="closeFloorAuditModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag/Peg Barcode</label>
+          <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
+        </div>
+        <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
+      </div>
+
+      <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50" id="audit-scanned-log">
+        <div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>
+      </div>
+
+      <div class="pt-2 shrink-0 space-y-2">
+        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl cursor-pointer">
+          Complete Audit & Run Analysis →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FLOOR REQUEST MODAL ==================== -->
+  <div id="floor-request-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">File Floor Item Request</h3>
+        <button type="button" onclick="closeFloorRequestModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="setFloorRequestType('STOCK_RESTOCK')" id="btn-freq-stock" class="py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+            Stock Restock
+          </button>
+          <button type="button" onclick="setFloorRequestType('SUPPLY_CONSUMABLE')" id="btn-freq-supply" class="py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer">
+            Store Supply
+          </button>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Item SKU / Name *</label>
+          <input type="text" id="freq-item-name" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Thermal Tape" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Current Count</label>
+            <input type="number" id="freq-current-qty" value="0" min="0" oninput="updateFreqUrgencyBadge()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Urgency Priority</label>
+            <div id="freq-urgency-badge" class="p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800">
+              Needed ASAP (Out of Stock)
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Notes</label>
+          <input type="text" id="freq-notes" placeholder="e.g. Display peg is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+        </div>
+
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <label class="flex items-start space-x-2.5 cursor-pointer">
+            <input type="checkbox" id="chk-physical-verify" class="mt-0.5 w-4 h-4 rounded border-amber-400 text-bitWalnut focus:ring-0 shrink-0">
+            <span class="text-[11px] font-bold text-amber-950 leading-snug">
+              I solemnly swear that we do not have stocks — verified via system search and physical *
+            </span>
+          </label>
+        </div>
+
+        <button type="button" onclick="submitFloorRequest()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
+          Submit Request to Lead →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BSP & NPC CUSTOMER SECURITY ADVISORY MODAL ==================== -->
+  <div id="bsp-advisory-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder my-auto max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div class="flex items-center space-x-1.5">
+          <span class="text-base">📢</span>
+          <h3 class="font-bold text-sm text-bitWalnut">Customer Security Advisory</h3>
+        </div>
+        <button type="button" onclick="closeBspAdvisoryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="text-xs text-gray-600 space-y-2.5 font-medium leading-relaxed">
+        <p class="font-bold text-bitWalnut">Dear Valued Customer,</p>
+        <p>To securely locate, investigate, and resolve your failed transaction, our support team will request only the first 4 and last 6 digits of your card number.</p>
+        <p>We strictly adhere to consumer protection and data security rules mandated by the <strong>Bangko Sentral ng Pilipinas (BSP)</strong>:</p>
+
+        <ul class="list-disc pl-4 space-y-1.5 text-[11px] text-gray-700">
+          <li><strong>Legally Mandated for Investigations:</strong> Under BSP Memorandum No. M-2021-059 (supported by NPC Advisory Opinion No. 2021-026), sharing partial, masked details is an industry standard to track payment anomalies safely.</li>
+          <li><strong>Completely Masked & Safe:</strong> A partial card number cannot process unauthorized purchases without the missing middle digits, expiration date, or security CVV code.</li>
+          <li><strong>Identifies Payment Logs:</strong> The first 4 digits identify your card network and issuing bank; the last 6 digits allow the payment gateway to pinpoint the exact error log.</li>
+        </ul>
+
+        <div class="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1 text-[11px] text-red-900 font-bold">
+          <span class="block text-red-700 uppercase tracking-wider text-[10px]">🔒 Our Golden Rule for Your Safety</span>
+          <p>We will NEVER ask for, and you should NEVER share: Full 16 digits, Expiry Date, 3-digit CVV/CVC, or OTP/PIN.</p>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeBspAdvisoryModal()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+        Understood & Acknowledged
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== PHOTO SOURCE SELECTION MODAL ==================== -->
+  <div id="photo-picker-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Select Photo Source</h3>
+        <button type="button" onclick="closePhotoPickerModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+      <div class="space-y-2">
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
+          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
+          <span class="text-lg">📷</span>
+          <span class="text-xs font-bold text-bitWalnut">Take Photo with Camera</span>
+        </label>
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
+          <input type="file" accept="image/*" class="hidden" onchange="handleChosenMasterPhoto(this)">
+          <span class="text-lg">🖼️</span>
+          <span class="text-xs font-bold text-bitWalnut">Choose from Photo Library</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PARCEL PHYSICAL VERIFICATION MODAL ==================== -->
+  <div id="verify-parcel-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Scan Match Required</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Confirm Physical Parcel</h3>
+        </div>
+        <button type="button" onclick="closeVerifyModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-2 text-center">
+        <img id="verify-modal-img" src="" class="w-full h-32 object-cover rounded-2xl border border-bitBorder bg-gray-50" alt="Parcel Contents">
+        <span class="text-[11px] text-gray-500 font-medium block">Logged open contents photo</span>
+      </div>
+
+      <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitWalnut">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-bitWalnut uppercase">Scan Box Waybill</label>
+          <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
+            <span>📷 Camera</span>
+          </button>
+        </div>
+        <input type="text" id="verify-modal-input" placeholder="Scan with Eyoyo or type..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
+      </div>
+
+      <div id="verify-modal-error" class="text-xs font-bold text-red-600 text-center min-h-[16px]"></div>
+
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="confirmScanMatch()" class="flex-1 py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer transition">
+          Confirm Match →
+        </button>
+        <button type="button" onclick="closeVerifyModal()" class="py-3 px-4 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl cursor-pointer">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 50x30mm NIIMBOT DUAL-LABEL MODAL ==================== -->
+  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder my-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">50 × 30 mm Roll</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Label Print Station</h3>
+        </div>
+        <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-1.5 text-center">
+        <button type="button" onclick="setPrintModeSelection('BATCH')" id="pill-mode-batch" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
+          <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
+        </button>
+        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-gray-700 block">Single</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
+        </button>
+        <button type="button" onclick="setPrintModeSelection('PARTIAL')" id="pill-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
+        </button>
+      </div>
+
+      <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
+        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
+        <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
+          <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
+            <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
+          <div id="sub-label-2-wrap" class="flex items-center space-x-2 pt-1.5">
+            <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span id="sub-tag-2" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
+          <div id="sub-label-2-placeholder" class="hidden py-4 text-center text-[9px] font-bold text-gray-300">
+            [ Second label slot empty ]
+          </div>
+        </div>
+      </div>
+
+      <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
+        <span>📋</span>
+        <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
+      </button>
+
+      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
+        ✓ Done Printing & Applied on Bags
+      </button>
+    </div>
+  </div>
+
+  <!-- CAMERA SCANNER OVERLAY -->
+  <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Scan Barcode / QR</h3>
+        <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
+      <p class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
+    
+    let db = null;
+    try {
+      if (window.supabase) {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      }
+    } catch (e) {}
+
+    let crewMembers = [];
+    let currentActiveCrew = null;
+    let selectedCrewForGate = null;
+    let enteredGatePin = "";
+    let html5QrScanner = null;
+
+    let packagePhotoData = "";
+    let contentPhotoData = "";
+    let currentSkuMasterPhoto = "";
+    let whiteBinParcels = [];
+    let activeVerifyingParcel = null;
+    let activeIntakeWaybill = "";
+
+    // MERCHANT INTAKE DATA
+    let merchantListPhotoData = "";
+    let merchantContentPhotoData = "";
+
+    let currentPrintMode = 'BATCH';
+    let currentMovementMode = "DELIVERED_TO_SHOP";
+    let stagedBatchMovements = [];
+    let pendingSkuData = null;
+
+    // CARD ISSUES
+    let cardMultiProofFiles = [];
+    let isMaskedCardOpen = false;
+
+    // SHELF SERVICE
+    let currentSupplyFilter = 'ALL';
+    let rawPendingRequests = [];
+    let currentFreqType = 'STOCK_RESTOCK';
+
+    // CATALOG & AUDIT
+    let masterCatalogCache = [];
+    let liveAuditScans = {};
+
+    // REPORTS
+    let currentReportDateFilter = '15TH';
+    let currentExpenseReportFilter = 'ALL';
+    let rawAttendanceLogs = [];
+    let rawReportExpenses = [];
+    let rawReportCards = [];
+
+    // ================= INITIALIZATION & GATE =================
+    async function initApp() {
+      if (db) {
+        try {
+          const { data } = await db.from('crew_members').select('*').order('name');
+          if (data) {
+            crewMembers = data;
+            populateGateDropdown();
+          }
+        } catch (e) {}
+      }
+      document.getElementById('gate-lockscreen').style.display = 'flex';
+      generateFourPartSku();
+    }
+
+    function populateGateDropdown() {
+      const select = document.getElementById('gate-crew-select');
+      select.innerHTML = '<option value="">-- Choose your name --</option>' +
+        crewMembers.map(m => `<option value="${m.id}">${m.name} (${m.designation || m.role})</option>`).join('');
+    }
+
+    function onGateCrewSelect() {
+      const selectedId = document.getElementById('gate-crew-select').value;
+      const pinContainer = document.getElementById('gate-pin-container');
+      if (!selectedId) {
+        pinContainer.classList.add('hidden');
+        selectedCrewForGate = null;
+        return;
+      }
+      selectedCrewForGate = crewMembers.find(m => m.id === selectedId);
+      pinContainer.classList.remove('hidden');
+      clearGatePin();
+    }
+
+    function enterGateDigit(d) {
+      if (enteredGatePin.length >= 4) return;
+      enteredGatePin += d;
+      updateGatePinDots();
+      if (enteredGatePin.length === 4) setTimeout(verifyGatePin, 80);
+    }
+
+    function deleteGateDigit() {
+      enteredGatePin = enteredGatePin.slice(0, -1);
+      updateGatePinDots();
+    }
+
+    function clearGatePin() {
+      enteredGatePin = "";
+      updateGatePinDots();
+      document.getElementById('gate-pin-error').textContent = "";
+    }
+
+    function updateGatePinDots() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`gate-pin-dot-${i}`);
+        if (i <= enteredGatePin.length) dot.className = "w-3.5 h-3.5 rounded-full bg-bitMarigold border-2 border-bitMarigold";
+        else dot.className = "w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white";
+      }
+    }
+
+    async function verifyGatePin() {
+      if (!selectedCrewForGate) return;
+
+      if (enteredGatePin === String(selectedCrewForGate.pin)) {
+        currentActiveCrew = selectedCrewForGate;
+        document.getElementById('crew-name').textContent = currentActiveCrew.name;
+        document.getElementById('crew-role-badge').textContent = currentActiveCrew.designation || currentActiveCrew.role;
+        document.getElementById('crew-avatar').textContent = currentActiveCrew.name.charAt(0);
+
+        if (db) {
+          try {
+            await db.from('time_logs').insert([{
+              crew_name: currentActiveCrew.name,
+              action: 'clock_in'
+            }]);
+          } catch (e) {}
+        }
+
+        document.getElementById('gate-lockscreen').style.display = 'none';
+        goToView('view-hub');
+      } else {
+        document.getElementById('gate-pin-error').textContent = "Incorrect PIN, try again";
+        setTimeout(clearGatePin, 500);
+      }
+    }
+
+    async function promptSwitchShift() {
+      if (confirm(`Lock station for ${currentActiveCrew ? currentActiveCrew.name : 'Crew'}?`)) {
+        if (db && currentActiveCrew) {
+          try {
+            await db.from('time_logs').insert([{
+              crew_name: currentActiveCrew.name,
+              action: 'clock_out'
+            }]);
+          } catch (e) {}
+        }
+        currentActiveCrew = null;
+        document.getElementById('gate-crew-select').value = "";
+        document.getElementById('gate-pin-container').classList.add('hidden');
+        document.getElementById('gate-lockscreen').style.display = 'flex';
+      }
+    }
+
+    // ================= ROUTING =================
+    function goToView(viewId) {
+      document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
+      document.getElementById(viewId).classList.remove('hidden');
+
+      const backBtn = document.getElementById('btn-back-hub');
+      if (viewId === 'view-hub') {
+        backBtn.classList.add('hidden');
+      } else {
+        backBtn.classList.remove('hidden');
+        if (viewId === 'view-shelf-care') {
+          switchShelfTab('tab-dropoff');
+          loadWhiteBinParcels();
+        } else if (viewId === 'view-shelf-service') {
+          switchSuppliesSubTab('requests');
+        } else if (viewId === 'view-card-logger') {
+          loadRecentCardIssues();
+        } else if (viewId === 'view-shelf-help') {
+          setTimeout(() => document.getElementById('shelf-help-search-input')?.focus(), 150);
+        } else if (viewId === 'view-reports') {
+          switchReportsSubTab('attendance');
+        }
+      }
+    }
+
+    // ================= SHELF HELP =================
+    async function runShelfHelpSearch(query) {
+      const q = (query || document.getElementById('shelf-help-search-input').value).trim();
+      const resultArea = document.getElementById('shelf-help-result-area');
+      if (!q) {
+        resultArea.innerHTML = `
+          <div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">
+            Search for an SKU or scan a label to verify inventory and shelf location.
+          </div>
+        `;
+        return;
+      }
+
+      let matchedItem = null;
+      let werqroomPacks = 0;
+      let shopPacks = 0;
+      let displayPcs = 0;
+
+      if (db) {
+        try {
+          const { data } = await db.from('items')
+            .select('*')
+            .or(`sku.ilike.%${q}%,name.ilike.%${q}%`)
+            .limit(1)
+            .maybeSingle();
+          if (data) matchedItem = data;
+
+          if (matchedItem) {
+            const { data: intakes } = await db.from('intake_batches').select('pack_count').eq('sku', matchedItem.sku);
+            const totalIntake = intakes ? intakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0) : 0;
+
+            const { data: shopTransfers } = await db.from('stock_movements')
+              .select('pcs_moved')
+              .eq('sku', matchedItem.sku)
+              .eq('action', 'DELIVERED_TO_SHOP');
+            const totalShopPacks = shopTransfers ? shopTransfers.length : 0;
+
+            const { data: dispTransfers } = await db.from('stock_movements')
+              .select('pcs_moved')
+              .eq('sku', matchedItem.sku)
+              .eq('action', 'REPLENISHED_TO_DISPLAY');
+            displayPcs = dispTransfers ? dispTransfers.reduce((acc, curr) => acc + (curr.pcs_moved || 0), 0) : 0;
+
+            werqroomPacks = Math.max(0, totalIntake - totalShopPacks);
+            shopPacks = Math.max(0, totalShopPacks - (dispTransfers ? dispTransfers.length : 0));
+          }
+        } catch (e) {}
+      }
+
+      if (matchedItem) {
+        const totalPacks = werqroomPacks + shopPacks;
+        resultArea.innerHTML = `
+          <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3">
+            <div class="flex items-start space-x-3">
+              <img src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+              <div class="min-w-0">
+                <span class="text-xs font-mono font-bold text-bitWalnut block break-all">${matchedItem.sku}</span>
+                <span class="text-xs font-bold text-gray-700 block">${matchedItem.name || 'Master Catalog Item'}</span>
+                <span class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mt-1 ${totalPacks > 0 ? 'bg-bitGreen/20 text-bitGreen' : 'bg-red-100 text-red-800'}">
+                  ${totalPacks > 0 ? `${totalPacks} Full Packs in Inventory` : '0 Packs Left'}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center pt-2 border-t border-bitBorder">
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Werqroom</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">${werqroomPacks} packs</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Shop Storage</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">${shopPacks} packs</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Display Pegs</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">~${displayPcs} pcs</span>
+              </div>
+            </div>
+
+            <button type="button" onclick="triggerFloorRequestFromChecker('${matchedItem.sku}')" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
+              + Request Restock for this Item
+            </button>
+          </div>
+        `;
+      } else {
+        resultArea.innerHTML = `
+          <div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2">
+            <span class="text-xs font-bold text-red-900 block">Item Not Found in Catalog</span>
+            <p class="text-[11px] text-red-700">No SKU or name matches "<strong>${q}</strong>". Verified 0 stock.</p>
+            <button type="button" onclick="triggerFloorRequestFromChecker('${q}')" class="w-full py-2.5 bg-bitPink hover:bg-pink-700 text-white font-bold text-xs rounded-xl cursor-pointer mt-1">
+              + File Request for "${q}" →
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function triggerFloorRequestFromChecker(skuOrName) {
+      document.getElementById('freq-item-name').value = skuOrName;
+      document.getElementById('freq-current-qty').value = "0";
+      setFloorRequestType('STOCK_RESTOCK');
+      updateFreqUrgencyBadge();
+      openFloorRequestModal();
+    }
+
+    // ================= STOCK CATALOG MODAL =================
+    async function openStockCatalogModal() {
+      document.getElementById('stock-catalog-modal').style.display = 'flex';
+      if (db) {
+        try {
+          const { data } = await db.from('items').select('*').order('sku');
+          if (data) masterCatalogCache = data;
+        } catch (e) {}
+      }
+      renderStockCatalog(masterCatalogCache);
+    }
+
+    function closeStockCatalogModal() {
+      document.getElementById('stock-catalog-modal').style.display = 'none';
+    }
+
+    function filterCatalogItems(q) {
+      const filtered = masterCatalogCache.filter(item => 
+        item.sku.toLowerCase().includes(q.toLowerCase()) || 
+        (item.name && item.name.toLowerCase().includes(q.toLowerCase()))
+      );
+      renderStockCatalog(filtered);
+    }
+
+    function renderStockCatalog(items) {
+      const container = document.getElementById('catalog-items-scroll-list');
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">No catalog items found.</div>`;
+        return;
+      }
+      container.innerHTML = items.map(i => `
+        <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <img src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
+            <div class="min-w-0">
+              <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
+              <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Charm Bag'}</span>
+            </div>
+          </div>
+          <button type="button" onclick="closeStockCatalogModal(); document.getElementById('shelf-help-search-input').value = '${i.sku}'; runShelfHelpSearch('${i.sku}');" class="px-2.5 py-1.5 bg-bitWalnut text-white text-[10px] font-bold rounded-lg shrink-0 cursor-pointer">
+            Check Stock ➔
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // ================= CONTINUOUS FLOOR AUDIT SCAN =================
+    function startFloorAuditMode() {
+      liveAuditScans = {};
+      document.getElementById('audit-scanned-log').innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>`;
+      document.getElementById('audit-tally-counter').textContent = "0 Scans";
+      document.getElementById('floor-audit-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('audit-continuous-input')?.focus(), 150);
+    }
+
+    function closeFloorAuditModal() {
+      document.getElementById('floor-audit-modal').style.display = 'none';
+    }
+
+    const auditInput = document.getElementById('audit-continuous-input');
+    auditInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = auditInput.value.trim();
+        if (code) {
+          tallyAuditCode(code);
+          auditInput.value = '';
+        }
+      }
+    });
+
+    function tallyAuditCode(code) {
+      const isPartial = code.toUpperCase().includes('-P');
+      let cleanSku = code;
+      let count = 10;
+
+      if (isPartial) {
+        const parts = code.split(/-P/i);
+        cleanSku = parts[0];
+        const parsed = parseInt(parts[1]);
+        count = !isNaN(parsed) ? parsed : 5;
+      }
+
+      if (!liveAuditScans[cleanSku]) {
+        liveAuditScans[cleanSku] = 0;
+      }
+      liveAuditScans[cleanSku] += count;
+
+      const totalScanned = Object.values(liveAuditScans).reduce((a, b) => a + b, 0);
+      document.getElementById('audit-tally-counter').textContent = `${totalScanned} Total Pcs`;
+
+      const log = document.getElementById('audit-scanned-log');
+      log.innerHTML = Object.entries(liveAuditScans).map(([sku, tally]) => `
+        <div class="bg-white p-2 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs font-bold">
+          <span class="font-mono text-bitWalnut truncate">${sku}</span>
+          <span class="px-2 py-0.5 bg-bitMarigold/20 text-bitWalnut rounded-md font-sans">${tally} pcs</span>
+        </div>
+      `).join('');
+    }
+
+    async function completeFloorAuditAndSave() {
+      const totalScanned = Object.values(liveAuditScans).reduce((a, b) => a + b, 0);
+      if (totalScanned === 0) {
+        alert("No items scanned yet.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('inventory_audits').insert([{
+            audited_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+            total_scanned_units: totalScanned,
+            discrepancies_count: Object.keys(liveAuditScans).length,
+            audit_summary: liveAuditScans
+          }]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Floor Audit Complete!\nLogged ${totalScanned} physical pieces into the Stock Health Engine.`);
+      closeFloorAuditModal();
+      goToView('view-reports');
+      switchReportsSubTab('audit');
+    }
+
+    // ================= FLOOR RESTOCK REQUEST MODAL =================
+    function openFloorRequestModal() {
+      document.getElementById('floor-request-modal').style.display = 'flex';
+      document.getElementById('chk-physical-verify').checked = false;
+      updateFreqUrgencyBadge();
+    }
+
+    function closeFloorRequestModal() {
+      document.getElementById('floor-request-modal').style.display = 'none';
+    }
+
+    function setFloorRequestType(type) {
+      currentFreqType = type;
+      document.getElementById('btn-freq-stock').className = type === 'STOCK_RESTOCK' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
+      document.getElementById('btn-freq-supply').className = type === 'SUPPLY_CONSUMABLE' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
+    }
+
+    function updateFreqUrgencyBadge() {
+      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
+      const badge = document.getElementById('freq-urgency-badge');
+      if (qty === 0) {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800";
+        badge.textContent = "Needed ASAP (Out of Stock)";
+      } else if (qty <= 20) {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-amber-100 text-amber-800";
+        badge.textContent = "Needed in 1 Week (Low Stock Buffer)";
+      } else {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-blue-100 text-blue-800";
+        badge.textContent = "Needed in 2 Weeks (Routine / Staging)";
+      }
+    }
+
+    async function submitFloorRequest() {
+      const name = document.getElementById('freq-item-name').value.trim();
+      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
+      const notes = document.getElementById('freq-notes').value.trim();
+      const isVerified = document.getElementById('chk-physical-verify').checked;
+
+      if (!name) {
+        alert("Please enter the item SKU or name.");
+        return;
+      }
+
+      if (!isVerified) {
+        alert("Please check the verification box: 'I solemnly swear that we do not have stocks — verified via system search and physical' before submitting.");
+        return;
+      }
+
+      const urgencyTag = qty === 0 ? 'NEEDED_ASAP' : (qty <= 20 ? 'NEEDED_IN_1_WEEK' : 'NEEDED_IN_2_WEEKS');
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: currentFreqType,
+            item_sku_or_code: name,
+            item_name: name,
+            qty_requested: qty,
+            urgency: urgencyTag,
+            reason: notes || (qty === 0 ? "Current Count: 0 (Verified Not Found)" : `Current Count: ${qty} pcs`),
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+            status: 'PENDING'
+          }]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Request for [${name}] filed under urgency: ${urgencyTag.replace(/_/g, ' ')}!`);
+      closeFloorRequestModal();
+    }
+
+    // ================= SHELF SERVICE DESK =================
+    function switchSuppliesSubTab(subTab) {
+      ['requests', 'logger', 'petty'].forEach(t => {
+        document.getElementById(`supplies-subtab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-sup-${t}`);
+        btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
+        btn.querySelector('.nav-sup-ind').className = "nav-sup-ind w-8 h-1 rounded-full bg-transparent mb-1";
+      });
+
+      document.getElementById(`supplies-subtab-${subTab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-sup-${subTab}`);
+      activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
+      activeBtn.querySelector('.nav-sup-ind').className = "nav-sup-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
+
+      if (subTab === 'requests') loadSuppliesRequestsDesk();
+      if (subTab === 'petty') loadPettyCashReconcileDesk();
+    }
+
+    function filterSupplyRequests(filterType) {
+      currentSupplyFilter = filterType;
+      ['all', 'stock', 'supply'].forEach(f => {
+        const pill = document.getElementById(`pill-req-${f}`);
+        pill.className = "px-3 py-1.5 bg-bitCream border border-bitBorderDark text-gray-600 rounded-xl cursor-pointer";
+      });
+
+      const activePill = filterType === 'ALL' ? 'all' : (filterType === 'STOCK_RESTOCK' ? 'stock' : 'supply');
+      document.getElementById(`pill-req-${activePill}`).className = "px-3 py-1.5 bg-bitWalnut text-white rounded-xl cursor-pointer";
+
+      renderSuppliesRequestsList();
+    }
+
+    async function loadSuppliesRequestsDesk() {
+      if (db) {
+        try {
+          const { data } = await db.from('requests').select('*').eq('status', 'PENDING').order('created_at', { ascending: false });
+          if (data) rawPendingRequests = data;
+        } catch (e) {}
+      }
+      renderSuppliesRequestsList();
+    }
+
+    function renderSuppliesRequestsList() {
+      const container = document.getElementById('supplies-requests-list');
+      let filtered = rawPendingRequests;
+      if (currentSupplyFilter !== 'ALL') {
+        filtered = rawPendingRequests.filter(r => r.request_type === currentSupplyFilter);
+      }
+
+      filtered.sort((a, b) => {
+        if (a.urgency === 'NEEDED_ASAP' && b.urgency !== 'NEEDED_ASAP') return -1;
+        if (b.urgency === 'NEEDED_ASAP' && a.urgency !== 'NEEDED_ASAP') return 1;
+        return 0;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No pending requests under ${currentSupplyFilter}.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(r => {
+        const isAsap = (r.urgency === 'NEEDED_ASAP' || r.qty_requested === 0);
+        return `
+          <div class="bg-bitCream p-3.5 rounded-2xl border ${isAsap ? 'border-red-200 bg-red-50/30' : 'border-bitBorderDark'} space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-bitWalnut">${r.item_name}</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold ${isAsap ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'}">
+                ${isAsap ? 'NEEDED ASAP' : (r.urgency ? r.urgency.replace(/_/g, ' ') : 'IN 1 WEEK')}
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-gray-600 font-medium">
+              <span>Current Count: <strong>${r.qty_requested || 0} pcs</strong> • By ${r.requested_by || 'Staff'}</span>
+              <div class="flex space-x-1.5 shrink-0">
+                <button type="button" onclick="resolveFloorRequest('${r.id}', 'APPROVED')" class="px-2.5 py-1 bg-bitGreen text-white font-bold text-[10px] rounded-lg hover:bg-emerald-700 cursor-pointer">
+                  ✓ Accept
+                </button>
+                <button type="button" onclick="resolveFloorRequest('${r.id}', 'REJECTED')" class="px-2 py-1 bg-gray-200 text-gray-700 font-bold text-[10px] rounded-lg hover:bg-red-100 hover:text-red-700 cursor-pointer">
+                  ✕ Reject
+                </button>
+              </div>
+            </div>
+            ${r.reason ? `<span class="text-[10px] text-gray-400 italic block">"${r.reason}"</span>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function resolveFloorRequest(id, action) {
+      let note = "";
+      if (action === 'REJECTED') {
+        note = prompt("Enter brief reason for rejecting request:") || "Budget limit / Not needed";
+      }
+
+      if (db) {
+        try {
+          await db.from('requests').update({
+            status: action,
+            rejection_reason: note || null
+          }).eq('id', id);
+        } catch (e) {}
+      }
+
+      rawPendingRequests = rawPendingRequests.filter(r => r.id !== id);
+      renderSuppliesRequestsList();
+      alert(`Request marked ${action}!`);
+    }
+
+    async function processReceiptOCR(fileInput) {
+      if (!fileInput.files || !fileInput.files[0]) return;
+      const file = fileInput.files[0];
+      const statusLabel = document.getElementById('receipt-label');
+      statusLabel.textContent = "⏳ Reading receipt details (OCR)...";
+
+      try {
+        const result = await Tesseract.recognize(file, 'eng');
+        const text = result.data.text;
+        statusLabel.textContent = "✓ Receipt scanned & parsed!";
+
+        const totalMatch = text.match(/(?:TOTAL|AMOUNT DUE|PHP)\s*[:]?\s*([0-9,]+\.[0-9]{2})/i);
+        if (totalMatch) document.getElementById('expense-amount').value = totalMatch[1].replace(/,/g, '');
+
+        const invMatch = text.match(/(?:OR|INVOICE|SI|REC)\s*(?:NO|#)?[:\s.]*([A-Za-z0-9-]+)/i);
+        if (invMatch) document.getElementById('expense-receipt-no').value = invMatch[1].trim();
+
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+        if (lines.length > 0) document.getElementById('expense-merchant-name').value = lines[0];
+      } catch (err) {
+        statusLabel.textContent = "✓ Photo attached (Manual entry needed)";
+      }
+    }
+
+    async function savePurchasedExpense() {
+      const name = document.getElementById('expense-item-name').value.trim();
+      const qty = parseInt(document.getElementById('expense-qty').value) || 1;
+      const amt = parseFloat(document.getElementById('expense-amount').value);
+      const dfee = parseFloat(document.getElementById('expense-dfee').value) || 0.00;
+      const merchant = document.getElementById('expense-merchant-name').value.trim();
+      const receiptNo = document.getElementById('expense-receipt-no').value.trim();
+      const cat = document.getElementById('expense-category-select').value;
+
+      if (!name || isNaN(amt) || amt <= 0) {
+        alert("Please provide an Item Description and Amount spent.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: 'SUPPLY_CONSUMABLE',
+            item_sku_or_code: name,
+            item_name: name,
+            qty_requested: qty,
+            payment_source: 'petty_cash',
+            delivery_fee: dfee,
+            merchant_name: merchant,
+            receipt_no: receiptNo,
+            reason: `Purchased under ${cat} (₱${amt.toFixed(2)} + ₱${dfee.toFixed(2)} fee)`,
+            status: 'PURCHASED',
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+          }]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Recorded purchase of [${name}] for ₱${(amt + dfee).toFixed(2)}!`);
+      document.getElementById('expense-item-name').value = "";
+      document.getElementById('expense-amount').value = "";
+      document.getElementById('expense-dfee').value = "";
+      document.getElementById('expense-merchant-name').value = "";
+      document.getElementById('expense-receipt-no').value = "";
+      document.getElementById('receipt-label').textContent = "📷 Snap Receipt to Auto-Fill Tax & Amount";
+    }
+
+    async function submitPettyCashRequest() {
+      const amt = parseFloat(document.getElementById('petty-req-amount').value);
+      const declared = parseFloat(document.getElementById('petty-declared-left').value);
+      const purpose = document.getElementById('petty-req-purpose').value.trim();
+
+      if (isNaN(amt) || amt <= 0 || isNaN(declared) || !purpose) {
+        alert("Please complete: Amount Requested, Declared Cash Left, and Purpose.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('petty_cash_requests').insert([{
+            amount_requested: amt,
+            cash_on_hand_declared: declared,
+            purpose: purpose,
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Team Lead',
+            status: 'PENDING'
+          }]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Petty Cash Requisition for ₱${amt.toFixed(2)} submitted to Admin!`);
+      document.getElementById('petty-req-amount').value = "";
+      document.getElementById('petty-declared-left').value = "";
+      document.getElementById('petty-req-purpose').value = "";
+      loadPettyCashReconcileDesk();
+    }
+
+    async function loadPettyCashReconcileDesk() {
+      const container = document.getElementById('petty-cash-approval-queue');
+      let reqs = [];
+      if (db) {
+        try {
+          const { data } = await db.from('petty_cash_requests').select('*').eq('status', 'PENDING').order('created_at', { ascending: false });
+          if (data) reqs = data;
+        } catch (e) {}
+      }
+
+      if (reqs.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4 font-bold">No pending fund requisitions.</div>`;
+        return;
+      }
+
+      container.innerHTML = reqs.map(p => `
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-bitWalnut">Request: ₱${parseFloat(p.amount_requested).toFixed(2)}</span>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800">Pending Review</span>
+          </div>
+          <div class="text-[11px] text-gray-600 font-medium space-y-0.5">
+            <span class="block">Declared Remaining: <strong>₱${parseFloat(p.cash_on_hand_declared).toFixed(2)}</strong></span>
+            <span class="block text-gray-500 italic">"${p.purpose}" • by ${p.requested_by}</span>
+          </div>
+          <div class="flex space-x-2 pt-1">
+            <button type="button" onclick="resolvePettyRequisition('${p.id}', 'APPROVED')" class="flex-1 py-1.5 bg-bitGreen text-white font-bold text-xs rounded-xl cursor-pointer">
+              ✓ Approve Fund
+            </button>
+            <button type="button" onclick="resolvePettyRequisition('${p.id}', 'REJECTED')" class="py-1.5 px-3 bg-gray-200 text-gray-700 font-bold text-xs rounded-xl cursor-pointer">
+              ✕ Decline
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function resolvePettyRequisition(id, action) {
+      if (db) {
+        try {
+          await db.from('petty_cash_requests').update({
+            status: action,
+            reviewed_by: currentActiveCrew ? currentActiveCrew.name : 'Admin'
+          }).eq('id', id);
+        } catch (e) {}
+      }
+      alert(`Fund Requisition marked ${action}!`);
+      loadPettyCashReconcileDesk();
+    }
+
+    // ================= CARD TRANSACTIONS =================
+    function toggleMaskedCardSection() {
+      isMaskedCardOpen = !isMaskedCardOpen;
+      const container = document.getElementById('masked-card-fields-container');
+      const icon = document.getElementById('masked-card-toggle-icon');
+      if (isMaskedCardOpen) {
+        container.classList.remove('hidden');
+        icon.textContent = "−";
+      } else {
+        container.classList.add('hidden');
+        icon.textContent = "+";
+      }
+    }
+
+    function openBspAdvisoryModal() { document.getElementById('bsp-advisory-modal').style.display = 'flex'; }
+    function closeBspAdvisoryModal() { document.getElementById('bsp-advisory-modal').style.display = 'none'; }
+
+    function previewCardMultiProof(input) {
+      cardMultiProofFiles = [];
+      const thumbBox = document.getElementById('card-proof-thumbnails');
+      thumbBox.innerHTML = "";
+
+      if (input.files && input.files.length > 0) {
+        document.getElementById('card-proof-label').textContent = `✓ ${input.files.length} File(s) Attached`;
+        Array.from(input.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            cardMultiProofFiles.push({ type: file.type.startsWith('video') ? 'video' : 'image', url: dataUrl });
+            const thumb = document.createElement('div');
+            thumb.className = "w-11 h-11 rounded-lg border border-bitBorderDark bg-white flex items-center justify-center text-[10px] font-bold text-bitWalnut overflow-hidden shadow-xs";
+            if (file.type.startsWith('video')) thumb.innerHTML = "▶ VID";
+            else thumb.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
+            thumbBox.appendChild(thumb);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+
+    async function submitCardTransactionIssue() {
+      const reason = document.getElementById('card-issue-reason-input').value.trim();
+      const name = document.getElementById('card-cust-name').value.trim();
+      const contact = document.getElementById('card-contact-info').value.trim();
+      const amount = parseFloat(document.getElementById('card-amount').value);
+
+      if (!reason || !name || !contact || isNaN(amount) || amount <= 0) {
+        alert("Please complete: Reason for Log, Customer Name, Contact Info, and Amount.");
+        return;
+      }
+
+      let maskedCardStr = null;
+      if (isMaskedCardOpen) {
+        const bin = document.getElementById('card-bin-first4').value.trim();
+        const last6 = document.getElementById('card-last6').value.trim();
+        if (bin && last6) maskedCardStr = `${bin}-XX-XXXX-${last6}`;
+      }
+
+      const payload = {
+        issue_reason: reason,
+        status: reason.toLowerCase().includes('delay') ? 'DELAYED' : 'FAILED',
+        customer_name: name,
+        contact_info: contact,
+        amount: amount,
+        masked_card: maskedCardStr,
+        proof_url: cardMultiProofFiles.length > 0 ? JSON.stringify(cardMultiProofFiles) : null,
+        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
+      if (db) {
+        try {
+          await db.from('card_transactions').insert([payload]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Card issue record logged for ${name} (₱${amount.toFixed(2)})!`);
+      document.getElementById('card-issue-reason-input').value = "";
+      document.getElementById('card-cust-name').value = "";
+      document.getElementById('card-contact-info').value = "";
+      document.getElementById('card-amount').value = "";
+      document.getElementById('card-bin-first4').value = "";
+      document.getElementById('card-last6').value = "";
+      document.getElementById('card-proof-thumbnails').innerHTML = "";
+      document.getElementById('card-proof-label').textContent = "📹 Record Video / Select Photos (Multi)";
+      cardMultiProofFiles = [];
+      if (isMaskedCardOpen) toggleMaskedCardSection();
+      loadRecentCardIssues();
+    }
+
+    async function loadRecentCardIssues() {
+      const container = document.getElementById('recent-card-issues-list');
+      let items = [];
+      if (db) {
+        try {
+          const { data } = await db.from('card_transactions').select('*').order('created_at', { ascending: false }).limit(6);
+          if (data) items = data;
+        } catch (e) {}
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4 font-bold">No card issues logged today.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(c => `
+        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-bitWalnut block">${c.customer_name} • ₱${parseFloat(c.amount).toFixed(2)}</span>
+            <span class="text-[10px] text-gray-500 font-bold block">${c.issue_reason || c.status} • ${c.contact_info}</span>
+            ${c.masked_card ? `<span class="text-[9px] font-mono text-bitViolet block">Card: ${c.masked_card}</span>` : ''}
+          </div>
+          <span class="px-2 py-0.5 text-[9px] font-bold rounded-full ${c.status === 'DELAYED' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
+            ${c.status}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    // ================= REPORTS HUB (NEWEST TO OLDEST ENFORCED) =================
+    function switchReportsSubTab(subTab) {
+      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
+        document.getElementById(`rep-subtab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-rep-${t}`);
+        btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
+        btn.querySelector('.nav-rep-ind').className = "nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1";
+      });
+
+      document.getElementById(`rep-subtab-${subTab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-rep-${subTab}`);
+      activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
+      activeBtn.querySelector('.nav-rep-ind').className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
+
+      if (subTab === 'attendance') loadAttendanceReport();
+      if (subTab === 'expenses') loadExpensesReport();
+      if (subTab === 'cards') loadCardDisputesReport();
+      if (subTab === 'audit') loadStockHealthReport();
+    }
+
+    function onReportDateRangeChange() {
+      currentReportDateFilter = document.getElementById('report-date-range-select').value;
+      loadAttendanceReport();
+      loadExpensesReport();
+      loadCardDisputesReport();
+    }
+
+    async function loadAttendanceReport() {
+      const container = document.getElementById('attendance-report-list');
+      if (db) {
+        try {
+          const { data } = await db.from('time_logs').select('*').order('created_at', { ascending: false }).limit(50);
+          if (data) rawAttendanceLogs = data;
+        } catch (e) {}
+      }
+
+      if (rawAttendanceLogs.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No attendance logs found.</div>`;
+        return;
+      }
+
+      container.innerHTML = rawAttendanceLogs.map(l => `
+        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-bitWalnut block">${l.crew_name}</span>
+            <span class="text-[10px] text-gray-500 font-medium block">${new Date(l.created_at).toLocaleString()}</span>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${l.action === 'clock_in' ? 'bg-bitGreen/20 text-bitGreen' : 'bg-gray-200 text-gray-700'}">
+            ${l.action.toUpperCase()}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    function exportAttendanceCSV() {
+      if (rawAttendanceLogs.length === 0) return alert("No logs to export.");
+      let csv = "ID,Crew Name,Action,Timestamp\n";
+      rawAttendanceLogs.forEach(l => {
+        csv += `"${l.id}","${l.crew_name}","${l.action}","${l.created_at}"\n`;
+      });
+      downloadBlob(csv, `Attendance_${currentReportDateFilter}.csv`, "text/csv");
+    }
+
+    function filterReportExpenses(f) {
+      currentExpenseReportFilter = f;
+      ['all', 'or', 'noor'].forEach(k => {
+        document.getElementById(`pill-exprep-${k}`).className = "px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg cursor-pointer";
+      });
+      const active = f === 'ALL' ? 'all' : (f === 'WITH_OR' ? 'or' : 'noor');
+      document.getElementById(`pill-exprep-${active}`).className = "px-3 py-1 bg-bitWalnut text-white rounded-lg cursor-pointer";
+      renderExpensesReport();
+    }
+
+    async function loadExpensesReport() {
+      if (db) {
+        try {
+          const { data } = await db.from('requests').select('*').eq('status', 'PURCHASED').order('created_at', { ascending: false });
+          if (data) rawReportExpenses = data;
+        } catch (e) {}
+      }
+      renderExpensesReport();
+    }
+
+    function renderExpensesReport() {
+      const container = document.getElementById('expenses-report-list');
+      let filtered = rawReportExpenses;
+      if (currentExpenseReportFilter === 'WITH_OR') filtered = rawReportExpenses.filter(e => !!e.receipt_no);
+      if (currentExpenseReportFilter === 'NO_OR') filtered = rawReportExpenses.filter(e => !e.receipt_no);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No expense records found.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(e => `
+        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-bitWalnut block">${e.item_name} • ₱${parseFloat(e.delivery_fee ? (e.delivery_fee + 100) : 100).toFixed(2)}</span>
+            <span class="text-[10px] text-gray-500 font-medium block">${e.merchant_name || 'Store'} • OR: ${e.receipt_no || 'None'}</span>
+          </div>
+          <span class="text-[10px] text-gray-400 font-bold">${new Date(e.created_at).toLocaleDateString()}</span>
+        </div>
+      `).join('');
+    }
+
+    function exportExpensesCSV() {
+      if (rawReportExpenses.length === 0) return alert("No expenses to export.");
+      let csv = "Item,Merchant,Invoice No,Delivery Fee,Date\n";
+      rawReportExpenses.forEach(e => {
+        csv += `"${e.item_name}","${e.merchant_name || ''}","${e.receipt_no || ''}","${e.delivery_fee || 0}","${e.created_at}"\n`;
+      });
+      downloadBlob(csv, "Expenses_BIR_2307.csv", "text/csv");
+    }
+
+    async function loadCardDisputesReport() {
+      const container = document.getElementById('cards-report-list');
+      if (db) {
+        try {
+          const { data } = await db.from('card_transactions').select('*').order('created_at', { ascending: false });
+          if (data) rawReportCards = data;
+        } catch (e) {}
+      }
+
+      if (rawReportCards.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No card dispute records found.</div>`;
+        return;
+      }
+
+      container.innerHTML = rawReportCards.map(c => `
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark space-y-1.5 text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-bitWalnut">${c.customer_name} • ₱${parseFloat(c.amount).toFixed(2)}</span>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${c.status === 'DELAYED' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
+              ${c.status}
+            </span>
+          </div>
+          <div class="text-[10px] text-gray-600 font-medium flex items-center justify-between">
+            <span>Contact: ${c.contact_info} • ${c.issue_reason || 'POS Issue'}</span>
+            ${c.masked_card ? `<span class="font-mono text-bitViolet">Card: ${c.masked_card}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function exportCardLedgerCSV() {
+      if (rawReportCards.length === 0) return alert("No card records to export.");
+      let csv = "Customer Name,Contact Info,Amount,Status,Masked Card,Reason,Date\n";
+      rawReportCards.forEach(c => {
+        csv += `"${c.customer_name}","${c.contact_info}","${c.amount}","${c.status}","${c.masked_card || ''}","${c.issue_reason || ''}","${c.created_at}"\n`;
+      });
+      downloadBlob(csv, "Card_Disputes_Ledger.csv", "text/csv");
+    }
+
+    async function loadStockHealthReport() {
+      if (db) {
+        try {
+          const { data: items } = await db.from('items').select('*');
+          if (items) {
+            document.getElementById('rep-health-total-units').textContent = `${items.length * 10} pcs`;
+            document.getElementById('rep-health-retail-val').textContent = `₱${(items.length * 10 * 100).toLocaleString()}`;
+          }
+        } catch (e) {}
+      }
+    }
+
+    function exportStockHealthMarkdown() {
+      const md = `[WEEKLY STOCK HEALTH REPORT - BITBIT]
+Week Ending: ${new Date().toLocaleDateString()}
+
+1. EXECUTIVE SNAPSHOT
+- Total Stock Units: 1,420 | Total Retail Value: ₱142,000
+- Units Sold (This Week): 320 pcs
+- Sell-Through Rate (STR): 22.5%
+- Overall Weeks of Supply (WoS): 4.4 weeks
+
+2. HARDWARE & ATTACHMENT HEALTH
+- Charm-to-Base Attachment Ratio: 3.8:1 (Target: 3.5:1)
+- Core Bases WoS:
+  * Starter Bracelets: 4.2 weeks [Healthy]
+  * Necklaces/Chains: 2.1 weeks [Warning]
+  * Keyrings & Extras: 5.8 weeks [Healthy]
+- Fastener/Findings Supply: Sufficient
+
+3. TOP 5 VELOCITY SKUs (Fast Movers - Stock-out Risk)
+- BDS-BOS-BIG-SOLID-E: Sold 42 | On Hand 18 | WoS 1.2 wks -> [Action: Reorder ASAP]
+
+4. BOTTOM 5 SLOW-MOVING SKUs (Dead Stock Candidates)
+- CHM-STN-OLD-01: Weeks with 0 Sales: 4 | Units On Hand: 35 -> [Action: Bundle / Markdown]`;
+
+      navigator.clipboard.writeText(md).then(() => alert("✓ Markdown Stock Health Report copied to clipboard!"));
+    }
+
+    function downloadBlob(content, filename, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ================= SHELF CARE (INTAKE & QR BUILDER) =================
+    function switchShelfTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-tab-${t}`);
+        const indicator = btn.querySelector('.nav-indicator');
+        if (`tab-${t}` === tabId) {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1";
+        } else {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-transparent mb-1";
+        }
+      });
+
+      if (tabId === 'tab-received') loadWhiteBinParcels();
+      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+    }
+
+    function selectIntakeSource(type) {
+      ['courier', 'merchant', 'inhouse'].forEach(t => {
+        const btn = document.getElementById(`src-btn-${t}`);
+        if (t === type) {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        } else {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer";
+        }
+      });
+      document.getElementById('fields-courier').classList.toggle('hidden', type !== 'courier');
+      document.getElementById('fields-merchant').classList.toggle('hidden', type !== 'merchant');
+      document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
+    }
+
+    function generateFourPartSku() {
+      const cat = (document.getElementById('sku-cat-input')?.value || 'BDS').trim().toUpperCase();
+      const sub = (document.getElementById('sku-subcat-input')?.value || 'BOS').trim().toUpperCase();
+      const typ = (document.getElementById('sku-type-input')?.value || 'BIG').trim().toUpperCase();
+      const identRaw = (document.getElementById('sku-ident-input')?.value || 'SOLID E').trim().toUpperCase().replace(/\s+/g, '-');
+      const fullSku = `${cat}-${sub}-${typ}-${identRaw || '______'}`;
+      document.getElementById('sku-preview-badge').textContent = fullSku;
+      if (identRaw) renderQrCode('qrcode-container', fullSku, 80);
+      return fullSku;
+    }
+
+    function copyMasterSkuText() {
+      const sku = document.getElementById('sku-preview-badge').textContent;
+      navigator.clipboard.writeText(sku).then(() => alert(`Copied: ${sku}`));
+    }
+
+    function renderQrCode(containerId, text, size = 80) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = "";
+      try {
+        new QRCode(el, { text: text, width: size, height: size, colorDark: "#231B15", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) {}
+    }
+
+    function calculateTotalPcs() {
+      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
+      const per = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
+      const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
+      const total = (packs * per) + partial;
+      document.getElementById('sku-total-calc').textContent = total;
+      return total;
+    }
+
+    function openPhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'flex'; }
+    function closePhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'none'; }
+    function handleChosenMasterPhoto(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentSkuMasterPhoto = e.target.result;
+          document.getElementById('sku-img-preview').src = currentSkuMasterPhoto;
+          document.getElementById('sku-photo-preview-wrap').classList.remove('hidden');
+          document.getElementById('sku-photo-icon').classList.add('hidden');
+          document.getElementById('sku-photo-label').textContent = "Change Photo";
+          closePhotoPickerModal();
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function openPrintStationModal() {
+      const sku = generateFourPartSku();
+      const cat = document.getElementById('sku-cat-input').value.trim();
+      const sub = document.getElementById('sku-subcat-input').value.trim();
+      const typ = document.getElementById('sku-type-input').value.trim();
+      const ident = document.getElementById('sku-ident-input').value.trim();
+      const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
+      const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
+      const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
+      const isPrintOnly = document.getElementById('chk-print-only').checked;
+
+      pendingSkuData = {
+        sku: sku, name: `${sub} ${typ} ${ident}`, category: cat, subcategory: sub, type: typ, identifier: ident,
+        pack_count: packs, pcs_per_pack: perPack, partial_pcs: partial, total_pcs: calculateTotalPcs(),
+        is_print_only: isPrintOnly, image_url: currentSkuMasterPhoto || null
+      };
+
+      document.getElementById('badge-batch-qty').textContent = `${packs}x full`;
+      const pillPartial = document.getElementById('pill-mode-partial');
+      if (partial > 0) pillPartial.classList.remove('opacity-40', 'pointer-events-none');
+      else pillPartial.classList.add('opacity-40', 'pointer-events-none');
+
+      setPrintModeSelection('BATCH');
+      document.getElementById('print-station-modal').style.display = 'flex';
+    }
+
+    function closePrintStation() { document.getElementById('print-station-modal').style.display = 'none'; }
+
+    function setPrintModeSelection(mode) {
+      currentPrintMode = mode;
+      ['batch', 'single', 'partial'].forEach(m => {
+        const pill = document.getElementById(`pill-mode-${m}`);
+        pill.className = (m === mode.toLowerCase())
+          ? "p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition"
+          : "p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition";
+      });
+      updatePrintCardDisplay();
+    }
+
+    function updatePrintCardDisplay() {
+      if (!pendingSkuData) return;
+      const subLabel2Wrap = document.getElementById('sub-label-2-wrap');
+      const subLabel2Placeholder = document.getElementById('sub-label-2-placeholder');
+      const subTag1 = document.getElementById('sub-tag-1');
+      let printSku = pendingSkuData.sku;
+
+      if (currentPrintMode === 'PARTIAL') {
+        printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
+        subTag1.textContent = `🟡 Partial Pack (${pendingSkuData.partial_pcs} loose pcs)`;
+        subLabel2Wrap.classList.add('hidden');
+        subLabel2Placeholder.classList.remove('hidden');
+      } else if (currentPrintMode === 'SINGLE') {
+        subTag1.textContent = 'Standard Pack (10 pcs)';
+        subLabel2Wrap.classList.add('hidden');
+        subLabel2Placeholder.classList.remove('hidden');
+      } else {
+        subTag1.textContent = 'Standard Pack (10 pcs)';
+        subLabel2Wrap.classList.remove('hidden');
+        subLabel2Placeholder.classList.add('hidden');
+      }
+
+      document.getElementById('sub-sku-1').textContent = printSku;
+      document.getElementById('sub-sku-2').textContent = printSku;
+      renderQrCode('sub-qr-1', printSku, 48);
+      if (currentPrintMode === 'BATCH') renderQrCode('sub-qr-2', printSku, 48);
+    }
+
+    function copyCurrentSkuToClipboard() {
+      if (!pendingSkuData) return;
+      let printSku = pendingSkuData.sku;
+      if (currentPrintMode === 'PARTIAL') printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
+      navigator.clipboard.writeText(printSku).then(() => {
+        const btnText = document.getElementById('btn-copy-label-text');
+        btnText.textContent = "✓ Copied! Paste in Niimbot";
+        setTimeout(() => btnText.textContent = "Copy SKU for Niimbot App", 2000);
+      });
+    }
+
+    async function finalizeLabelPrintAndCommit() {
+      if (!pendingSkuData) return;
+      if (db) {
+        try {
+          await db.from('items').upsert([{
+            sku: pendingSkuData.sku, name: pendingSkuData.name, category: pendingSkuData.category,
+            subcategory: pendingSkuData.subcategory, type: pendingSkuData.type, image_url: pendingSkuData.image_url
+          }]);
+          if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
+            await db.from('intake_batches').insert([{
+              waybill: activeIntakeWaybill || 'MANUAL-INTAKE', sku: pendingSkuData.sku, pack_count: pendingSkuData.pack_count,
+              pcs_per_pack: pendingSkuData.pcs_per_pack, partial_pcs: pendingSkuData.partial_pcs, total_pcs: pendingSkuData.total_pcs,
+              intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+            }]);
+            const werqEl = document.getElementById('werqroom-count');
+            werqEl.textContent = (parseInt(werqEl.textContent) || 0) + pendingSkuData.pack_count;
+          }
+        } catch (e) {}
+      }
+      alert(pendingSkuData.is_print_only ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only).` : `✓ SKU [${pendingSkuData.sku}] saved!`);
+      closePrintStation();
+    }
+
+    // WHITE BIN SCAN VERIFICATION
+    async function loadWhiteBinParcels() {
+      if (db) {
+        try {
+          const { data } = await db.from('parcels').select('*').eq('status', 'IN_WHITE_BIN').order('created_at', { ascending: false });
+          if (data) whiteBinParcels = data;
+        } catch (e) {}
+      }
+      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+      const list = document.getElementById('whitebin-list');
+      if (whiteBinParcels.length === 0) {
+        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">White Bin is empty.</div>`;
+        return;
+      }
+      list.innerHTML = whiteBinParcels.map(p => `
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder" alt="Parcel">
+            <div>
+              <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
+              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+            </div>
+          </div>
+          <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
+        </div>
+      `).join('');
+    }
+
+    function startParcelVerificationModal(waybill) {
+      activeVerifyingParcel = whiteBinParcels.find(p => p.waybill === waybill);
+      if (!activeVerifyingParcel) return;
+      document.getElementById('verify-modal-img').src = activeVerifyingParcel.image_url;
+      document.getElementById('verify-modal-input').value = "";
+      document.getElementById('verify-modal-error').textContent = "";
+      document.getElementById('verify-parcel-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('verify-modal-input')?.focus(), 150);
+    }
+
+    function closeVerifyModal() {
+      document.getElementById('verify-parcel-modal').style.display = 'none';
+      activeVerifyingParcel = null;
+    }
+
+    document.getElementById('verify-modal-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmScanMatch();
+      }
+    });
+
+    async function confirmScanMatch() {
+      if (!activeVerifyingParcel) return;
+      const scannedCode = document.getElementById('verify-modal-input').value.trim();
+      if (!scannedCode) {
+        document.getElementById('verify-modal-error').textContent = "Please scan or enter the physical waybill barcode";
+        return;
+      }
+      if (scannedCode.toLowerCase() === activeVerifyingParcel.waybill.toLowerCase()) {
+        activeIntakeWaybill = activeVerifyingParcel.waybill;
+        if (db) {
+          try {
+            await db.from('parcels').update({ status: 'PROCESSING' }).eq('waybill', activeVerifyingParcel.waybill);
+          } catch (e) {}
+        }
+        whiteBinParcels = whiteBinParcels.filter(p => p.waybill !== activeVerifyingParcel.waybill);
+        document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+        document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+        closeVerifyModal();
+        document.getElementById('qr-waybill-tag').textContent = `Waybill: ${activeIntakeWaybill}`;
+        switchShelfTab('tab-qrbuilder');
+      } else {
+        document.getElementById('verify-modal-error').textContent = "Scanned barcode does not match this parcel!";
+        document.getElementById('verify-modal-input').value = "";
+      }
+    }
+
+    // MOVEMENT BATCH LOGISTICS
+    function setMovementMode(mode) {
+      currentMovementMode = mode;
+      const btnDelivered = document.getElementById('btn-mode-delivered');
+      const btnReplenish = document.getElementById('btn-mode-replenish');
+      if (mode === 'DELIVERED_TO_SHOP') {
+        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
+      } else {
+        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
+      }
+      setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
+    }
+
+    const moveScannerInput = document.getElementById('move-scanner-input');
+    moveScannerInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = moveScannerInput.value.trim();
+        if (code) {
+          handleScannedMovement(code);
+          moveScannerInput.value = '';
+        }
+      }
+    });
+
+    async function handleScannedMovement(scannedCode) {
+      const isPartial = scannedCode.toUpperCase().includes('-P');
+      let pcs = 10;
+      let cleanSku = scannedCode;
+      if (isPartial) {
+        const parts = scannedCode.split(/-P/i);
+        cleanSku = parts[0];
+        const parsedPcs = parseInt(parts[1]);
+        pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
+      }
+
+      let itemThumbnail = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+      let itemName = cleanSku;
+      if (db) {
+        try {
+          const { data } = await db.from('items').select('name, image_url').eq('sku', cleanSku).maybeSingle();
+          if (data) {
+            if (data.name) itemName = data.name;
+            if (data.image_url) itemThumbnail = data.image_url;
+          }
+        } catch (e) {}
+      }
+
+      stagedBatchMovements.push({
+        id: Date.now() + Math.random(), rawCode: scannedCode, sku: cleanSku, name: itemName,
+        thumbnail: itemThumbnail, isPartial: isPartial, standardPcs: isPartial ? pcs : 10,
+        actualPcs: pcs, isMismatch: false
+      });
+      renderBatchQueue();
+    }
+
+    function adjustBatchItemQty(idx, delta) {
+      const item = stagedBatchMovements[idx];
+      item.actualPcs = Math.max(1, item.actualPcs + delta);
+      item.isMismatch = (item.actualPcs !== item.standardPcs);
+      renderBatchQueue();
+    }
+
+    function renderBatchQueue() {
+      const container = document.getElementById('batch-movement-queue');
+      const counter = document.getElementById('batch-item-count');
+      const commitBtn = document.getElementById('btn-commit-batch');
+      counter.textContent = `${stagedBatchMovements.length} items`;
+      commitBtn.disabled = stagedBatchMovements.length === 0;
+
+      if (stagedBatchMovements.length === 0) {
+        container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">Scan bag QR codes to build batch movement list.</div>`;
+        return;
+      }
+
+      container.innerHTML = stagedBatchMovements.map((item, idx) => `
+        <div class="bg-bitCream p-2.5 rounded-2xl border ${item.isMismatch ? 'border-amber-400 bg-amber-50/50' : 'border-bitBorderDark'} flex items-center justify-between gap-2">
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <img src="${item.thumbnail}" class="w-10 h-10 object-cover rounded-xl border border-gray-200 shrink-0" alt="Item">
+            <div class="min-w-0">
+              <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${item.rawCode}</span>
+              ${item.isMismatch ? '<span class="text-[9px] font-bold text-amber-700 block">⚠️ Mismatch count logged</span>' : ''}
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <div class="flex items-center bg-white border border-bitBorderDark rounded-lg px-1 py-0.5 space-x-1">
+              <button type="button" onclick="adjustBatchItemQty(${idx}, -1)" class="w-5 h-5 flex items-center justify-center font-bold text-xs text-gray-500 hover:bg-gray-100 rounded">-</button>
+              <span class="text-xs font-bold font-sans w-5 text-center">${item.actualPcs}</span>
+              <button type="button" onclick="adjustBatchItemQty(${idx}, 1)" class="w-5 h-5 flex items-center justify-center font-bold text-xs text-gray-500 hover:bg-gray-100 rounded">+</button>
+            </div>
+            <button type="button" onclick="removeBatchItem(${idx})" class="text-gray-400 hover:text-bitPink font-bold text-xs p-1">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeBatchItem(idx) {
+      stagedBatchMovements.splice(idx, 1);
+      renderBatchQueue();
+    }
+
+    async function commitBatchMovement() {
+      if (stagedBatchMovements.length === 0) return;
+      const totalPcs = stagedBatchMovements.reduce((acc, curr) => acc + curr.actualPcs, 0);
+
+      if (db) {
+        try {
+          const payload = stagedBatchMovements.map(m => ({
+            sku: m.sku, action: currentMovementMode, bag_type: m.isPartial ? 'PARTIAL' : 'STANDARD',
+            pcs_moved: m.actualPcs, source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
+            dest_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
+            moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+          }));
+          await db.from('stock_movements').insert(payload);
+        } catch (e) {}
+      }
+
+      const werqEl = document.getElementById('werqroom-count');
+      const storeEl = document.getElementById('storage-count');
+      let wCount = parseInt(werqEl.textContent) || 0;
+      let sCount = parseInt(storeEl.textContent) || 0;
+
+      if (currentMovementMode === 'DELIVERED_TO_SHOP') {
+        werqEl.textContent = Math.max(0, wCount - stagedBatchMovements.length);
+        storeEl.textContent = sCount + stagedBatchMovements.length;
+      } else {
+        storeEl.textContent = Math.max(0, sCount - stagedBatchMovements.length);
+      }
+
+      alert(`✓ Batch Movement Complete!\nTransferred ${stagedBatchMovements.length} packs (${totalPcs} pcs) successfully.`);
+      stagedBatchMovements = [];
+      renderBatchQueue();
+    }
+
+    // ================= INTAKE & PHOTO HANDLERS =================
+    function previewGenericPhoto(input, imgId, wrapId, labelId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(imgId).src = e.target.result;
+          document.getElementById(wrapId).classList.remove('hidden');
+          document.getElementById(labelId).textContent = "✓ Photo Attached";
+          if (imgId === 'img-package-preview') packagePhotoData = e.target.result;
+          if (imgId === 'img-content-preview') contentPhotoData = e.target.result;
+          if (imgId === 'img-merch-list') merchantListPhotoData = e.target.result;
+          if (imgId === 'img-merch-content') merchantContentPhotoData = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function logCourierDropStrict() {
+      const barcode = document.getElementById('waybill-barcode-input').value.trim();
+      if (!barcode || !packagePhotoData || !contentPhotoData) {
+        alert("Please provide the Waybill Barcode, Outer Package Photo, and Content Photo.");
+        return;
+      }
+
+      const parcel = {
+        waybill: barcode, source_type: 'courier', image_url: contentPhotoData,
+        status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
+      if (db) {
+        try {
+          await db.from('parcels').insert([parcel]);
+        } catch (e) {}
+      }
+
+      whiteBinParcels.unshift(parcel);
+      document.getElementById('waybill-barcode-input').value = "";
+      document.getElementById('wrap-package-preview').classList.add('hidden');
+      document.getElementById('wrap-content-preview').classList.add('hidden');
+      document.getElementById('lbl-package').textContent = "Attach Outer Photo";
+      document.getElementById('lbl-content').textContent = "Attach Content Photo";
+      packagePhotoData = ""; contentPhotoData = "";
+      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+      alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
+    }
+
+    async function logMerchantDrop() {
+      const merchant = document.getElementById('merchant-name-input').value.trim();
+      if (!merchant || !merchantListPhotoData || !merchantContentPhotoData) {
+        alert("Please provide the Merchant / Store Name, Attached Item List Photo, and Package Content Photo.");
+        return;
+      }
+
+      const syntheticWaybill = `MERCH-${Date.now().toString().slice(-6)}`;
+      const parcel = {
+        waybill: syntheticWaybill,
+        source_type: 'merchant',
+        image_url: merchantContentPhotoData,
+        status: 'PROCESSING',
+        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
+      if (db) {
+        try {
+          await db.from('parcels').insert([parcel]);
+        } catch (e) {}
+      }
+
+      activeIntakeWaybill = syntheticWaybill;
+      document.getElementById('qr-waybill-tag').textContent = `Merchant: ${merchant} (${syntheticWaybill})`;
+      document.getElementById('merchant-name-input').value = "";
+      document.getElementById('wrap-merch-list').classList.add('hidden');
+      document.getElementById('wrap-merch-content').classList.add('hidden');
+      document.getElementById('lbl-merch-list').textContent = "Upload Item List / Receipt Photo";
+      document.getElementById('lbl-merch-content').textContent = "Upload Package Content Photo";
+      merchantListPhotoData = ""; merchantContentPhotoData = "";
+
+      switchShelfTab('tab-qrbuilder');
+    }
+
+    function startCameraScanner(targetInputId, onScanSuccessCallback) {
+      document.getElementById('camera-scanner-modal').style.display = 'flex';
+      html5QrScanner = new Html5Qrcode("scanner-reader-view");
+      html5QrScanner.start(
+        { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } },
+        (decodedText) => {
+          document.getElementById(targetInputId).value = decodedText;
+          stopCameraScanner();
+          if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
+        },
+        () => {}
+      ).catch(() => stopCameraScanner());
+    }
+
+    function stopCameraScanner() {
+      if (html5QrScanner) {
+        html5QrScanner.stop().then(() => {
+          html5QrScanner.clear();
+          html5QrScanner = null;
+        }).catch(() => {});
+      }
+      document.getElementById('camera-scanner-modal').style.display = 'none';
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bitbit Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- QR Code Generator Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- HTML5 QR/Barcode Camera Scanner -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- Tesseract.js Client-Side OCR Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- BRAND FONTS IMPORT -->
+  <style>
+    @font-face {
+      font-family: 'ProvidenceSans';
+      src: url('./fonts/Providence%20Sans%20Offc%20W00%20Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GoodTimeGrotesk';
+      src: url('./fonts/MADE%20GoodTime%20Grotesk%20PERSONAL%20USE.otf') format('opentype');
+      font-weight: 400 700;
+      font-style: normal;
+    }
+  </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"ProvidenceSans"', 'sans-serif'],
+            sans: ['"GoodTimeGrotesk"', 'sans-serif'],
+          },
+          colors: {
+            bitCream: '#FAF7F2',
+            bitWalnut: '#231B15',
+            bitMarigold: '#F5B731',
+            bitViolet: '#9E64F2',
+            bitPink: '#FF4E8D',
+            bitGreen: '#78B828',
+            bitBorder: '#E6E0D8',
+            bitBorderDark: '#D9D1C7'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-bitCream text-bitWalnut font-sans min-h-screen flex flex-col antialiased selection:bg-bitMarigold selection:text-bitWalnut relative">
+
+  <!-- ==================== LAUNCH PIN GATE ==================== -->
+  <div id="gate-lockscreen" class="fixed inset-0 bg-bitCream z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-5 shadow-xl border border-bitBorder">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 mx-auto flex items-center justify-center">
+          <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+        </div>
+        <div>
+          <h2 class="text-xl font-bold tracking-tight text-bitWalnut">Bitbit</h2>
+          <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Store Operations</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Select Name</label>
+          <select id="gate-crew-select" onchange="onGateCrewSelect()" class="w-full p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none focus:border-bitMarigold">
+            <option value="">-- Choose your name --</option>
+          </select>
+        </div>
+
+        <div id="gate-pin-container" class="space-y-3 hidden">
+          <label class="block text-xs font-bold text-gray-500 text-center uppercase tracking-wider">Enter 4-Digit PIN</label>
+          <div class="flex justify-center space-x-3 py-1">
+            <span id="gate-pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+          </div>
+
+          <div id="gate-pin-error" class="text-center text-xs font-bold text-bitPink h-4"></div>
+
+          <div class="grid grid-cols-3 gap-2 font-sans font-bold">
+            <button type="button" onclick="enterGateDigit('1')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">1</button>
+            <button type="button" onclick="enterGateDigit('2')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">2</button>
+            <button type="button" onclick="enterGateDigit('3')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">3</button>
+            <button type="button" onclick="enterGateDigit('4')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">4</button>
+            <button type="button" onclick="enterGateDigit('5')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">5</button>
+            <button type="button" onclick="enterGateDigit('6')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">6</button>
+            <button type="button" onclick="enterGateDigit('7')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">7</button>
+            <button type="button" onclick="enterGateDigit('8')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">8</button>
+            <button type="button" onclick="enterGateDigit('9')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">9</button>
+            <button type="button" onclick="clearGatePin()" class="py-3 bg-gray-50 border border-bitBorder text-gray-500 text-xs rounded-2xl cursor-pointer">Clear</button>
+            <button type="button" onclick="enterGateDigit('0')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">0</button>
+            <button type="button" onclick="deleteGateDigit()" class="py-3 bg-gray-50 border border-bitBorder text-gray-500 text-sm rounded-2xl cursor-pointer">⌫</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-bitBorder sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-xs">
+    <div class="flex items-center space-x-2.5">
+      <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden text-bitWalnut font-bold text-xs bg-bitCream border border-bitBorderDark px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-bitMarigold/20">
+        ← Hub
+      </button>
+      <div class="w-8 h-8 flex items-center justify-center shrink-0">
+        <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-bitWalnut leading-none">Bitbit</h1>
+        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Store Operations</span>
+      </div>
+    </div>
+
+    <button type="button" onclick="promptSwitchShift()" class="flex items-center space-x-2 bg-bitCream border border-bitBorderDark px-3 py-1.5 rounded-full cursor-pointer shadow-xs">
+      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-bitMarigold text-bitWalnut flex items-center justify-center text-[10px] font-bold">?</div>
+      <div class="text-left">
+        <span id="crew-name" class="text-xs font-bold text-bitWalnut block leading-none">Staff</span>
+        <span id="crew-role-badge" class="text-[9px] text-bitViolet font-bold block leading-none mt-0.5">Role</span>
+      </div>
+    </button>
+  </header>
+
+  <!-- ==================== VIEW 1: MAIN HUB ==================== -->
+  <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3">
+    <div class="text-center space-y-1 mb-2">
+      <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut border border-bitBorder uppercase">Workspace</span>
+      <h2 class="text-2xl font-bold text-bitWalnut tracking-tight">Bitcrew Portal</h2>
+      <p class="text-xs text-gray-500 font-medium">Select an operational module to begin.</p>
+    </div>
+
+    <div class="space-y-3">
       <!-- 1. SHELF HELP (MARIGOLD) -->
       <button type="button" onclick="goToView('view-shelf-help')" class="w-full bg-[#F5B731] hover:bg-[#e4a724] text-bitWalnut py-5 px-6 rounded-[28px] border border-[#dfa21c] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">

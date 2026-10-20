@@ -1682,7 +1682,7 @@
                 <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
                 <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Catalog Item'}</span>
                 <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold ${packs > 0 ? 'bg-bitGreen/20 text-bitGreen' : 'bg-gray-200 text-gray-500'}">
-                  ${packs > 0 ? `${packs} packs in stock` : '0 packs (Out of stock)'}
+                  ${packs > 0 ? packs + ' packs in stock' : '0 packs (Out of stock)'}
                 </span>
               </div>
             </div>

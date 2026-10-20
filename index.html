@@ -194,16 +194,20 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <button type="button" onclick="openStockCatalogModal()" class="py-2.5 px-2 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-bitWalnut font-bold text-xs rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
-          <span>📖</span>
-          <span>Open Stock Catalog</span>
-        </button>
-        <button type="button" onclick="startFloorAuditMode()" class="py-2.5 px-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
-          <span>⚡</span>
-          <span>Start Floor Audit</span>
-        </button>
-      </div>
+      <div class="grid grid-cols-3 gap-2 mb-3">
+                <button type="button" onclick="openStockCatalogModal()" class="py-2.5 px-2 bg-white hover:bg-gray-50 border border-bitBorder rounded-xl font-bold text-[11px] text-bitWalnut shadow-sm flex items-center justify-center gap-1 cursor-pointer">
+                  <span>📖</span>
+                  <span>Catalog</span>
+                </button>
+                <button type="button" onclick="startFloorAuditMode()" class="py-2.5 px-2 bg-white hover:bg-gray-50 border border-bitBorder rounded-xl font-bold text-[11px] text-bitWalnut shadow-sm flex items-center justify-center gap-1 cursor-pointer">
+                  <span>⚡</span>
+                  <span>Floor Audit</span>
+                </button>
+                <button type="button" onclick="openNewArrivalsModal()" class="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer">
+                  <span>✨</span>
+                  <span>New (7 Days)</span>
+                </button>
+              </div>
 
       <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
         <div class="flex items-center justify-between mb-1">
@@ -863,7 +867,39 @@
       </div>
     </div>
   </main>
+  
+<!-- MOVEMENT HISTORY MODAL -->
+  <div id="movement-history-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitMarigold bg-amber-100 px-2 py-0.5 rounded-full">Audit Trail</span>
+          <h3 id="history-modal-sku" class="font-bold text-sm text-bitWalnut mt-0.5 font-mono">SKU History</h3>
+        </div>
+        <button type="button" onclick="closeMovementHistoryModal()" class="text-gray-400 font-bold p-1 text-base">&times;</button>
+      </div>
+      <div id="history-modal-timeline" class="space-y-2 overflow-y-auto flex-1 pr-1 text-xs">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
 
+  <!-- RECENT ARRIVALS (LAST 7 DAYS) MODAL -->
+  <div id="new-arrivals-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitGreen bg-emerald-100 px-2 py-0.5 rounded-full">Floor Awareness</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">✨ New Arrivals (Past 7 Days)</h3>
+        </div>
+        <button type="button" onclick="closeNewArrivalsModal()" class="text-gray-400 font-bold p-1 text-base">&times;</button>
+      </div>
+      <div id="new-arrivals-scroll-list" class="space-y-2.5 overflow-y-auto flex-1 pr-1">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+  
   <!-- STOCK CATALOG MODAL -->
   <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <!-- HIDDEN FILE INPUT FOR STAFF CATALOG PHOTO CAPTURE -->
@@ -1534,7 +1570,10 @@
     }
 
     // ================= SHELF HELP =================
-   async function runShelfHelpSearch(query) {
+   // Cache for movement logs to serve history popups without refetching
+    let activeSearchMovements = {};
+
+    async function runShelfHelpSearch(query) {
       const q = (query || document.getElementById('shelf-help-search-input').value).trim();
       const resultArea = document.getElementById('shelf-help-result-area');
       if (!q) {
@@ -1563,6 +1602,8 @@
 
         const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
 
+        activeSearchMovements = {};
+
         const itemsWithStock = matchedItems.map(item => {
           const itemIntakes = (intakes || []).filter(b => b.sku === item.sku);
           const totalIntakePacks = itemIntakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0);
@@ -1572,12 +1613,14 @@
           const werqPacks = Math.max(0, totalIntakePacks - shopPacks);
           const totalPacks = werqPacks + shopPacks;
 
+          activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
           return {
             ...item,
             werqPacks,
             shopPacks,
             totalPacks,
-            movements: itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            movementCount: itemMovements.length
           };
         });
 
@@ -1587,20 +1630,6 @@
           const thumbSrc = item.image_url ? item.image_url : defaultThumb;
           const stockBadgeClass = item.totalPacks > 0 ? "bg-bitGreen/20 text-bitGreen" : "bg-red-100 text-red-800";
           const stockBadgeText = item.totalPacks > 0 ? (item.totalPacks + " Full Packs in Inventory") : "0 Packs (Out of Stock)";
-
-          let logHtml = '<div class="text-[10px] text-gray-400 italic bg-white/60 p-2 rounded-lg border border-dashed border-bitBorder text-center">No post-audit movement logged yet</div>';
-
-          if (item.movements && item.movements.length > 0) {
-            logHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">' + item.movements.slice(0, 5).map(m => {
-              const d = new Date(m.created_at);
-              const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-              const isShop = m.action === "DELIVERED_TO_SHOP";
-              const tagClass = isShop ? "text-bitMarigold" : "text-bitGreen";
-              const tagText = isShop ? "➔ To Shop" : "✓ Restock";
-              const mover = m.moved_by || "Staff";
-              return '<div class="flex items-center justify-between text-[10px] bg-white p-1.5 rounded-lg border border-bitBorder"><div><span class="font-bold ' + tagClass + '">' + tagText + '</span><span class="text-gray-400 ml-1">(' + mover + ')</span></div><span class="text-gray-400 font-mono">' + formattedDate + '</span></div>';
-            }).join("") + '</div>';
-          }
 
           return '<div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3 mb-3">' +
             '<div class="flex items-start space-x-3">' +
@@ -1624,17 +1653,121 @@
                 '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.shopPacks + ' packs</span>' +
               '</div>' +
             '</div>' +
-            '<div class="pt-2 border-t border-bitBorder/60">' +
-              '<span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Recent Movement Log</span>' +
-              logHtml +
+            '<div class="grid grid-cols-2 gap-2 pt-1">' +
+              '<button type="button" onclick="openMovementHistoryModal(\'' + item.sku + '\')" class="py-2 bg-white hover:bg-gray-100 text-bitWalnut border border-bitBorder font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-1">' +
+                '🕒 History (' + item.movementCount + ')' +
+              '</button>' +
+              '<button type="button" onclick="triggerFloorRequestFromChecker(\'' + item.sku + '\')" class="py-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">' +
+                '+ Request Restock' +
+              '</button>' +
             '</div>' +
-            '<button type="button" onclick="triggerFloorRequestFromChecker(\'' + item.sku + '\')" class="w-full py-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">+ Request Restock for this Item</button>' +
           '</div>';
         }).join("");
 
       } catch (err) {
         resultArea.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Search error: ' + err.message + '</div>';
       }
+    }
+
+    function openMovementHistoryModal(sku) {
+      document.getElementById('history-modal-sku').textContent = sku;
+      const timelineContainer = document.getElementById('history-modal-timeline');
+      const logs = activeSearchMovements[sku] || [];
+
+      if (logs.length === 0) {
+        timelineContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic">No movements recorded yet for this item.</div>';
+      } else {
+        timelineContainer.innerHTML = logs.map(m => {
+          const d = new Date(m.created_at);
+          const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+          const isShop = m.action === "DELIVERED_TO_SHOP";
+          const tagClass = isShop ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800";
+          const tagText = isShop ? "Delivered to Shop" : "Replenished / Restocked";
+          const mover = m.moved_by || "Staff";
+
+          return '<div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1">' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="font-bold px-2 py-0.5 rounded-full text-[10px] ' + tagClass + '">' + tagText + '</span>' +
+              '<span class="text-gray-400 font-mono text-[10px]">' + formattedDate + '</span>' +
+            '</div>' +
+            '<div class="text-[11px] text-gray-600 flex justify-between">' +
+              '<span>Handled by: <strong>' + mover + '</strong></span>' +
+              '<span>Qty: <strong>' + (m.pcs_moved || 10) + ' pcs</strong></span>' +
+            '</div>' +
+          '</div>';
+        }).join("");
+      }
+
+      document.getElementById('movement-history-modal').style.display = 'flex';
+    }
+
+    function closeMovementHistoryModal() {
+      document.getElementById('movement-history-modal').style.display = 'none';
+    }
+
+    async function openNewArrivalsModal() {
+      const modal = document.getElementById('new-arrivals-modal');
+      const listContainer = document.getElementById('new-arrivals-scroll-list');
+      modal.style.display = 'flex';
+      listContainer.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Scanning recent shop deliveries...</div>';
+
+      if (!db) return;
+
+      try {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const sevenDaysIso = sevenDaysAgo.toISOString();
+
+        const { data: recentMovements } = await db.from('stock_movements')
+          .select('sku, action, pcs_moved, moved_by, created_at')
+          .eq('action', 'DELIVERED_TO_SHOP')
+          .gte('created_at', sevenDaysIso)
+          .order('created_at', { ascending: false });
+
+        if (!recentMovements || recentMovements.length === 0) {
+          listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs italic">No shop deliveries recorded in the past 7 days.</div>';
+          return;
+        }
+
+        const uniqueSkus = [...new Set(recentMovements.map(m => m.sku))];
+        const { data: itemDetails } = await db.from('items').select('*').in('sku', uniqueSkus);
+        const itemMap = {};
+        (itemDetails || []).forEach(it => { itemMap[it.sku] = it; });
+
+        listContainer.innerHTML = uniqueSkus.map(sku => {
+          const it = itemMap[sku] || { sku, name: 'Catalog Item', image_url: null };
+          const deliveries = recentMovements.filter(m => m.sku === sku);
+          const totalDeliveredPacks = deliveries.length;
+          const latest = deliveries[0];
+          const d = new Date(latest.created_at);
+          const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+          const thumbSrc = it.image_url || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+
+          return '<div class="p-3 bg-bitCream rounded-2xl border border-bitBorder flex items-center justify-between gap-3">' +
+            '<div class="flex items-center space-x-3 min-w-0">' +
+              '<img src="' + thumbSrc + '" class="w-12 h-12 rounded-xl object-cover border border-bitBorder bg-white shrink-0" alt="' + sku + '">' +
+              '<div class="min-w-0">' +
+                '<span class="font-mono font-bold text-xs text-bitWalnut block truncate">' + sku + '</span>' +
+                '<span class="text-[11px] text-gray-600 block truncate">' + (it.name || '') + '</span>' +
+                '<span class="text-[10px] text-emerald-700 font-bold">+' + totalDeliveredPacks + ' packs delivered</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="text-right shrink-0">' +
+              '<span class="text-[10px] text-gray-400 block font-mono">' + formattedDate + '</span>' +
+              '<button type="button" onclick="closeNewArrivalsModal(); document.getElementById(\'shelf-help-search-input\').value = \'' + sku + '\'; runShelfHelpSearch(\'' + sku + '\');" class="mt-1 px-2.5 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg">' +
+                'Check Stock' +
+              '</button>' +
+            '</div>' +
+          '</div>';
+        }).join("");
+
+      } catch (e) {
+        listContainer.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Failed to load arrivals: ' + e.message + '</div>';
+      }
+    }
+
+    function closeNewArrivalsModal() {
+      document.getElementById('new-arrivals-modal').style.display = 'none';
     }
 
     // ================= STOCK CATALOG MODAL =================

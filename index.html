@@ -189,12 +189,27 @@
     <!-- TAB 1: DROP-OFF -->
     <section id="tab-dropoff" class="tab-pane space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        
+        <!-- STEP 1: RESTORED INTAKE SOURCE SELECTOR -->
         <div class="border-b border-gray-100 pb-3">
-          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Intake</span>
-          <h2 class="text-lg font-bold text-bitWalnut mt-1">Package Drop-Off</h2>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase tracking-wide mb-1">Step 1: Intake Source</span>
+          <h2 class="text-lg font-bold text-bitWalnut">Select Incoming Type</h2>
+          
+          <div class="grid grid-cols-3 gap-1.5 mt-2.5">
+            <button type="button" onclick="selectIntakeSource('courier')" id="src-btn-courier" class="py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+              Courier Drop
+            </button>
+            <button type="button" onclick="selectIntakeSource('merchant')" id="src-btn-merchant" class="py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer">
+              Merchant
+            </button>
+            <button type="button" onclick="selectIntakeSource('inhouse')" id="src-btn-inhouse" class="py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer">
+              In-House
+            </button>
+          </div>
         </div>
 
-        <div class="space-y-3">
+        <!-- COURIER FIELDS -->
+        <div id="fields-courier" class="space-y-3">
           <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
             <div class="flex items-center justify-between mb-1">
               <label class="text-[11px] font-bold text-gray-600 uppercase">1. Waybill Barcode</label>
@@ -231,6 +246,55 @@
             Send Parcel to Werqroom White Bin →
           </button>
         </div>
+
+        <!-- MERCHANT FIELDS -->
+        <div id="fields-merchant" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">1. Merchant Receipt / Sheet</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-merch-preview', 'wrap-merch-preview', 'lbl-merch')">
+              <div id="wrap-merch-preview" class="hidden mb-1">
+                <img id="img-merch-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Receipt">
+              </div>
+              <span id="lbl-merch" class="text-xs font-bold text-gray-600">Add Receipt Photo</span>
+            </label>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Delivered Goods Photo</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-merch-batch', 'wrap-merch-batch', 'lbl-merch-batch')">
+              <div id="wrap-merch-batch" class="hidden mb-1">
+                <img id="img-merch-batch" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Goods">
+              </div>
+              <span id="lbl-merch-batch" class="text-xs font-bold text-gray-600">Add Goods Photo</span>
+            </label>
+          </div>
+          <button type="button" onclick="switchShelfTab('tab-qrbuilder')" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Proceed to QR Builder →
+          </button>
+        </div>
+
+        <!-- IN-HOUSE FIELDS -->
+        <div id="fields-inhouse" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Material / Craft Batch Notes</label>
+            <input type="text" placeholder="e.g. Handmade Clay Batch 04" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Finished Craft Photo</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+              <input type="file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-inhouse-preview', 'wrap-inhouse-preview', 'lbl-inhouse')">
+              <div id="wrap-inhouse-preview" class="hidden mb-1">
+                <img id="img-inhouse-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Craft">
+              </div>
+              <span id="lbl-inhouse" class="text-xs font-bold text-gray-600">Add Finished Item Photo</span>
+            </label>
+          </div>
+          <button type="button" onclick="switchShelfTab('tab-qrbuilder')" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Proceed to QR Builder →
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -244,6 +308,7 @@
           </div>
           <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Parcels</span>
         </div>
+        <p class="text-xs text-gray-500 font-medium">Select a parcel and scan physical box waybill to verify.</p>
         <div id="whitebin-list" class="space-y-2"></div>
       </div>
     </section>
@@ -253,7 +318,7 @@
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-2">
           <div>
-            <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Werqroom Intake</span>
+            <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Direct Intake</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">SKU & Label Generator</h2>
           </div>
         </div>
@@ -279,7 +344,7 @@
           <input type="text" id="sku-ident-input" value="SOLID E" placeholder="SOLID E or STAR-01" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
         </div>
 
-        <!-- STREAMLINED COMPACT PREVIEW (NO DUPLICATE BOXES) -->
+        <!-- STREAMLINED COMPACT PREVIEW -->
         <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between">
           <div>
             <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
@@ -366,7 +431,7 @@
           <input type="text" id="move-scanner-input" placeholder="Scan standard or -P partial bag..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
         </div>
 
-        <!-- BATCH STAGING TABLE WITH INLINE COUNT OVERRIDES -->
+        <!-- BATCH STAGING TABLE -->
         <div class="space-y-2 pt-1">
           <div class="flex items-center justify-between text-xs font-bold text-gray-600">
             <span>Staged Batch Items</span>
@@ -387,7 +452,7 @@
       </div>
     </section>
 
-    <!-- 4-TAB BOTTOM NAVIGATION WITH ACCURATE ACTIVE HIGHLIGHT -->
+    <!-- 4-TAB BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-tab-dropoff" class="nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
@@ -432,7 +497,46 @@
     </div>
   </div>
 
-  <!-- ==================== 50x30mm DUAL-LABEL NIIMBOT MODAL ==================== -->
+  <!-- ==================== PARCEL PHYSICAL VERIFICATION MODAL ==================== -->
+  <div id="verify-parcel-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Scan Match Required</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Confirm Physical Parcel</h3>
+        </div>
+        <button type="button" onclick="closeVerifyModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-2 text-center">
+        <img id="verify-modal-img" src="" class="w-full h-32 object-cover rounded-2xl border border-bitBorder bg-gray-50" alt="Parcel Contents">
+        <span class="text-[11px] text-gray-500 font-medium block">Logged open contents photo</span>
+      </div>
+
+      <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitWalnut">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-bitWalnut uppercase">Scan Box Waybill</label>
+          <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
+            <span>📷 Camera</span>
+          </button>
+        </div>
+        <input type="text" id="verify-modal-input" placeholder="Scan with Eyoyo or type..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
+      </div>
+
+      <div id="verify-modal-error" class="text-xs font-bold text-red-600 text-center min-h-[16px]"></div>
+
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="confirmScanMatch()" class="flex-1 py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer transition">
+          Confirm Match →
+        </button>
+        <button type="button" onclick="closeVerifyModal()" class="py-3 px-4 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl cursor-pointer">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 50x30mm NIIMBOT DUAL-LABEL MODAL ==================== -->
   <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder my-auto">
       <div class="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -443,54 +547,53 @@
         <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
 
-      <!-- 3 EXPLICIT PRINT MODES -->
+      <!-- INTERACTIVE PRINT MODE PILLS -->
       <div class="grid grid-cols-3 gap-1.5 text-center">
-        <label class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block">
-          <input type="radio" name="print-mode-choice" value="BATCH" checked onchange="updatePrintCardDisplay()" class="hidden">
+        <button type="button" onclick="setPrintModeSelection('BATCH')" id="pill-mode-batch" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
           <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
           <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
-        </label>
+        </button>
 
-        <label class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block">
-          <input type="radio" name="print-mode-choice" value="SINGLE" onchange="updatePrintCardDisplay()" class="hidden">
+        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
           <span class="text-[11px] font-bold text-gray-700 block">Single</span>
           <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
-        </label>
+        </button>
 
-        <label id="lbl-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block">
-          <input type="radio" name="print-mode-choice" value="PARTIAL" onchange="updatePrintCardDisplay()" class="hidden">
+        <button type="button" onclick="setPrintModeSelection('PARTIAL')" id="pill-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
           <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
           <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
-        </label>
+        </button>
       </div>
 
-      <!-- 50x30mm PREVIEW CONTAINER (SPLIT INTO TWO 50x15mm ROWS) -->
+      <!-- 50x30mm SHEET CONTAINER (2 OUTPUTS FOR BATCH, 1 FOR SINGLE/PARTIAL) -->
       <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
         <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
         
-        <!-- CARD MATCHING 50x30 RATIO (Two identical 50x15mm labels) -->
         <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
-          <!-- TOP SUB-LABEL (50x15mm) -->
+          <!-- TOP SUB-LABEL (Always visible) -->
           <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
             <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
             <div class="min-w-0">
               <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
             </div>
           </div>
 
-          <!-- BOTTOM SUB-LABEL (50x15mm) -->
-          <div class="flex items-center space-x-2 pt-1.5">
+          <!-- BOTTOM SUB-LABEL (Visible in BATCH mode only, hidden in Single/Partial) -->
+          <div id="sub-label-2-wrap" class="flex items-center space-x-2 pt-1.5">
             <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
             <div class="min-w-0">
               <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+              <span id="sub-tag-2" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
             </div>
+          </div>
+          <div id="sub-label-2-placeholder" class="hidden py-4 text-center text-[9px] font-bold text-gray-300">
+            [ Second label slot empty ]
           </div>
         </div>
       </div>
 
-      <!-- 1-CLICK COPY ACTION FOR NIIMBOT APP -->
+      <!-- 1-CLICK COPY ACTION FOR NIIMBOT -->
       <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
         <span>📋</span>
         <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
@@ -535,8 +638,10 @@
     let contentPhotoData = "";
     let currentSkuMasterPhoto = "";
     let whiteBinParcels = [];
+    let activeVerifyingParcel = null;
     let activeIntakeWaybill = "";
 
+    let currentPrintMode = 'BATCH';
     let currentMovementMode = "DELIVERED_TO_SHOP";
     let stagedBatchMovements = [];
     let pendingSkuData = null;
@@ -638,7 +743,7 @@
       } else {
         backBtn.classList.remove('hidden');
         if (viewId === 'view-shelf-care') {
-          switchShelfTab('tab-qrbuilder');
+          switchShelfTab('tab-dropoff');
           loadWhiteBinParcels();
         }
       }
@@ -663,6 +768,22 @@
 
       if (tabId === 'tab-received') loadWhiteBinParcels();
       if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+    }
+
+    // ================= INTAKE SOURCE SELECTOR =================
+    function selectIntakeSource(type) {
+      ['courier', 'merchant', 'inhouse'].forEach(t => {
+        const btn = document.getElementById(`src-btn-${t}`);
+        if (t === type) {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        } else {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer";
+        }
+      });
+
+      document.getElementById('fields-courier').classList.toggle('hidden', type !== 'courier');
+      document.getElementById('fields-merchant').classList.toggle('hidden', type !== 'merchant');
+      document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
     }
 
     // ================= 4-PART SKU GENERATOR =================
@@ -729,7 +850,7 @@
       }
     }
 
-    // ================= 50x30mm NIIMBOT MODAL =================
+    // ================= 50x30mm NIIMBOT MODAL & PILL SWITCHER =================
     function openPrintStationModal() {
       const sku = generateFourPartSku();
       const cat = document.getElementById('sku-cat-input').value.trim();
@@ -750,14 +871,14 @@
 
       document.getElementById('badge-batch-qty').textContent = `${packs}x full`;
       
-      const lblPartial = document.getElementById('lbl-mode-partial');
+      const pillPartial = document.getElementById('pill-mode-partial');
       if (partial > 0) {
-        lblPartial.classList.remove('opacity-40', 'pointer-events-none');
+        pillPartial.classList.remove('opacity-40', 'pointer-events-none');
       } else {
-        lblPartial.classList.add('opacity-40', 'pointer-events-none');
+        pillPartial.classList.add('opacity-40', 'pointer-events-none');
       }
 
-      updatePrintCardDisplay();
+      setPrintModeSelection('BATCH');
       document.getElementById('print-station-modal').style.display = 'flex';
     }
 
@@ -765,27 +886,60 @@
       document.getElementById('print-station-modal').style.display = 'none';
     }
 
+    // DYNAMIC PILL TOGGLE HANDLER
+    function setPrintModeSelection(mode) {
+      currentPrintMode = mode;
+      const modes = ['batch', 'single', 'partial'];
+
+      modes.forEach(m => {
+        const pill = document.getElementById(`pill-mode-${m}`);
+        if (m === mode.toLowerCase()) {
+          pill.className = "p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition";
+        } else {
+          pill.className = "p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition";
+        }
+      });
+
+      updatePrintCardDisplay();
+    }
+
     function updatePrintCardDisplay() {
       if (!pendingSkuData) return;
-      const selectedMode = document.querySelector('input[name="print-mode-choice"]:checked')?.value || 'BATCH';
+
+      const subLabel2Wrap = document.getElementById('sub-label-2-wrap');
+      const subLabel2Placeholder = document.getElementById('sub-label-2-placeholder');
+      const subTag1 = document.getElementById('sub-tag-1');
 
       let printSku = pendingSkuData.sku;
-      if (selectedMode === 'PARTIAL') {
+
+      if (currentPrintMode === 'PARTIAL') {
         printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
+        subTag1.textContent = `🟡 Partial Pack (${pendingSkuData.partial_pcs} loose pcs)`;
+        subLabel2Wrap.classList.add('hidden');
+        subLabel2Placeholder.classList.remove('hidden');
+      } else if (currentPrintMode === 'SINGLE') {
+        subTag1.textContent = 'Standard Pack (10 pcs)';
+        subLabel2Wrap.classList.add('hidden');
+        subLabel2Placeholder.classList.remove('hidden');
+      } else { // BATCH (Dual Output)
+        subTag1.textContent = 'Standard Pack (10 pcs)';
+        subLabel2Wrap.classList.remove('hidden');
+        subLabel2Placeholder.classList.add('hidden');
       }
 
       document.getElementById('sub-sku-1').textContent = printSku;
       document.getElementById('sub-sku-2').textContent = printSku;
 
       renderQrCode('sub-qr-1', printSku, 48);
-      renderQrCode('sub-qr-2', printSku, 48);
+      if (currentPrintMode === 'BATCH') {
+        renderQrCode('sub-qr-2', printSku, 48);
+      }
     }
 
     function copyCurrentSkuToClipboard() {
       if (!pendingSkuData) return;
-      const selectedMode = document.querySelector('input[name="print-mode-choice"]:checked')?.value || 'BATCH';
       let printSku = pendingSkuData.sku;
-      if (selectedMode === 'PARTIAL') {
+      if (currentPrintMode === 'PARTIAL') {
         printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
       }
 
@@ -834,6 +988,91 @@
         : `✓ SKU [${pendingSkuData.sku}] saved and ${pendingSkuData.pack_count} packs added to Werqroom!`);
 
       closePrintStation();
+    }
+
+    // ================= WHITE BIN VERIFICATION MATCH WORKFLOW =================
+    async function loadWhiteBinParcels() {
+      if (db) {
+        try {
+          const { data } = await db.from('parcels').select('*').eq('status', 'IN_WHITE_BIN').order('created_at', { ascending: false });
+          if (data) whiteBinParcels = data;
+        } catch (e) {}
+      }
+      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+
+      const list = document.getElementById('whitebin-list');
+      if (whiteBinParcels.length === 0) {
+        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">White Bin is empty.</div>`;
+        return;
+      }
+      list.innerHTML = whiteBinParcels.map(p => `
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder" alt="Parcel">
+            <div>
+              <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
+              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+            </div>
+          </div>
+          <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
+        </div>
+      `).join('');
+    }
+
+    function startParcelVerificationModal(waybill) {
+      activeVerifyingParcel = whiteBinParcels.find(p => p.waybill === waybill);
+      if (!activeVerifyingParcel) return;
+
+      document.getElementById('verify-modal-img').src = activeVerifyingParcel.image_url;
+      document.getElementById('verify-modal-input').value = "";
+      document.getElementById('verify-modal-error').textContent = "";
+      document.getElementById('verify-parcel-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('verify-modal-input')?.focus(), 150);
+    }
+
+    function closeVerifyModal() {
+      document.getElementById('verify-parcel-modal').style.display = 'none';
+      activeVerifyingParcel = null;
+    }
+
+    document.getElementById('verify-modal-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        confirmScanMatch();
+      }
+    });
+
+    async function confirmScanMatch() {
+      if (!activeVerifyingParcel) return;
+
+      const scannedCode = document.getElementById('verify-modal-input').value.trim();
+      if (!scannedCode) {
+        document.getElementById('verify-modal-error').textContent = "Please scan or enter the physical waybill barcode";
+        return;
+      }
+
+      if (scannedCode.toLowerCase() === activeVerifyingParcel.waybill.toLowerCase()) {
+        activeIntakeWaybill = activeVerifyingParcel.waybill;
+
+        // Strike out of White Bin in database
+        if (db) {
+          try {
+            await db.from('parcels').update({ status: 'PROCESSING' }).eq('waybill', activeVerifyingParcel.waybill);
+          } catch (e) {}
+        }
+
+        whiteBinParcels = whiteBinParcels.filter(p => p.waybill !== activeVerifyingParcel.waybill);
+        document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+        document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+        
+        closeVerifyModal();
+        document.getElementById('qr-waybill-tag').textContent = `Waybill: ${activeIntakeWaybill}`;
+        switchShelfTab('tab-qrbuilder');
+      } else {
+        document.getElementById('verify-modal-error').textContent = "Scanned barcode does not match this parcel! Check physical box.";
+        document.getElementById('verify-modal-input').value = "";
+      }
     }
 
     // ================= MOVEMENT STATION BATCH QUEUE & INLINE ADJUSTER =================
@@ -938,7 +1177,6 @@
             </div>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <!-- INLINE ADJUSTER -->
             <div class="flex items-center bg-white border border-bitBorderDark rounded-lg px-1 py-0.5 space-x-1">
               <button type="button" onclick="adjustBatchItemQty(${idx}, -1)" class="w-5 h-5 flex items-center justify-center font-bold text-xs text-gray-500 hover:bg-gray-100 rounded">-</button>
               <span class="text-xs font-bold font-sans w-5 text-center">${item.actualPcs}</span>
@@ -964,7 +1202,7 @@
         try {
           const payload = stagedBatchMovements.map(m => ({
             sku: m.sku,
-            action: currentMovementMode,
+            action: m.mode,
             bag_type: m.isPartial ? 'PARTIAL' : 'STANDARD',
             pcs_moved: m.actualPcs,
             source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
@@ -975,7 +1213,6 @@
         } catch (e) {}
       }
 
-      // Update counters
       const werqEl = document.getElementById('werqroom-count');
       const storeEl = document.getElementById('storage-count');
       let wCount = parseInt(werqEl.textContent) || 0;
@@ -1065,40 +1302,6 @@
       document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
       document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
       alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
-    }
-
-    async function loadWhiteBinParcels() {
-      if (db) {
-        try {
-          const { data } = await db.from('parcels').select('*').eq('status', 'IN_WHITE_BIN').order('created_at', { ascending: false });
-          if (data) whiteBinParcels = data;
-        } catch (e) {}
-      }
-      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
-      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
-
-      const list = document.getElementById('whitebin-list');
-      if (whiteBinParcels.length === 0) {
-        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">White Bin is empty.</div>`;
-        return;
-      }
-      list.innerHTML = whiteBinParcels.map(p => `
-        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between">
-          <div class="flex items-center space-x-2.5">
-            <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder" alt="Parcel">
-            <div>
-              <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
-              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
-            </div>
-          </div>
-          <button type="button" onclick="startUnboxParcel('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
-        </div>
-      `).join('');
-    }
-
-    function startUnboxParcel(waybill) {
-      activeIntakeWaybill = waybill;
-      switchShelfTab('tab-qrbuilder');
     }
 
     window.addEventListener('DOMContentLoaded', initApp);

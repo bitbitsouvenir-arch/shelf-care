@@ -223,10 +223,11 @@
     </div>
   </main>
 
-  <!-- ========================================================================= -->
+ <!-- ========================================================================= -->
   <!-- BLOCK 4: SHELF CARE (COUNTERS, DROP-OFF, WHITE BIN)                       -->
   <!-- ========================================================================= -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-36 space-y-4">
+    <!-- TOP COUNTERS -->
     <div class="grid grid-cols-3 gap-2">
       <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
@@ -510,7 +511,7 @@
     </section>
 
     <!-- 4-TAB BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-30 pointer-events-auto px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-40 pointer-events-auto px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-tab-dropoff" class="nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
         <span>Drop-Off</span>
@@ -1036,7 +1037,7 @@
     </div>
   </div>
 
-  <!-- ========================================================================= -->
+ <!-- ========================================================================= -->
   <!-- BLOCK 8: REPORTS HUB & JAVASCRIPT STATE ENGINE                            -->
   <!-- ========================================================================= -->
   <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
@@ -1056,7 +1057,7 @@
         <div class="space-y-2">
           <div class="flex items-center justify-between gap-2">
             <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
-            <input type="month" id="report-month-input" onchange="onReportMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            <input type="month" id="report-month-input" onchange="onReportMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
           </div>
 
           <div class="grid grid-cols-3 gap-1 text-[10px] font-bold text-center">
@@ -1094,13 +1095,13 @@
         <div class="space-y-2">
           <div class="flex items-center justify-between gap-2">
             <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
-            <input type="month" id="report-expenses-month-input" onchange="onExpensesMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+            <input type="month" id="report-expenses-month-input" onchange="onExpensesMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
           </div>
 
           <div class="flex space-x-1.5 text-xs font-bold">
-            <button type="button" onclick="filterReportExpenses('ALL')" id="pill-exprep-all" class="px-3 py-1 bg-bitWalnut text-white rounded-lg">All</button>
-            <button type="button" onclick="filterReportExpenses('WITH_OR')" id="pill-exprep-or" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">With OR</button>
-            <button type="button" onclick="filterReportExpenses('NO_OR')" id="pill-exprep-noor" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">Without OR</button>
+            <button type="button" onclick="filterReportExpenses('ALL')" id="pill-exprep-all" class="px-3 py-1 bg-bitWalnut text-white rounded-lg cursor-pointer">All</button>
+            <button type="button" onclick="filterReportExpenses('WITH_OR')" id="pill-exprep-or" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg cursor-pointer">With OR</button>
+            <button type="button" onclick="filterReportExpenses('NO_OR')" id="pill-exprep-noor" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg cursor-pointer">Without OR</button>
           </div>
         </div>
 
@@ -1125,7 +1126,7 @@
 
         <div class="flex items-center justify-between gap-2">
           <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
-          <input type="month" id="report-cards-month-input" onchange="onCardsMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+          <input type="month" id="report-cards-month-input" onchange="onCardsMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
         </div>
 
         <div id="cards-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
@@ -1134,7 +1135,7 @@
       </div>
     </section>
 
-    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH & AUDIT INTELLIGENCE -->
+    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH & AUDIT CHECK DROPDOWN -->
     <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -1147,7 +1148,15 @@
           </button>
         </div>
 
-        <div id="weekly-health-content" class="space-y-4 text-xs">
+        <!-- AUDIT CHECK DROPDOWN WITH CONDUCTED DATE -->
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Select Audit Check (Date Conducted):</label>
+          <select id="select-audit-history" onchange="onAuditHistorySelect()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none cursor-pointer">
+            <option value="LATEST">-- Latest Floor Audit --</option>
+          </select>
+        </div>
+
+        <div id="weekly-health-content" class="space-y-4 text-xs pt-1">
           <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
             <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">1. Executive Snapshot</span>
             <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-gray-700">
@@ -1200,7 +1209,7 @@
     </section>
 
     <!-- 4-TAB BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-40 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchReportsSubTab('attendance')" id="nav-rep-attendance" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
         <span>Attendance</span>
@@ -1221,7 +1230,7 @@
   </main>
 
   <script>
-    const SUPABASE_URL = "[https://nwuauzkurgwkfjmrnwdh.supabase.co](https://nwuauzkurgwkfjmrnwdh.supabase.co)";
+    const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
     
     let db = null;
@@ -1243,9 +1252,7 @@
       { id: '9f3dc0bb-c35e-48c6-8427-6eccd91d0009', name: 'Gian', pin: '1234', role: 'crew' }
     ];
 
-    // DYNAMIC SUPABASE TAXONOMY (Loaded from sku_taxonomy table)
     let activeTaxonomy = { categories: [], subcategories: [], types: [] };
-
     let crewMembers = [...DEFAULT_CREW];
     let currentActiveCrew = null;
     let selectedCrewForGate = null;
@@ -1276,6 +1283,7 @@
 
     let masterCatalogCache = [];
     let liveAuditScans = {};
+    let auditHistoryCache = [];
 
     let currentReportMonth = new Date().toISOString().slice(0, 7);
     let currentAttendanceHalfFilter = 'FIRST_HALF';
@@ -1288,9 +1296,13 @@
     async function initApp() {
       populateGateDropdown();
 
-      document.getElementById('report-month-input').value = currentReportMonth;
-      document.getElementById('report-expenses-month-input').value = currentReportMonth;
-      document.getElementById('report-cards-month-input').value = currentReportMonth;
+      // Safe date setter checks (prevents null reference script halts)
+      const rMonth = document.getElementById('report-month-input');
+      if (rMonth) rMonth.value = currentReportMonth;
+      const rExp = document.getElementById('report-expenses-month-input');
+      if (rExp) rExp.value = currentReportMonth;
+      const rCards = document.getElementById('report-cards-month-input');
+      if (rCards) rCards.value = currentReportMonth;
 
       if (db) {
         try {
@@ -1319,13 +1331,13 @@
       const subList = document.getElementById('taxonomy-subcat-list');
       const typList = document.getElementById('taxonomy-type-list');
 
-      if (catList) {
+      if (catList && activeTaxonomy.categories.length > 0) {
         catList.innerHTML = activeTaxonomy.categories.map(c => `<option value="${c.code}">${c.label} (${c.code})</option>`).join('');
       }
-      if (subList) {
+      if (subList && activeTaxonomy.subcategories.length > 0) {
         subList.innerHTML = activeTaxonomy.subcategories.map(s => `<option value="${s.code}">${s.label} (${s.code})</option>`).join('');
       }
-      if (typList) {
+      if (typList && activeTaxonomy.types.length > 0) {
         typList.innerHTML = activeTaxonomy.types.map(t => `<option value="${t.code}">${t.label} (${t.code})</option>`).join('');
       }
     }
@@ -1501,7 +1513,7 @@
         resultArea.innerHTML = `
           <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3">
             <div class="flex items-start space-x-3">
-              <img src="${matchedItem.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+              <img src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
               <div class="min-w-0">
                 <span class="text-xs font-mono font-bold text-bitWalnut block break-all">${matchedItem.sku}</span>
                 <span class="text-xs font-bold text-gray-700 block">${matchedItem.name || 'Master Catalog Item'}</span>
@@ -1585,7 +1597,7 @@
       container.innerHTML = items.map(i => `
         <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
           <div class="flex items-center space-x-2.5 min-w-0">
-            <img src="${i.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
+            <img src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
             <div class="min-w-0">
               <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
               <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Charm Bag'}</span>
@@ -2136,17 +2148,20 @@
     }
 
     function onReportMonthChange() {
-      currentReportMonth = document.getElementById('report-month-input').value;
+      const el = document.getElementById('report-month-input');
+      if (el) currentReportMonth = el.value;
       loadAttendanceReport();
     }
 
     function onExpensesMonthChange() {
-      currentReportMonth = document.getElementById('report-expenses-month-input').value;
+      const el = document.getElementById('report-expenses-month-input');
+      if (el) currentReportMonth = el.value;
       loadExpensesReport();
     }
 
     function onCardsMonthChange() {
-      currentReportMonth = document.getElementById('report-cards-month-input').value;
+      const el = document.getElementById('report-cards-month-input');
+      if (el) currentReportMonth = el.value;
       loadCardDisputesReport();
     }
 
@@ -2330,7 +2345,33 @@
           } else {
             pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
           }
+
+          // Fetch past audit checks for dropdown
+          const { data: audits } = await db.from('inventory_audits').select('*').order('created_at', { ascending: false });
+          if (audits && audits.length > 0) {
+            auditHistoryCache = audits;
+            const selectEl = document.getElementById('select-audit-history');
+            selectEl.innerHTML = '<option value="LATEST">-- Latest Floor Audit --</option>' +
+              audits.map(a => {
+                const dt = new Date(a.created_at);
+                const dateStr = dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `<option value="${a.id}">${dateStr} - ${a.audited_by || 'Staff'} (${a.total_scanned_units || 0} pcs)</option>`;
+              }).join('');
+          }
         } catch (e) {}
+      }
+    }
+
+    function onAuditHistorySelect() {
+      const selVal = document.getElementById('select-audit-history').value;
+      if (selVal === 'LATEST') {
+        loadStockHealthReport();
+        return;
+      }
+      const chosen = auditHistoryCache.find(a => a.id === selVal);
+      if (chosen) {
+        document.getElementById('rep-health-total-units').textContent = `${chosen.total_scanned_units || 0} pcs`;
+        document.getElementById('rep-health-retail-val').textContent = `₱${((chosen.total_scanned_units || 0) * 100).toLocaleString()}`;
       }
     }
 
@@ -2375,6 +2416,41 @@ Month / Cycle: ${currentReportMonth}
     }
 
     // ================= INTAKE & PHOTO HANDLERS =================
+    function selectIntakeSource(type) {
+      ['courier', 'merchant', 'inhouse'].forEach(t => {
+        const btn = document.getElementById(`src-btn-${t}`);
+        if (t === type) {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        } else {
+          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer";
+        }
+      });
+      document.getElementById('fields-courier').classList.toggle('hidden', type !== 'courier');
+      document.getElementById('fields-merchant').classList.toggle('hidden', type !== 'merchant');
+      document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
+    }
+
+    function switchShelfTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-tab-${t}`);
+        const indicator = btn.querySelector('.nav-indicator');
+        if (`tab-${t}` === tabId) {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1";
+        } else {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-transparent mb-1";
+        }
+      });
+
+      if (tabId === 'tab-received') loadWhiteBinParcels();
+      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+    }
+
     function proceedInhouseToQr() {
       const notes = document.getElementById('inhouse-craft-notes').value.trim() || 'New In-House Craft';
       activeIntakeWaybill = `CRAFT-${Date.now().toString().slice(-6)}`;
@@ -2638,7 +2714,7 @@ Month / Cycle: ${currentReportMonth}
         return `
           <div class="bg-bitCream p-3 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between">
             <div class="flex items-center space-x-2.5">
-              <img src="${p.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder bg-white" alt="Parcel">
+              <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder bg-white" alt="Parcel">
               <div>
                 <div class="flex items-center space-x-1.5">
                   <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
@@ -2749,7 +2825,7 @@ Month / Cycle: ${currentReportMonth}
         pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
       }
 
-      let itemThumbnail = '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)';
+      let itemThumbnail = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
       let itemName = cleanSku;
       if (db) {
         try {

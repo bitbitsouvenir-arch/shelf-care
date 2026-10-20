@@ -1538,41 +1538,31 @@
       const q = (query || document.getElementById('shelf-help-search-input').value).trim();
       const resultArea = document.getElementById('shelf-help-result-area');
       if (!q) {
-        resultArea.innerHTML = `
-          <div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">
-            Search for an SKU or scan a label to verify inventory and movement history.
-          </div>
-        `;
+        resultArea.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">Search for an SKU or scan a label to verify inventory and movement history.</div>';
         return;
       }
 
-      resultArea.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">Searching inventory...</div>`;
+      resultArea.innerHTML = '<div class="text-center py-6 text-xs text-gray-400 font-bold">Searching inventory...</div>';
 
       if (!db) return;
 
       try {
-        // 1. Fetch all items matching SKU or Name
         const { data: matchedItems } = await db.from('items')
           .select('*')
-          .or(`sku.ilike.%${q}\%,name.ilike.\%${q}%`)
+          .or('sku.ilike.%' + q + '%,name.ilike.%' + q + '%')
           .limit(20);
 
         if (!matchedItems || matchedItems.length === 0) {
-          resultArea.innerHTML = `
-            <div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2">
-              <span class="text-xs font-bold text-red-800 block">Item Not Found in Catalog</span>
-              <p class="text-[11px] text-red-700">No SKU or name matches "<strong>${q}</strong>".</p>
-            </div>
-          `;
+          resultArea.innerHTML = '<div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2"><span class="text-xs font-bold text-red-800 block">Item Not Found in Catalog</span><p class="text-[11px] text-red-700">No SKU or name matches "' + q + '".</p></div>';
           return;
         }
 
-        // 2. Fetch intake and movement logs for all matched SKUs
         const skus = matchedItems.map(m => m.sku);
         const { data: intakes } = await db.from('intake_batches').select('sku, pack_count').in('sku', skus);
         const { data: movements } = await db.from('stock_movements').select('sku, action, pcs_moved, moved_by, created_at').in('sku', skus);
 
-        // 3. Compute live balances for each item
+        const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+
         const itemsWithStock = matchedItems.map(item => {
           const itemIntakes = (intakes || []).filter(b => b.sku === item.sku);
           const totalIntakePacks = itemIntakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0);
@@ -1591,33 +1581,60 @@
           };
         });
 
-        // 4. Sort from most stock to least stock
         itemsWithStock.sort((a, b) => b.totalPacks - a.totalPacks);
 
-        // 5. Render cards with Werqroom, Shop Storage, and Movement Log
-        resultArea.innerHTML = itemsWithStock.map(item => `
-          <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3 mb-3">
-            <div class="flex items-start space-x-3">
-              <!-- CLICKABLE CAMERA THUMBNAIL -->
-              <div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture('${item.sku}')" title="Tap to update photo">
-                <img id="shelf-help-thumb-${item.sku}" src="${item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-14 h-14 object-cover rounded-2xl border border-bitBorder bg-white" alt="${item.sku}">
-                <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-80 hover:opacity-100 transition text-xs text-white font-bold">
-                  📷
-                </div>
-              </div>
-              <div class="min-w-0 flex-1">
-                <span class="
-          </div>
-        `;
-      }
-    }
+        resultArea.innerHTML = itemsWithStock.map(item => {
+          const thumbSrc = item.image_url ? item.image_url : defaultThumb;
+          const stockBadgeClass = item.totalPacks > 0 ? "bg-bitGreen/20 text-bitGreen" : "bg-red-100 text-red-800";
+          const stockBadgeText = item.totalPacks > 0 ? (item.totalPacks + " Full Packs in Inventory") : "0 Packs (Out of Stock)";
 
-    function triggerFloorRequestFromChecker(skuOrName) {
-      document.getElementById('freq-item-name').value = skuOrName;
-      document.getElementById('freq-current-qty').value = "0";
-      setFloorRequestType('STOCK_RESTOCK');
-      updateFreqUrgencyBadge();
-      openFloorRequestModal();
+          let logHtml = '<div class="text-[10px] text-gray-400 italic bg-white/60 p-2 rounded-lg border border-dashed border-bitBorder text-center">No post-audit movement logged yet</div>';
+
+          if (item.movements && item.movements.length > 0) {
+            logHtml = '<div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">' + item.movements.slice(0, 5).map(m => {
+              const d = new Date(m.created_at);
+              const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+              const isShop = m.action === "DELIVERED_TO_SHOP";
+              const tagClass = isShop ? "text-bitMarigold" : "text-bitGreen";
+              const tagText = isShop ? "➔ To Shop" : "✓ Restock";
+              const mover = m.moved_by || "Staff";
+              return '<div class="flex items-center justify-between text-[10px] bg-white p-1.5 rounded-lg border border-bitBorder"><div><span class="font-bold ' + tagClass + '">' + tagText + '</span><span class="text-gray-400 ml-1">(' + mover + ')</span></div><span class="text-gray-400 font-mono">' + formattedDate + '</span></div>';
+            }).join("") + '</div>';
+          }
+
+          return '<div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3 mb-3">' +
+            '<div class="flex items-start space-x-3">' +
+              '<div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture(\'' + item.sku + '\')" title="Tap to update photo">' +
+                '<img id="shelf-help-thumb-' + item.sku + '" src="' + thumbSrc + '" class="w-14 h-14 object-cover rounded-2xl border border-bitBorder bg-white" alt="' + item.sku + '">' +
+                '<div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-80 hover:opacity-100 transition text-xs text-white font-bold">📷</div>' +
+              '</div>' +
+              '<div class="min-w-0 flex-1">' +
+                '<span class="text-xs font-mono font-bold text-bitWalnut block break-all">' + item.sku + '</span>' +
+                '<span class="text-xs font-bold text-gray-700 block">' + (item.name || 'Catalog Item') + '</span>' +
+                '<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-1 " + stockBadgeClass + "\'>" + stockBadgeText + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2 text-center pt-2 border-t border-bitBorder">' +
+              '<div class="p-2 bg-white rounded-xl border border-bitBorder">' +
+                '<span class="text-[9px] font-bold text-gray-400 uppercase block">Werqroom</span>' +
+                '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.werqPacks + ' packs</span>' +
+              '</div>' +
+              '<div class="p-2 bg-white rounded-xl border border-bitBorder">' +
+                '<span class="text-[9px] font-bold text-gray-400 uppercase block">Shop Storage</span>' +
+                '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.shopPacks + ' packs</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="pt-2 border-t border-bitBorder/60">' +
+              '<span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Recent Movement Log</span>' +
+              logHtml +
+            '</div>' +
+            '<button type="button" onclick="triggerFloorRequestFromChecker(\'' + item.sku + '\')" class="w-full py-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">+ Request Restock for this Item</button>' +
+          '</div>';
+        }).join("");
+
+      } catch (err) {
+        resultArea.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Search error: ' + err.message + '</div>';
+      }
     }
 
     // ================= STOCK CATALOG MODAL =================

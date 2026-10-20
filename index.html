@@ -1268,11 +1268,26 @@
     let rawReportCards = [];
 
     // ================= INITIALIZATION & GATE =================
+    const DEFAULT_CREW = [
+      { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e', name: 'Mems', pin: '6363', role: 'admin' },
+      { id: 'ceb28403-407b-47f4-b0eb-b09a70b3', name: 'Louise', pin: '2514', role: 'admin' },
+      { id: '5b7f0a7c-4c2a-4956-be10-d6064292', name: 'Scarlet', pin: '1234', role: 'lead' },
+      { id: 'd1d38f84-e807-4375-8a94-cf2d268b', name: 'Alex', pin: '1234', role: 'lead' },
+      { id: '9e034f33-d5a2-493a-8303-8c7b898', name: 'Deejae', pin: '1234', role: 'payroll' },
+      { id: '2138ea2c-304a-4f30-bef0-f683003df', name: 'Kath', pin: '1234', role: 'crew' },
+      { id: '5a4233ac-03bf-4eac-96e9-9aae922a', name: 'Sasha', pin: '1234', role: 'crew' },
+      { id: '6bc3fcff-07ba-44a9-8795-d62b868dc', name: 'Ashley', pin: '1234', role: 'crew' },
+      { id: '9f3dc0bb-c35e-48c6-8427-6eccd91d', name: 'Gian', pin: '1234', role: 'crew' }
+    ];
+
     async function initApp() {
+      crewMembers = [...DEFAULT_CREW];
+      populateGateDropdown();
+
       if (db) {
         try {
           const { data } = await db.from('crew_members').select('*').order('name');
-          if (data) {
+          if (data && data.length > 0) {
             crewMembers = data;
             populateGateDropdown();
           }
@@ -1284,8 +1299,12 @@
 
     function populateGateDropdown() {
       const select = document.getElementById('gate-crew-select');
+      if (!select) return;
       select.innerHTML = '<option value="">-- Choose your name --</option>' +
-        crewMembers.map(m => `<option value="${m.id}">${m.name} (${m.designation || m.role})</option>`).join('');
+        crewMembers.map(m => {
+          const displayRole = m.role || m.designation || 'Staff';
+          return `<option value="${m.id}">${m.name} (${displayRole})</option>`;
+        }).join('');
     }
 
     function onGateCrewSelect() {

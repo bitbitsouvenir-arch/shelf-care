@@ -131,52 +131,96 @@
     </button>
   </header>
 
-  <!-- ==================== VIEW 1: MAIN HUB ==================== -->
+  <!-- ==================== VIEW 1: BITBIT MAIN HUB ==================== -->
   <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3">
-    <div class="text-center space-y-1 mb-1">
+    <div class="text-center space-y-1 mb-2">
       <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut border border-bitBorder uppercase">Workspace</span>
       <h2 class="text-2xl font-bold text-bitWalnut tracking-tight">Bitcrew Portal</h2>
-      <p class="text-xs text-gray-500 font-bold">Select an operational module to begin.</p>
+      <p class="text-xs text-gray-500 font-medium">Select an operational module to begin.</p>
     </div>
 
-    <div class="space-y-2.5">
-      <!-- 1. SHELF CARE -->
-      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#d9ec3c] text-bitWalnut p-4.5 rounded-[24px] border border-[#d2e434] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+    <div class="space-y-3">
+      <!-- 1. SHELF HELP (MARIGOLD - STOCK & LOCATION CHECKER) -->
+      <button type="button" onclick="goToView('view-shelf-help')" class="w-full bg-[#F5B731] hover:bg-[#e4a724] text-bitWalnut py-5 px-6 rounded-[28px] border border-[#dfa21c] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-bold tracking-tight leading-snug">Shelf Care</div>
-          <span class="text-xs font-medium text-gray-700 block mt-0.5">Intake, QR Builder & Movement Station</span>
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Help</div>
+          <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Check Live Stock, Locations & Master SKU</span>
         </div>
         <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- 2. SUPPLIES & EXPENSES (MILESTONE 3) -->
-      <button type="button" onclick="goToView('view-supplies')" class="w-full bg-[#E8FB4B] hover:bg-[#d9ec3c] text-bitWalnut p-4.5 rounded-[24px] border border-[#d2e434] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <!-- 2. SHELF CARE (ORGANIC GREEN - INTAKE & MOVEMENT) -->
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#78B828] hover:bg-[#6ba523] text-white py-5 px-6 rounded-[28px] border border-[#6ba523] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-bold tracking-tight leading-snug">Supplies & Expenses</div>
-          <span class="text-xs font-medium text-gray-700 block mt-0.5">Requests Desk, OCR Logger & Petty Cash</span>
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Care</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Intake, QR Builder & Movement Station</span>
         </div>
-        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- 3. CARD TRANSACTIONS (MILESTONE 2) -->
-      <button type="button" onclick="goToView('view-card-logger')" class="w-full bg-white hover:bg-bitCream text-bitWalnut p-4.5 rounded-[24px] border border-bitBorderDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <!-- 3. SHELF SERVICE (ELECTRIC VIOLET - FORMERLY SUPPLIES & EXPENSES) -->
+      <button type="button" onclick="goToView('view-shelf-service')" class="w-full bg-[#9E64F2] hover:bg-[#8e52e4] text-white py-5 px-6 rounded-[28px] border border-[#8e52e4] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-lg font-bold tracking-tight leading-snug">Card Transactions</div>
-          <span class="text-xs font-medium text-gray-500 block mt-0.5">Failed/Delayed Swipes & BSP Protection</span>
+          <div class="text-lg font-bold tracking-tight leading-tight">Shelf Service</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Requests Desk, OCR Logger & Petty Cash</span>
+        </div>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 4. CARD TRANSACTIONS (VIBRANT PINK - POS EXCEPTIONS) -->
+      <button type="button" onclick="goToView('view-card-logger')" class="w-full bg-[#FF4E8D] hover:bg-[#eb3a7a] text-white py-5 px-6 rounded-[28px] border border-[#eb3a7a] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Card Transactions</div>
+          <span class="text-xs font-medium text-white/90 block mt-1">Failed/Delayed Swipes & BSP Protection</span>
+        </div>
+        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <!-- 5. REPORTS (NEUTRAL PILLOW CARD) -->
+      <button type="button" onclick="goToView('view-reports')" class="w-full bg-white hover:bg-bitCream text-bitWalnut py-5 px-6 rounded-[28px] border border-bitBorderDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+        <div class="text-left">
+          <div class="text-lg font-bold tracking-tight leading-tight">Reports Hub</div>
+          <span class="text-xs font-medium text-gray-500 block mt-1">Attendance, Audits & Card Dispute Review</span>
         </div>
         <span class="text-2xl text-gray-400 group-hover:translate-x-1 transition-transform">→</span>
-      </button>
-
-      <!-- 4. QUICK REQUEST TRIGGER -->
-      <button type="button" onclick="openFloorRequestModal()" class="w-full bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut p-3 rounded-2xl font-bold text-xs border border-bitBorderDark shadow-xs transition cursor-pointer flex items-center justify-center space-x-1.5">
-        <span>+ File Floor Request (Stock / Supply)</span>
       </button>
     </div>
   </main>
 
-  <!-- ==================== VIEW 2: SHELF CARE (MILESTONE 1 CODE) ==================== -->
+  <!-- ==================== VIEW 2: SHELF HELP (STOCK & LOCATION CHECKER) ==================== -->
+  <main id="view-shelf-help" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase tracking-wide">Stock Checker</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Shelf Help</h2>
+        </div>
+        <span class="text-xs text-gray-400 font-bold">Search Live SKUs</span>
+      </div>
+
+      <!-- SEARCH INPUT & SCAN BUTTON -->
+      <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-gray-600 uppercase">Search SKU or Item Name</label>
+          <button type="button" onclick="startCameraScanner('shelf-help-search-input', runShelfHelpSearch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+            <span>📷 Scan QR / Barcode</span>
+          </button>
+        </div>
+        <input type="text" id="shelf-help-search-input" oninput="runShelfHelpSearch(this.value)" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Solid E..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
+      </div>
+
+      <!-- RESULT CARD CONTAINER -->
+      <div id="shelf-help-result-area" class="space-y-3 pt-1">
+        <div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">
+          Search for an SKU or scan a label to verify inventory and shelf location.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== VIEW 3: SHELF CARE MODULE ==================== -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
-    <!-- STOCK COUNTER TILES -->
+    <!-- TOP COUNTERS -->
     <div class="grid grid-cols-3 gap-2">
       <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
@@ -454,134 +498,34 @@
     </nav>
   </main>
 
-  <!-- ==================== VIEW 3: CARD TRANSACTIONS (MILESTONE 2) ==================== -->
-  <main id="view-card-logger" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
-    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
-      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
-        <div>
-          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 uppercase tracking-wide">POS Exception</span>
-          <h2 class="text-xl font-bold text-bitWalnut mt-1">Card Transaction Issue</h2>
-        </div>
-        <span class="text-xs text-gray-400 font-bold">Failed / Delayed</span>
-      </div>
-
-      <div class="space-y-3.5">
-        <!-- 1. COMBO BOX FOR REASON FOR LOG -->
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Reason for Log (Select or Type New) <span class="text-bitPink">*</span></label>
-          <div class="relative">
-            <input type="text" id="card-issue-reason-input" list="card-reason-presets" placeholder="e.g. Failed Transaction or Delay in Processing" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
-            <datalist id="card-reason-presets">
-              <option value="Failed Transaction"></option>
-              <option value="Delay in Processing"></option>
-              <option value="POS Terminal Offline / Timeout"></option>
-              <option value="Incorrect Deducted Amount"></option>
-            </datalist>
-          </div>
-        </div>
-
-        <!-- 2. CUSTOMER NAME -->
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Customer Name <span class="text-bitPink">*</span></label>
-          <input type="text" id="card-cust-name" placeholder="e.g. Maria Santos" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-semibold outline-none focus:border-bitWalnut">
-        </div>
-
-        <!-- 3. CONTACT INFO -->
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Contact Info (Mobile / IG / Email) <span class="text-bitPink">*</span></label>
-          <input type="text" id="card-contact-info" placeholder="0917-xxx-xxxx, @instagram, or name@email.com" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
-        </div>
-
-        <!-- 4. AMOUNT -->
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Amount Swiped (₱) <span class="text-bitPink">*</span></label>
-          <input type="number" id="card-amount" placeholder="0.00" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-sm outline-none focus:border-bitWalnut">
-        </div>
-
-        <!-- 5. OPTIONAL MASKED CARD TOGGLE & (i) ADVISORY -->
-        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
-          <div class="flex items-center justify-between">
-            <button type="button" onclick="toggleMaskedCardSection()" id="btn-toggle-masked-card" class="text-xs font-bold text-bitWalnut flex items-center space-x-1.5 cursor-pointer">
-              <span id="masked-card-toggle-icon" class="w-4 h-4 rounded-full bg-bitMarigold border border-bitBorder flex items-center justify-center text-[10px] font-bold">+</span>
-              <span>Add Masked Card Number</span>
-            </button>
-            <button type="button" onclick="openBspAdvisoryModal()" class="w-5 h-5 rounded-full bg-white border border-bitBorderDark text-[11px] font-bold text-bitViolet flex items-center justify-center cursor-pointer hover:bg-bitViolet hover:text-white" title="Customer Security Advisory">
-              i
-            </button>
-          </div>
-
-          <!-- HIDDEN MASKED CARD FIELDS -->
-          <div id="masked-card-fields-container" class="hidden pt-2 border-t border-bitBorder space-y-2">
-            <span class="text-[10px] text-gray-500 font-bold block">BSP Mandated Investigation Rule (First 4 & Last 6 digits only)</span>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[9px] font-bold text-gray-500 uppercase">First 4 Digits (BIN)</label>
-                <input type="text" id="card-bin-first4" maxlength="4" placeholder="4111" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
-              </div>
-              <div>
-                <label class="block text-[9px] font-bold text-gray-500 uppercase">Last 6 Digits</label>
-                <input type="text" id="card-last6" maxlength="6" placeholder="123456" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MULTI-FILE ATTACHMENTS (VIDEO & SNAPSHOTS) -->
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Terminal Video or Error Photos *</label>
-          <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
-            <input type="file" id="card-proof-file" accept="video/*,image/*" multiple class="hidden" onchange="previewCardMultiProof(this)">
-            <span id="card-proof-label" class="text-xs font-bold text-gray-600">📹 Record Video / Select Photos (Multi)</span>
-          </label>
-          <div id="card-proof-thumbnails" class="flex flex-wrap gap-1.5 pt-2"></div>
-        </div>
-
-        <button type="button" onclick="submitCardTransactionIssue()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-          Save Card Issue Record →
-        </button>
-      </div>
-
-      <!-- RECENT ISSUE LOGS -->
-      <div class="pt-3 border-t border-gray-100 space-y-2">
-        <div class="flex items-center justify-between text-xs font-bold text-gray-600">
-          <span>Recent Shift Logs</span>
-          <span class="text-[10px] text-gray-400 font-bold">Today's Issues</span>
-        </div>
-        <div id="recent-card-issues-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== VIEW 4: SUPPLIES & EXPENSES (MILESTONE 3 TRIPLE-TAB) ==================== -->
-  <main id="view-supplies" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
-    <!-- SUB-TAB SEGMENT 1: REQUESTS DESK -->
+  <!-- ==================== VIEW 4: SHELF SERVICE (TRIPLE-TAB DESK) ==================== -->
+  <main id="view-shelf-service" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
+    <!-- SUB-TAB 1: REQUESTS DESK -->
     <section id="supplies-subtab-requests" class="supplies-pane space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Floor Queue</span>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitViolet/20 text-bitViolet uppercase">Floor Queue</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">Requested Items</h2>
           </div>
-          <button type="button" onclick="openFloorRequestModal()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
-            + New Request
+          <button type="button" onclick="openFloorRequestModal()" class="px-3 py-1.5 bg-bitWalnut text-white font-bold text-xs rounded-xl cursor-pointer">
+            + Restock Request
           </button>
         </div>
 
-        <!-- FILTER PILLS: ALL VS STOCK VS SUPPLY -->
         <div class="flex space-x-1.5 text-xs font-bold">
           <button type="button" onclick="filterSupplyRequests('ALL')" id="pill-req-all" class="px-3 py-1.5 bg-bitWalnut text-white rounded-xl">All</button>
           <button type="button" onclick="filterSupplyRequests('STOCK_RESTOCK')" id="pill-req-stock" class="px-3 py-1.5 bg-bitCream border border-bitBorderDark text-gray-600 rounded-xl">Stock</button>
           <button type="button" onclick="filterSupplyRequests('SUPPLY_CONSUMABLE')" id="pill-req-supply" class="px-3 py-1.5 bg-bitCream border border-bitBorderDark text-gray-600 rounded-xl">Supply</button>
         </div>
 
-        <!-- LIST WITH ACCEPT / REJECT -->
         <div id="supplies-requests-list" class="space-y-2.5 max-h-96 overflow-y-auto pr-1">
           <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading pending requests...</div>
         </div>
       </div>
     </section>
 
-    <!-- SUB-TAB SEGMENT 2: EXPENSE LOGGER (ALREADY PURCHASED) -->
+    <!-- SUB-TAB 2: EXPENSE LOGGER -->
     <section id="supplies-subtab-logger" class="supplies-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
         <div class="border-b border-gray-100 pb-3">
@@ -601,7 +545,7 @@
           <div class="grid grid-cols-3 gap-2">
             <div class="col-span-2">
               <label class="block text-xs font-bold text-gray-700 mb-1">Item Description *</label>
-              <input type="text" id="expense-item-name" placeholder="e.g. 58mm Thermal Paper Rolls" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+              <input type="text" id="expense-item-name" placeholder="e.g. 58mm Thermal Paper" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Qty</label>
@@ -649,7 +593,7 @@
       </div>
     </section>
 
-    <!-- SUB-TAB SEGMENT 3: PETTY CASH & VERIFICATION -->
+    <!-- SUB-TAB 3: PETTY CASH & VERIFICATION -->
     <section id="supplies-subtab-petty" class="supplies-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
         <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -660,7 +604,6 @@
           <span class="text-xs font-bold text-gray-400">Team Lead ➔ Admin</span>
         </div>
 
-        <!-- NEW PETTY CASH REQUEST FORM -->
         <div class="bg-bitCream p-3.5 rounded-2xl border border-bitBorderDark space-y-3">
           <span class="text-xs font-bold text-bitWalnut block">Request Bulk Store Funds</span>
           <div class="grid grid-cols-2 gap-2">
@@ -684,13 +627,11 @@
           </button>
         </div>
 
-        <!-- ADMIN VERIFICATION & SUPPLY MOVEMENT PANEL -->
         <div class="space-y-2 pt-1 border-t border-gray-100">
           <div class="flex items-center justify-between text-xs font-bold text-gray-700">
             <span>Requisition Approvals & Reconcile</span>
             <span class="text-[10px] text-gray-400">Expected vs Declared</span>
           </div>
-
           <div id="petty-cash-approval-queue" class="space-y-2.5">
             <div class="text-xs text-gray-400 text-center py-4 font-bold">Loading fund requests...</div>
           </div>
@@ -698,7 +639,7 @@
       </div>
     </section>
 
-    <!-- TRIPLE-TAB BOTTOM NAVIGATION FOR SUPPLIES VIEW -->
+    <!-- TRIPLE-TAB BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchSuppliesSubTab('requests')" id="nav-sup-requests" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
         <span class="nav-sup-ind w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
@@ -715,43 +656,112 @@
     </nav>
   </main>
 
-  <!-- ==================== BSP & NPC CUSTOMER SECURITY ADVISORY MODAL ==================== -->
-  <div id="bsp-advisory-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder my-auto max-h-[85vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <div class="flex items-center space-x-1.5">
-          <span class="text-base">📢</span>
-          <h3 class="font-bold text-sm text-bitWalnut">Customer Security Advisory</h3>
+  <!-- ==================== VIEW 5: CARD TRANSACTIONS ==================== -->
+  <main id="view-card-logger" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 uppercase tracking-wide">POS Exception</span>
+          <h2 class="text-xl font-bold text-bitWalnut mt-1">Card Transaction Issue</h2>
         </div>
-        <button type="button" onclick="closeBspAdvisoryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+        <span class="text-xs text-gray-400 font-bold">Failed / Delayed</span>
       </div>
 
-      <div class="text-xs text-gray-600 space-y-2.5 font-medium leading-relaxed">
-        <p class="font-bold text-bitWalnut">Dear Valued Customer,</p>
-        <p>To securely locate, investigate, and resolve your failed transaction, our support team will request only the first 4 and last 6 digits of your card number.</p>
-        <p>We strictly adhere to consumer protection and data security rules mandated by the <strong>Bangko Sentral ng Pilipinas (BSP)</strong>:</p>
-
-        <ul class="list-disc pl-4 space-y-1.5 text-[11px] text-gray-700">
-          <li><strong>Legally Mandated for Investigations:</strong> Under BSP Memorandum No. M-2021-059 (supported by NPC Advisory Opinion No. 2021-026), sharing partial, masked details is an industry standard to track payment anomalies safely.</li>
-          <li><strong>Completely Masked & Safe:</strong> A partial card number cannot process unauthorized purchases without the missing middle digits, expiration date, or security CVV code.</li>
-          <li><strong>Identifies Payment Logs:</strong> The first 4 digits identify your card network and issuing bank; the last 6 digits allow the payment gateway to pinpoint the exact error log.</li>
-        </ul>
-
-        <div class="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1 text-[11px] text-red-900 font-bold">
-          <span class="block text-red-700 uppercase tracking-wider text-[10px]">🔒 Our Golden Rule for Your Safety</span>
-          <p>We will NEVER ask for, and you should NEVER share: Full 16 digits, Expiry Date, 3-digit CVV/CVC, or OTP/PIN.</p>
+      <div class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Reason for Log (Select or Type New) <span class="text-bitPink">*</span></label>
+          <div class="relative">
+            <input type="text" id="card-issue-reason-input" list="card-reason-presets" placeholder="e.g. Failed Transaction or Delay in Processing" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+            <datalist id="card-reason-presets">
+              <option value="Failed Transaction"></option>
+              <option value="Delay in Processing"></option>
+              <option value="POS Terminal Offline / Timeout"></option>
+              <option value="Incorrect Deducted Amount"></option>
+            </datalist>
+          </div>
         </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Customer Name <span class="text-bitPink">*</span></label>
+          <input type="text" id="card-cust-name" placeholder="e.g. Maria Santos" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-semibold outline-none focus:border-bitWalnut">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Contact Info (Mobile / IG / Email) <span class="text-bitPink">*</span></label>
+          <input type="text" id="card-contact-info" placeholder="0917-xxx-xxxx, @instagram, or name@email.com" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Amount Swiped (₱) <span class="text-bitPink">*</span></label>
+          <input type="number" id="card-amount" placeholder="0.00" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-sm outline-none focus:border-bitWalnut">
+        </div>
+
+        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="toggleMaskedCardSection()" id="btn-toggle-masked-card" class="text-xs font-bold text-bitWalnut flex items-center space-x-1.5 cursor-pointer">
+              <span id="masked-card-toggle-icon" class="w-4 h-4 rounded-full bg-bitMarigold border border-bitBorder flex items-center justify-center text-[10px] font-bold">+</span>
+              <span>Add Masked Card Number</span>
+            </button>
+            <button type="button" onclick="openBspAdvisoryModal()" class="w-5 h-5 rounded-full bg-white border border-bitBorderDark text-[11px] font-bold text-bitViolet flex items-center justify-center cursor-pointer hover:bg-bitViolet hover:text-white" title="Customer Security Advisory">
+              i
+            </button>
+          </div>
+
+          <div id="masked-card-fields-container" class="hidden pt-2 border-t border-bitBorder space-y-2">
+            <span class="text-[10px] text-gray-500 font-bold block">BSP Mandated Investigation Rule (First 4 & Last 6 digits only)</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 uppercase">First 4 Digits (BIN)</label>
+                <input type="text" id="card-bin-first4" maxlength="4" placeholder="4111" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 uppercase">Last 6 Digits</label>
+                <input type="text" id="card-last6" maxlength="6" placeholder="123456" class="w-full p-2 bg-white rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-center outline-none">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Terminal Video or Error Photos *</label>
+          <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
+            <input type="file" id="card-proof-file" accept="video/*,image/*" multiple class="hidden" onchange="previewCardMultiProof(this)">
+            <span id="card-proof-label" class="text-xs font-bold text-gray-600">📹 Record Video / Select Photos (Multi)</span>
+          </label>
+          <div id="card-proof-thumbnails" class="flex flex-wrap gap-1.5 pt-2"></div>
+        </div>
+
+        <button type="button" onclick="submitCardTransactionIssue()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+          Save Card Issue Record →
+        </button>
       </div>
 
-      <button type="button" onclick="closeBspAdvisoryModal()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-        Understood & Acknowledged
-      </button>
+      <div class="pt-3 border-t border-gray-100 space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-gray-600">
+          <span>Recent Shift Logs</span>
+          <span class="text-[10px] text-gray-400 font-bold">Today's Issues</span>
+        </div>
+        <div id="recent-card-issues-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <!-- ==================== FLOOR REQUEST MODAL ==================== -->
+  <!-- ==================== VIEW 6: REPORTS HUB ==================== -->
+  <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+      <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Admin & Leads</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Reports & Audits</h2>
+        </div>
+      </div>
+      <div class="text-xs text-gray-500 font-medium">Shift attendance records and historical count discrepancies are saved directly to your Supabase ledger.</div>
+    </div>
+  </main>
+
+  <!-- ==================== FLOOR REQUEST MODAL (WITH MANDATORY VALIDATION CHECKBOX) ==================== -->
   <div id="floor-request-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-gray-100 pb-2">
         <h3 class="font-bold text-sm text-bitWalnut">File Floor Item Request</h3>
         <button type="button" onclick="closeFloorRequestModal()" class="text-gray-400 font-bold p-1">✕</button>
@@ -787,13 +797,57 @@
 
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Notes</label>
-          <input type="text" id="freq-notes" placeholder="e.g. Completely sold out at cashier table" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+          <input type="text" id="freq-notes" placeholder="e.g. Display peg is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+        </div>
+
+        <!-- MANDATORY VERIFICATION TICK BOX -->
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <label class="flex items-start space-x-2.5 cursor-pointer">
+            <input type="checkbox" id="chk-physical-verify" class="mt-0.5 w-4 h-4 rounded border-amber-400 text-bitWalnut focus:ring-0 shrink-0">
+            <span class="text-[11px] font-bold text-amber-950 leading-snug">
+              I have checked and confirmed that we do not have stocks of this item — verified via system search and physical check. *
+            </span>
+          </label>
         </div>
 
         <button type="button" onclick="submitFloorRequest()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
           Submit Request to Lead →
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ==================== BSP & NPC CUSTOMER SECURITY ADVISORY MODAL ==================== -->
+  <div id="bsp-advisory-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder my-auto max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div class="flex items-center space-x-1.5">
+          <span class="text-base">📢</span>
+          <h3 class="font-bold text-sm text-bitWalnut">Customer Security Advisory</h3>
+        </div>
+        <button type="button" onclick="closeBspAdvisoryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="text-xs text-gray-600 space-y-2.5 font-medium leading-relaxed">
+        <p class="font-bold text-bitWalnut">Dear Valued Customer,</p>
+        <p>To securely locate, investigate, and resolve your failed transaction, our support team will request only the first 4 and last 6 digits of your card number.</p>
+        <p>We strictly adhere to consumer protection and data security rules mandated by the <strong>Bangko Sentral ng Pilipinas (BSP)</strong>:</p>
+
+        <ul class="list-disc pl-4 space-y-1.5 text-[11px] text-gray-700">
+          <li><strong>Legally Mandated for Investigations:</strong> Under BSP Memorandum No. M-2021-059 (supported by NPC Advisory Opinion No. 2021-026), sharing partial, masked details is an industry standard to track payment anomalies safely.</li>
+          <li><strong>Completely Masked & Safe:</strong> A partial card number cannot process unauthorized purchases without the missing middle digits, expiration date, or security CVV code.</li>
+          <li><strong>Identifies Payment Logs:</strong> The first 4 digits identify your card network and issuing bank; the last 6 digits allow the payment gateway to pinpoint the exact error log.</li>
+        </ul>
+
+        <div class="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1 text-[11px] text-red-900 font-bold">
+          <span class="block text-red-700 uppercase tracking-wider text-[10px]">🔒 Our Golden Rule for Your Safety</span>
+          <p>We will NEVER ask for, and you should NEVER share: Full 16 digits, Expiry Date, 3-digit CVV/CVC, or OTP/PIN.</p>
+        </div>
+      </div>
+
+      <button type="button" onclick="closeBspAdvisoryModal()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+        Understood & Acknowledged
+      </button>
     </div>
   </div>
 
@@ -959,17 +1013,16 @@
     let stagedBatchMovements = [];
     let pendingSkuData = null;
 
-    // MILESTONE 2: CARD ISSUE VARIABLES
+    // CARD ISSUES
     let cardMultiProofFiles = [];
     let isMaskedCardOpen = false;
 
-    // MILESTONE 3: SUPPLIES VARIABLES
+    // SHELF SERVICE
     let currentSupplyFilter = 'ALL';
     let rawPendingRequests = [];
-    let activeRequisitionRequests = [];
     let currentFreqType = 'STOCK_RESTOCK';
 
-    // ================= INITIALIZATION =================
+    // ================= INITIALIZATION & GATE =================
     async function initApp() {
       if (db) {
         try {
@@ -1055,7 +1108,7 @@
       }
     }
 
-    // ================= ROUTING & TAB NAVIGATION =================
+    // ================= ROUTING =================
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -1068,166 +1121,192 @@
         if (viewId === 'view-shelf-care') {
           switchShelfTab('tab-dropoff');
           loadWhiteBinParcels();
+        } else if (viewId === 'view-shelf-service') {
+          switchSuppliesSubTab('requests');
         } else if (viewId === 'view-card-logger') {
           loadRecentCardIssues();
-        } else if (viewId === 'view-supplies') {
-          switchSuppliesSubTab('requests');
+        } else if (viewId === 'view-shelf-help') {
+          setTimeout(() => document.getElementById('shelf-help-search-input')?.focus(), 150);
         }
       }
     }
 
-    function switchShelfTab(tabId) {
-      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
-
-      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`nav-tab-${t}`);
-        const indicator = btn.querySelector('.nav-indicator');
-        if (`tab-${t}` === tabId) {
-          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
-          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1";
-        } else {
-          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
-          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-transparent mb-1";
-        }
-      });
-
-      if (tabId === 'tab-received') loadWhiteBinParcels();
-      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
-    }
-
-    // ================= MILESTONE 2: CARD TRANSACTIONS =================
-    function toggleMaskedCardSection() {
-      isMaskedCardOpen = !isMaskedCardOpen;
-      const container = document.getElementById('masked-card-fields-container');
-      const icon = document.getElementById('masked-card-toggle-icon');
-      if (isMaskedCardOpen) {
-        container.classList.remove('hidden');
-        icon.textContent = "−";
-      } else {
-        container.classList.add('hidden');
-        icon.textContent = "+";
-      }
-    }
-
-    function openBspAdvisoryModal() {
-      document.getElementById('bsp-advisory-modal').style.display = 'flex';
-    }
-
-    function closeBspAdvisoryModal() {
-      document.getElementById('bsp-advisory-modal').style.display = 'none';
-    }
-
-    function previewCardMultiProof(input) {
-      cardMultiProofFiles = [];
-      const thumbBox = document.getElementById('card-proof-thumbnails');
-      thumbBox.innerHTML = "";
-
-      if (input.files && input.files.length > 0) {
-        document.getElementById('card-proof-label').textContent = `✓ ${input.files.length} File(s) Attached`;
-        
-        Array.from(input.files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const dataUrl = e.target.result;
-            cardMultiProofFiles.push({ type: file.type.startsWith('video') ? 'video' : 'image', url: dataUrl });
-            
-            const thumb = document.createElement('div');
-            thumb.className = "w-11 h-11 rounded-lg border border-bitBorderDark bg-white flex items-center justify-center text-[10px] font-bold text-bitWalnut overflow-hidden shadow-xs";
-            if (file.type.startsWith('video')) {
-              thumb.innerHTML = "▶ VID";
-            } else {
-              thumb.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
-            }
-            thumbBox.appendChild(thumb);
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-    }
-
-    async function submitCardTransactionIssue() {
-      const reason = document.getElementById('card-issue-reason-input').value.trim();
-      const name = document.getElementById('card-cust-name').value.trim();
-      const contact = document.getElementById('card-contact-info').value.trim();
-      const amount = parseFloat(document.getElementById('card-amount').value);
-
-      if (!reason || !name || !contact || isNaN(amount) || amount <= 0) {
-        alert("Please complete: Reason for Log, Customer Name, Contact Info, and Amount.");
-        return;
-      }
-
-      let maskedCardStr = null;
-      if (isMaskedCardOpen) {
-        const bin = document.getElementById('card-bin-first4').value.trim();
-        const last6 = document.getElementById('card-last6').value.trim();
-        if (bin && last6) {
-          maskedCardStr = `${bin}-XX-XXXX-${last6}`;
-        }
-      }
-
-      const payload = {
-        issue_reason: reason,
-        status: reason.toLowerCase().includes('delay') ? 'DELAYED' : 'FAILED',
-        customer_name: name,
-        contact_info: contact,
-        amount: amount,
-        masked_card: maskedCardStr,
-        proof_url: cardMultiProofFiles.length > 0 ? JSON.stringify(cardMultiProofFiles) : null,
-        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-      };
-
-      if (db) {
-        try {
-          await db.from('card_transactions').insert([payload]);
-        } catch (e) {}
-      }
-
-      alert(`✓ Card issue record logged for ${name} (₱${amount.toFixed(2)})!`);
-      document.getElementById('card-issue-reason-input').value = "";
-      document.getElementById('card-cust-name').value = "";
-      document.getElementById('card-contact-info').value = "";
-      document.getElementById('card-amount').value = "";
-      document.getElementById('card-bin-first4').value = "";
-      document.getElementById('card-last6').value = "";
-      document.getElementById('card-proof-thumbnails').innerHTML = "";
-      document.getElementById('card-proof-label').textContent = "📹 Record Video / Select Photos (Multi)";
-      cardMultiProofFiles = [];
-      if (isMaskedCardOpen) toggleMaskedCardSection();
-      loadRecentCardIssues();
-    }
-
-    async function loadRecentCardIssues() {
-      const container = document.getElementById('recent-card-issues-list');
-      let items = [];
-      if (db) {
-        try {
-          const { data } = await db.from('card_transactions').select('*').order('created_at', { ascending: false }).limit(6);
-          if (data) items = data;
-        } catch (e) {}
-      }
-
-      if (items.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4 font-bold">No card issues logged today.</div>`;
-        return;
-      }
-
-      container.innerHTML = items.map(c => `
-        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
-          <div>
-            <span class="font-bold text-bitWalnut block">${c.customer_name} • ₱${parseFloat(c.amount).toFixed(2)}</span>
-            <span class="text-[10px] text-gray-500 font-bold block">${c.issue_reason || c.status} • ${c.contact_info}</span>
-            ${c.masked_card ? `<span class="text-[9px] font-mono text-bitViolet block">Card: ${c.masked_card}</span>` : ''}
+    // ================= SHELF HELP: STOCK CHECKER & LOCATION BREAKDOWN =================
+    async function runShelfHelpSearch(query) {
+      const q = (query || document.getElementById('shelf-help-search-input').value).trim();
+      const resultArea = document.getElementById('shelf-help-result-area');
+      if (!q) {
+        resultArea.innerHTML = `
+          <div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">
+            Search for an SKU or scan a label to verify inventory and shelf location.
           </div>
-          <span class="px-2 py-0.5 text-[9px] font-bold rounded-full ${c.status === 'DELAYED' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
-            ${c.status}
-          </span>
-        </div>
-      `).join('');
+        `;
+        return;
+      }
+
+      let matchedItem = null;
+      let werqroomPacks = 0;
+      let shopPacks = 0;
+      let displayPcs = 0;
+
+      if (db) {
+        try {
+          const { data } = await db.from('items')
+            .select('*')
+            .or(`sku.ilike.%${q}%,name.ilike.%${q}%`)
+            .limit(1)
+            .maybeSingle();
+          if (data) matchedItem = data;
+
+          if (matchedItem) {
+            // Count Werqroom intake packs
+            const { data: intakes } = await db.from('intake_batches').select('pack_count').eq('sku', matchedItem.sku);
+            const totalIntake = intakes ? intakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0) : 0;
+
+            // Count Werqroom -> Shop transfers
+            const { data: shopTransfers } = await db.from('stock_movements')
+              .select('pcs_moved')
+              .eq('sku', matchedItem.sku)
+              .eq('action', 'DELIVERED_TO_SHOP');
+            const totalShopPacks = shopTransfers ? shopTransfers.length : 0;
+
+            // Count Shop -> Display transfers
+            const { data: dispTransfers } = await db.from('stock_movements')
+              .select('pcs_moved')
+              .eq('sku', matchedItem.sku)
+              .eq('action', 'REPLENISHED_TO_DISPLAY');
+            displayPcs = dispTransfers ? dispTransfers.reduce((acc, curr) => acc + (curr.pcs_moved || 0), 0) : 0;
+
+            werqroomPacks = Math.max(0, totalIntake - totalShopPacks);
+            shopPacks = Math.max(0, totalShopPacks - (dispTransfers ? dispTransfers.length : 0));
+          }
+        } catch (e) {}
+      }
+
+      if (matchedItem) {
+        const totalPacks = werqroomPacks + shopPacks;
+        resultArea.innerHTML = `
+          <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3">
+            <div class="flex items-start space-x-3">
+              <img src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+              <div class="min-w-0">
+                <span class="text-xs font-mono font-bold text-bitWalnut block break-all">${matchedItem.sku}</span>
+                <span class="text-xs font-bold text-gray-700 block">${matchedItem.name || 'Master Catalog Item'}</span>
+                <span class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold mt-1 ${totalPacks > 0 ? 'bg-bitGreen/20 text-bitGreen' : 'bg-red-100 text-red-800'}">
+                  ${totalPacks > 0 ? `${totalPacks} Full Packs in Inventory` : '0 Packs Left'}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center pt-2 border-t border-bitBorder">
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Werqroom</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">${werqroomPacks} packs</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Shop Storage</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">${shopPacks} packs</span>
+              </div>
+              <div class="p-2 bg-white rounded-xl border border-bitBorder">
+                <span class="text-[9px] font-bold text-gray-400 uppercase block">Display Pegs</span>
+                <span class="text-sm font-bold text-bitWalnut font-sans">~${displayPcs} pcs</span>
+              </div>
+            </div>
+
+            <button type="button" onclick="triggerFloorRequestFromChecker('${matchedItem.sku}')" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
+              + Request Restock for this Item
+            </button>
+          </div>
+        `;
+      } else {
+        resultArea.innerHTML = `
+          <div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2">
+            <span class="text-xs font-bold text-red-900 block">Item Not Found in Catalog</span>
+            <p class="text-[11px] text-red-700">No SKU or name matches "<strong>${q}</strong>". Verified 0 stock.</p>
+            <button type="button" onclick="triggerFloorRequestFromChecker('${q}')" class="w-full py-2.5 bg-bitPink hover:bg-pink-700 text-white font-bold text-xs rounded-xl cursor-pointer mt-1">
+              + File Request for "${q}" →
+            </button>
+          </div>
+        `;
+      }
     }
 
-    // ================= MILESTONE 3: SUPPLIES & EXPENSES =================
+    function triggerFloorRequestFromChecker(skuOrName) {
+      document.getElementById('freq-item-name').value = skuOrName;
+      document.getElementById('freq-current-qty').value = "0";
+      setFloorRequestType('STOCK_RESTOCK');
+      updateFreqUrgencyBadge();
+      openFloorRequestModal();
+    }
+
+    // ================= FLOOR RESTOCK REQUEST MODAL =================
+    function openFloorRequestModal() {
+      document.getElementById('floor-request-modal').style.display = 'flex';
+      document.getElementById('chk-physical-verify').checked = false;
+      updateFreqUrgencyBadge();
+    }
+
+    function closeFloorRequestModal() {
+      document.getElementById('floor-request-modal').style.display = 'none';
+    }
+
+    function setFloorRequestType(type) {
+      currentFreqType = type;
+      document.getElementById('btn-freq-stock').className = type === 'STOCK_RESTOCK' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
+      document.getElementById('btn-freq-supply').className = type === 'SUPPLY_CONSUMABLE' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
+    }
+
+    function updateFreqUrgencyBadge() {
+      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
+      const badge = document.getElementById('freq-urgency-badge');
+      if (qty === 0) {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800";
+        badge.textContent = "Needed ASAP";
+      } else if (qty <= 20) {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-amber-100 text-amber-800";
+        badge.textContent = "In 1 Week";
+      } else {
+        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-blue-100 text-blue-800";
+        badge.textContent = "In 2 Weeks";
+      }
+    }
+
+    async function submitFloorRequest() {
+      const name = document.getElementById('freq-item-name').value.trim();
+      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
+      const notes = document.getElementById('freq-notes').value.trim();
+      const isVerified = document.getElementById('chk-physical-verify').checked;
+
+      if (!name) {
+        alert("Please enter the item SKU or name.");
+        return;
+      }
+
+      if (!isVerified) {
+        alert("Please check the verification box confirming that you have searched and physically checked stock before filing.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('requests').insert([{
+            request_type: currentFreqType,
+            item_sku_or_code: name,
+            item_name: name,
+            qty_requested: qty,
+            urgency: qty === 0 ? 'NEEDED_ASAP' : (qty <= 20 ? 'NEEDED_IN_1_WEEK' : 'NEEDED_IN_2_WEEKS'),
+            reason: notes || null,
+            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+            status: 'PENDING'
+          }]);
+        } catch (e) {}
+      }
+
+      alert(`✓ Request for [${name}] queued!`);
+      closeFloorRequestModal();
+    }
+
+    // ================= SHELF SERVICE DESK =================
     function switchSuppliesSubTab(subTab) {
       ['requests', 'logger', 'petty'].forEach(t => {
         document.getElementById(`supplies-subtab-${t}`).classList.add('hidden');
@@ -1470,67 +1549,146 @@
       loadPettyCashReconcileDesk();
     }
 
-    // ================= FLOOR REQUEST TRIGGER =================
-    function openFloorRequestModal() {
-      document.getElementById('floor-request-modal').style.display = 'flex';
-      updateFreqUrgencyBadge();
-    }
-
-    function closeFloorRequestModal() {
-      document.getElementById('floor-request-modal').style.display = 'none';
-    }
-
-    function setFloorRequestType(type) {
-      currentFreqType = type;
-      document.getElementById('btn-freq-stock').className = type === 'STOCK_RESTOCK' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
-      document.getElementById('btn-freq-supply').className = type === 'SUPPLY_CONSUMABLE' ? "py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer" : "py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer";
-    }
-
-    function updateFreqUrgencyBadge() {
-      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
-      const badge = document.getElementById('freq-urgency-badge');
-      if (qty === 0) {
-        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800";
-        badge.textContent = "Needed ASAP";
-      } else if (qty <= 20) {
-        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-amber-100 text-amber-800";
-        badge.textContent = "In 1 Week";
+    // ================= CARD TRANSACTIONS =================
+    function toggleMaskedCardSection() {
+      isMaskedCardOpen = !isMaskedCardOpen;
+      const container = document.getElementById('masked-card-fields-container');
+      const icon = document.getElementById('masked-card-toggle-icon');
+      if (isMaskedCardOpen) {
+        container.classList.remove('hidden');
+        icon.textContent = "−";
       } else {
-        badge.className = "p-2 rounded-xl text-center text-[10px] font-bold bg-blue-100 text-blue-800";
-        badge.textContent = "In 2 Weeks";
+        container.classList.add('hidden');
+        icon.textContent = "+";
       }
     }
 
-    async function submitFloorRequest() {
-      const name = document.getElementById('freq-item-name').value.trim();
-      const qty = parseInt(document.getElementById('freq-current-qty').value) || 0;
-      const notes = document.getElementById('freq-notes').value.trim();
+    function openBspAdvisoryModal() { document.getElementById('bsp-advisory-modal').style.display = 'flex'; }
+    function closeBspAdvisoryModal() { document.getElementById('bsp-advisory-modal').style.display = 'none'; }
 
-      if (!name) {
-        alert("Please enter the item SKU or name.");
+    function previewCardMultiProof(input) {
+      cardMultiProofFiles = [];
+      const thumbBox = document.getElementById('card-proof-thumbnails');
+      thumbBox.innerHTML = "";
+
+      if (input.files && input.files.length > 0) {
+        document.getElementById('card-proof-label').textContent = `✓ ${input.files.length} File(s) Attached`;
+        Array.from(input.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            cardMultiProofFiles.push({ type: file.type.startsWith('video') ? 'video' : 'image', url: dataUrl });
+            const thumb = document.createElement('div');
+            thumb.className = "w-11 h-11 rounded-lg border border-bitBorderDark bg-white flex items-center justify-center text-[10px] font-bold text-bitWalnut overflow-hidden shadow-xs";
+            if (file.type.startsWith('video')) thumb.innerHTML = "▶ VID";
+            else thumb.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
+            thumbBox.appendChild(thumb);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+
+    async function submitCardTransactionIssue() {
+      const reason = document.getElementById('card-issue-reason-input').value.trim();
+      const name = document.getElementById('card-cust-name').value.trim();
+      const contact = document.getElementById('card-contact-info').value.trim();
+      const amount = parseFloat(document.getElementById('card-amount').value);
+
+      if (!reason || !name || !contact || isNaN(amount) || amount <= 0) {
+        alert("Please complete: Reason for Log, Customer Name, Contact Info, and Amount.");
         return;
       }
 
+      let maskedCardStr = null;
+      if (isMaskedCardOpen) {
+        const bin = document.getElementById('card-bin-first4').value.trim();
+        const last6 = document.getElementById('card-last6').value.trim();
+        if (bin && last6) maskedCardStr = `${bin}-XX-XXXX-${last6}`;
+      }
+
+      const payload = {
+        issue_reason: reason,
+        status: reason.toLowerCase().includes('delay') ? 'DELAYED' : 'FAILED',
+        customer_name: name,
+        contact_info: contact,
+        amount: amount,
+        masked_card: maskedCardStr,
+        proof_url: cardMultiProofFiles.length > 0 ? JSON.stringify(cardMultiProofFiles) : null,
+        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
       if (db) {
         try {
-          await db.from('requests').insert([{
-            request_type: currentFreqType,
-            item_sku_or_code: name,
-            item_name: name,
-            qty_requested: qty,
-            urgency: qty === 0 ? 'NEEDED_ASAP' : (qty <= 20 ? 'NEEDED_IN_1_WEEK' : 'NEEDED_IN_2_WEEKS'),
-            reason: notes || null,
-            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
-            status: 'PENDING'
-          }]);
+          await db.from('card_transactions').insert([payload]);
         } catch (e) {}
       }
 
-      alert(`✓ Request for [${name}] queued!`);
-      closeFloorRequestModal();
+      alert(`✓ Card issue record logged for ${name} (₱${amount.toFixed(2)})!`);
+      document.getElementById('card-issue-reason-input').value = "";
+      document.getElementById('card-cust-name').value = "";
+      document.getElementById('card-contact-info').value = "";
+      document.getElementById('card-amount').value = "";
+      document.getElementById('card-bin-first4').value = "";
+      document.getElementById('card-last6').value = "";
+      document.getElementById('card-proof-thumbnails').innerHTML = "";
+      document.getElementById('card-proof-label').textContent = "📹 Record Video / Select Photos (Multi)";
+      cardMultiProofFiles = [];
+      if (isMaskedCardOpen) toggleMaskedCardSection();
+      loadRecentCardIssues();
     }
 
-    // ================= SCANNER & HELPERS (MILESTONE 1 CONTINUITY) =================
+    async function loadRecentCardIssues() {
+      const container = document.getElementById('recent-card-issues-list');
+      let items = [];
+      if (db) {
+        try {
+          const { data } = await db.from('card_transactions').select('*').order('created_at', { ascending: false }).limit(6);
+          if (data) items = data;
+        } catch (e) {}
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4 font-bold">No card issues logged today.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(c => `
+        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+          <div>
+            <span class="font-bold text-bitWalnut block">${c.customer_name} • ₱${parseFloat(c.amount).toFixed(2)}</span>
+            <span class="text-[10px] text-gray-500 font-bold block">${c.issue_reason || c.status} • ${c.contact_info}</span>
+            ${c.masked_card ? `<span class="text-[9px] font-mono text-bitViolet block">Card: ${c.masked_card}</span>` : ''}
+          </div>
+          <span class="px-2 py-0.5 text-[9px] font-bold rounded-full ${c.status === 'DELAYED' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}">
+            ${c.status}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    // ================= SHELF CARE (INTAKE, QR BUILDER & MOVEMENT) =================
+    function switchShelfTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-tab-${t}`);
+        const indicator = btn.querySelector('.nav-indicator');
+        if (`tab-${t}` === tabId) {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1";
+        } else {
+          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
+          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-transparent mb-1";
+        }
+      });
+
+      if (tabId === 'tab-received') loadWhiteBinParcels();
+      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+    }
+
     function selectIntakeSource(type) {
       ['courier', 'merchant', 'inhouse'].forEach(t => {
         const btn = document.getElementById(`src-btn-${t}`);

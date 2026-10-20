@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Bitcrew Portal</title>
+  <title>Bitbit Portal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Client CDN -->
@@ -44,7 +44,8 @@
             bitViolet: '#9E64F2',
             bitPink: '#FF4E8D',
             bitGreen: '#78B828',
-            bitBorder: '#231B15'
+            bitBorder: '#E6E0D8',
+            bitBorderDark: '#D9D1C7'
           }
         }
       }
@@ -55,44 +56,49 @@
 
   <!-- ==================== LAUNCH PIN GATE ==================== -->
   <div id="gate-lockscreen" class="fixed inset-0 bg-bitCream z-50 flex flex-col items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-5 shadow-xl border-2 border-bitBorder">
-      <div class="text-center space-y-1">
-        <h2 class="text-3xl font-display text-bitWalnut">bit bit</h2>
-        <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Bitcrew Floor Gate</p>
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-5 shadow-xl border border-bitBorder">
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 mx-auto flex items-center justify-center">
+          <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+        </div>
+        <div>
+          <h2 class="text-xl font-bold tracking-tight text-bitWalnut">Bitbit</h2>
+          <p class="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Store Operations</p>
+        </div>
       </div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-bitWalnut mb-1">Select Name</label>
-          <select id="gate-crew-select" onchange="onGateCrewSelect()" class="w-full p-3 bg-bitCream rounded-2xl border-2 border-bitBorder text-xs font-bold text-bitWalnut outline-none">
+          <label class="block text-xs font-bold text-gray-600 mb-1">Select Name</label>
+          <select id="gate-crew-select" onchange="onGateCrewSelect()" class="w-full p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none focus:border-bitMarigold">
             <option value="">-- Choose your name --</option>
           </select>
         </div>
 
         <div id="gate-pin-container" class="space-y-3 hidden">
-          <label class="block text-xs font-bold text-bitWalnut text-center">Enter 4-Digit PIN</label>
+          <label class="block text-xs font-bold text-gray-500 text-center uppercase tracking-wider">Enter 4-Digit PIN</label>
           <div class="flex justify-center space-x-3 py-1">
-            <span id="gate-pin-dot-1" class="w-4 h-4 rounded-full border-2 border-bitBorder bg-white"></span>
-            <span id="gate-pin-dot-2" class="w-4 h-4 rounded-full border-2 border-bitBorder bg-white"></span>
-            <span id="gate-pin-dot-3" class="w-4 h-4 rounded-full border-2 border-bitBorder bg-white"></span>
-            <span id="gate-pin-dot-4" class="w-4 h-4 rounded-full border-2 border-bitBorder bg-white"></span>
+            <span id="gate-pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
+            <span id="gate-pin-dot-4" class="w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white"></span>
           </div>
 
           <div id="gate-pin-error" class="text-center text-xs font-bold text-bitPink h-4"></div>
 
-          <div class="grid grid-cols-3 gap-2 font-mono">
-            <button type="button" onclick="enterGateDigit('1')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">1</button>
-            <button type="button" onclick="enterGateDigit('2')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">2</button>
-            <button type="button" onclick="enterGateDigit('3')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">3</button>
-            <button type="button" onclick="enterGateDigit('4')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">4</button>
-            <button type="button" onclick="enterGateDigit('5')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">5</button>
-            <button type="button" onclick="enterGateDigit('6')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">6</button>
-            <button type="button" onclick="enterGateDigit('7')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">7</button>
-            <button type="button" onclick="enterGateDigit('8')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">8</button>
-            <button type="button" onclick="enterGateDigit('9')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">9</button>
-            <button type="button" onclick="clearGatePin()" class="py-3 bg-gray-100 border-2 border-bitBorder text-gray-500 font-bold text-xs rounded-2xl cursor-pointer">Clear</button>
-            <button type="button" onclick="enterGateDigit('0')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder font-bold text-base rounded-2xl cursor-pointer">0</button>
-            <button type="button" onclick="deleteGateDigit()" class="py-3 bg-gray-100 border-2 border-bitBorder text-gray-500 font-bold text-sm rounded-2xl cursor-pointer">⌫</button>
+          <div class="grid grid-cols-3 gap-2 font-sans font-bold">
+            <button type="button" onclick="enterGateDigit('1')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">1</button>
+            <button type="button" onclick="enterGateDigit('2')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">2</button>
+            <button type="button" onclick="enterGateDigit('3')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">3</button>
+            <button type="button" onclick="enterGateDigit('4')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">4</button>
+            <button type="button" onclick="enterGateDigit('5')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">5</button>
+            <button type="button" onclick="enterGateDigit('6')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">6</button>
+            <button type="button" onclick="enterGateDigit('7')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">7</button>
+            <button type="button" onclick="enterGateDigit('8')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">8</button>
+            <button type="button" onclick="enterGateDigit('9')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">9</button>
+            <button type="button" onclick="clearGatePin()" class="py-3 bg-gray-50 border border-bitBorder text-gray-500 text-xs rounded-2xl cursor-pointer">Clear</button>
+            <button type="button" onclick="enterGateDigit('0')" class="py-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorder text-base rounded-2xl cursor-pointer">0</button>
+            <button type="button" onclick="deleteGateDigit()" class="py-3 bg-gray-50 border border-bitBorder text-gray-500 text-sm rounded-2xl cursor-pointer">⌫</button>
           </div>
         </div>
       </div>
@@ -100,19 +106,22 @@
   </div>
 
   <!-- TOP HEADER -->
-  <header class="bg-white border-b-2 border-bitBorder sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-xs">
-    <div class="flex items-center space-x-2">
-      <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden text-bitWalnut font-bold text-xs bg-bitCream border-2 border-bitBorder px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-bitMarigold/20">
+  <header class="bg-white/90 backdrop-blur-md border-b border-bitBorder sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-xs">
+    <div class="flex items-center space-x-2.5">
+      <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden text-bitWalnut font-bold text-xs bg-bitCream border border-bitBorderDark px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-bitMarigold/20">
         ← Hub
       </button>
+      <div class="w-8 h-8 flex items-center justify-center shrink-0">
+        <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+      </div>
       <div>
-        <h1 class="text-xl font-display text-bitWalnut leading-none">bit bit</h1>
-        <span id="header-subtitle" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Store Operations</span>
+        <h1 class="text-sm font-bold tracking-tight text-bitWalnut leading-none">Bitbit</h1>
+        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Store Operations</span>
       </div>
     </div>
 
-    <button type="button" onclick="promptSwitchShift()" class="flex items-center space-x-2 bg-bitCream border-2 border-bitBorder px-3 py-1.5 rounded-full cursor-pointer shadow-xs">
-      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-bitMarigold border border-bitBorder text-bitWalnut flex items-center justify-center text-xs font-bold">?</div>
+    <button type="button" onclick="promptSwitchShift()" class="flex items-center space-x-2 bg-bitCream border border-bitBorderDark px-3 py-1.5 rounded-full cursor-pointer shadow-xs">
+      <div id="crew-avatar" class="w-5 h-5 rounded-full bg-bitMarigold text-bitWalnut flex items-center justify-center text-[10px] font-bold">?</div>
       <div class="text-left">
         <span id="crew-name" class="text-xs font-bold text-bitWalnut block leading-none">Staff</span>
         <span id="crew-role-badge" class="text-[9px] text-bitViolet font-bold block leading-none mt-0.5">Role</span>
@@ -123,28 +132,28 @@
   <!-- ==================== VIEW 1: BITCREW MAIN HUB ==================== -->
   <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3.5">
     <div class="text-center space-y-1 mb-2">
-      <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/30 text-bitWalnut border border-bitBorder uppercase">Workspace</span>
-      <h2 class="text-3xl font-display text-bitWalnut">Bitcrew Portal</h2>
-      <p class="text-xs text-gray-600 font-bold">Select an operational module to begin.</p>
+      <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut border border-bitBorder uppercase">Workspace</span>
+      <h2 class="text-2xl font-bold text-bitWalnut tracking-tight">Bitcrew Portal</h2>
+      <p class="text-xs text-gray-500 font-bold">Select an operational module to begin.</p>
     </div>
 
     <div class="space-y-3">
       <!-- 1. SHELF CARE -->
-      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-bitGreen text-white p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] transition active:translate-x-0.5 active:translate-y-0.5 cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#E8FB4B] hover:bg-[#d9ec3c] text-bitWalnut p-5 rounded-[28px] border border-[#d2e434] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-xl font-display leading-tight">Shelf Care</div>
-          <span class="text-xs font-bold text-white/90 block mt-0.5">Intake, QR Builder & Movement Station</span>
+          <div class="text-lg font-bold tracking-tight leading-snug">Shelf Care</div>
+          <span class="text-xs font-medium text-gray-700 block mt-0.5">Intake, QR Builder & Movement Station</span>
         </div>
-        <span class="text-2xl font-bold group-hover:translate-x-1 transition-transform">➔</span>
+        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <!-- 2. SUPPLIES -->
-      <button type="button" onclick="goToView('view-shelf-care'); switchShelfTab('tab-move');" class="w-full bg-bitMarigold text-bitWalnut p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] transition active:translate-x-0.5 active:translate-y-0.5 cursor-pointer flex items-center justify-between group">
+      <!-- 2. MOVEMENT STATION DIRECT -->
+      <button type="button" onclick="goToView('view-shelf-care'); switchShelfTab('tab-move');" class="w-full bg-white hover:bg-bitCream text-bitWalnut p-5 rounded-[28px] border border-bitBorderDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
-          <div class="text-xl font-display leading-tight">Stock Logistics</div>
-          <span class="text-xs font-bold text-bitWalnut/80 block mt-0.5">Werqroom ➔ Shop ➔ Display Movement</span>
+          <div class="text-lg font-bold tracking-tight leading-snug">Stock Movement</div>
+          <span class="text-xs font-medium text-gray-500 block mt-0.5">Werqroom ➔ Shop ➔ Display Hand-offs</span>
         </div>
-        <span class="text-2xl font-bold group-hover:translate-x-1 transition-transform">➔</span>
+        <span class="text-2xl text-gray-400 group-hover:translate-x-1 transition-transform">→</span>
       </button>
     </div>
   </main>
@@ -152,43 +161,43 @@
   <!-- ==================== VIEW 2: SHELF CARE MODULE ==================== -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
 
-    <!-- STOCK COUNTER TOP TILES -->
+    <!-- STOCK COUNTER TILES -->
     <div class="grid grid-cols-3 gap-2">
-      <div class="bg-white p-3 rounded-2xl border-2 border-bitBorder shadow-xs">
-        <span class="text-[10px] font-bold text-gray-500 uppercase">Werqroom</span>
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
         <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-display text-bitWalnut" id="werqroom-count">0</span>
-          <span class="text-[10px] font-bold text-gray-400">packs</span>
+          <span class="text-xl font-bold text-bitWalnut" id="werqroom-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">packs</span>
         </div>
       </div>
-      <div class="bg-white p-3 rounded-2xl border-2 border-bitBorder shadow-xs">
-        <span class="text-[10px] font-bold text-gray-500 uppercase">Shop Storage</span>
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop Storage</span>
         <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-display text-bitWalnut" id="storage-count">0</span>
-          <span class="text-[10px] font-bold text-gray-400">packs</span>
+          <span class="text-xl font-bold text-bitWalnut" id="storage-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">packs</span>
         </div>
       </div>
-      <div class="bg-white p-3 rounded-2xl border-2 border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
-        <span class="text-[10px] font-bold text-bitMarigold uppercase">White Bin</span>
+      <div class="bg-white p-3 rounded-2xl border border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
+        <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">White Bin</span>
         <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-display text-bitWalnut" id="whitebin-count">0</span>
-          <span class="text-[10px] font-bold text-gray-400">parcels</span>
+          <span class="text-xl font-bold text-bitWalnut" id="whitebin-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">parcels</span>
         </div>
       </div>
     </div>
 
     <!-- TAB 1: DROP-OFF -->
     <section id="tab-dropoff" class="tab-pane space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] space-y-4">
-        <div class="border-b-2 border-bitCream pb-3">
-          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/30 text-bitWalnut border border-bitBorder uppercase">Intake</span>
-          <h2 class="text-xl font-display text-bitWalnut mt-1">Package Drop-Off</h2>
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Intake</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Package Drop-Off</h2>
         </div>
 
         <div class="space-y-3">
-          <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitBorder">
+          <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
             <div class="flex items-center justify-between mb-1">
-              <label class="text-[11px] font-bold text-bitWalnut uppercase">1. Waybill Barcode</label>
+              <label class="text-[11px] font-bold text-gray-600 uppercase">1. Waybill Barcode</label>
               <button type="button" onclick="startCameraScanner('waybill-barcode-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
                 <span>📷 Scan Barcode</span>
               </button>
@@ -197,28 +206,28 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-bitWalnut mb-1">2. Outer Package Photo *</label>
-            <label class="border-2 border-dashed border-bitBorder rounded-2xl p-3 text-center cursor-pointer bg-bitCream block">
+            <label class="block text-xs font-bold text-gray-700 mb-1">2. Outer Package Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
               <input type="file" id="package-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-package-preview', 'wrap-package-preview', 'lbl-package')">
               <div id="wrap-package-preview" class="hidden mb-1">
-                <img id="img-package-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border-2 border-bitBorder" alt="Package">
+                <img id="img-package-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Package">
               </div>
-              <span id="lbl-package" class="text-xs font-bold text-bitWalnut">Attach Outer Photo</span>
+              <span id="lbl-package" class="text-xs font-bold text-gray-600">Attach Outer Photo</span>
             </label>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-bitWalnut mb-1">3. Content Photo *</label>
-            <label class="border-2 border-dashed border-bitBorder rounded-2xl p-3 text-center cursor-pointer bg-bitCream block">
+            <label class="block text-xs font-bold text-gray-700 mb-1">3. Content Photo *</label>
+            <label class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-3 text-center cursor-pointer bg-bitCream block transition">
               <input type="file" id="content-photo-file" accept="image/*" class="hidden" onchange="previewGenericPhoto(this, 'img-content-preview', 'wrap-content-preview', 'lbl-content')">
               <div id="wrap-content-preview" class="hidden mb-1">
-                <img id="img-content-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border-2 border-bitBorder" alt="Contents">
+                <img id="img-content-preview" class="w-20 h-20 object-cover rounded-xl mx-auto border shadow-sm" alt="Contents">
               </div>
-              <span id="lbl-content" class="text-xs font-bold text-bitWalnut">Attach Content Photo</span>
+              <span id="lbl-content" class="text-xs font-bold text-gray-600">Attach Content Photo</span>
             </label>
           </div>
 
-          <button type="button" onclick="logCourierDropStrict()" class="w-full py-3.5 bg-bitWalnut text-white rounded-2xl font-bold text-xs shadow-md cursor-pointer hover:bg-black">
+          <button type="button" onclick="logCourierDropStrict()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
             Send Parcel to Werqroom White Bin →
           </button>
         </div>
@@ -227,129 +236,129 @@
 
     <!-- TAB 2: RECEIVED (WHITE BIN) -->
     <section id="tab-received" class="tab-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] space-y-3">
-        <div class="flex items-center justify-between border-b-2 border-bitCream pb-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/30 text-bitWalnut border border-bitBorder uppercase">Sorting Queue</span>
-            <h2 class="text-xl font-display text-bitWalnut mt-1">White Bin Parcels</h2>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Sorting Queue</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">White Bin Parcels</h2>
           </div>
-          <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border-2 border-bitBorder text-xs font-bold rounded-full">0 Parcels</span>
+          <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Parcels</span>
         </div>
-        <div id="whitebin-list" class="space-y-2.5"></div>
+        <div id="whitebin-list" class="space-y-2"></div>
       </div>
     </section>
 
-    <!-- TAB 3: QR BUILDER (4-PART SKU & 3 PRINT MODES) -->
+    <!-- TAB 3: QR BUILDER (4-PART SKU & CLEANED STREAMLINED PREVIEW) -->
     <section id="tab-qrbuilder" class="tab-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] space-y-3.5">
-        <div class="flex items-center justify-between border-b-2 border-bitCream pb-2">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-2">
           <div>
-            <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/30 px-2 py-0.5 rounded-full border border-bitBorder">Werqroom Intake</span>
-            <h2 class="font-display text-xl text-bitWalnut mt-1">SKU & Label Generator</h2>
+            <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Werqroom Intake</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">SKU & Label Generator</h2>
           </div>
         </div>
 
-        <!-- 4-PART SKU FORMULA -->
+        <!-- 4-PART SKU INPUTS -->
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-[10px] font-bold text-bitWalnut mb-1">1. Category</label>
-            <input type="text" id="sku-cat-input" value="BDS" placeholder="BDS, CHM" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border-2 border-bitBorder font-mono text-xs font-bold uppercase outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
+            <input type="text" id="sku-cat-input" value="BDS" placeholder="BDS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-bitWalnut mb-1">2. Sub-Cat</label>
-            <input type="text" id="sku-subcat-input" value="BOS" placeholder="BOS, LNK" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border-2 border-bitBorder font-mono text-xs font-bold uppercase outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">2. Sub-Cat</label>
+            <input type="text" id="sku-subcat-input" value="BOS" placeholder="BOS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-bitWalnut mb-1">3. Type</label>
-            <input type="text" id="sku-type-input" value="BIG" placeholder="BIG, STN" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border-2 border-bitBorder font-mono text-xs font-bold uppercase outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">3. Type</label>
+            <input type="text" id="sku-type-input" value="BIG" placeholder="BIG" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
           </div>
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold text-bitWalnut mb-1">4. Identifier Code</label>
-          <input type="text" id="sku-ident-input" value="SOLID E" placeholder="SOLID E or STAR-01" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border-2 border-bitBorder font-mono text-xs font-bold uppercase outline-none">
+          <label class="block text-[10px] font-bold text-gray-500 mb-1">4. Identifier Code</label>
+          <input type="text" id="sku-ident-input" value="SOLID E" placeholder="SOLID E or STAR-01" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
         </div>
 
-        <div>
-          <label class="block text-[10px] font-bold text-bitWalnut mb-1">Item Display Name</label>
-          <input type="text" id="sku-name-input" value="BOSS BIG SOLID E" placeholder="e.g. Boss Big Solid E Bead" class="w-full p-2.5 bg-bitCream rounded-xl border-2 border-bitBorder text-xs font-bold outline-none">
+        <!-- STREAMLINED COMPACT PREVIEW (NO DUPLICATE BOXES) -->
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between">
+          <div>
+            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
+            <span id="sku-preview-badge" class="font-mono font-bold text-sm text-bitWalnut tracking-wider select-all">BDS-BOS-BIG-SOLID-E</span>
+          </div>
+          <button type="button" onclick="copyMasterSkuText()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50">
+            📋 Copy
+          </button>
         </div>
 
-        <!-- GENERATED 4-PART SKU BADGE -->
-        <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitBorder text-center">
-          <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Generated Master SKU</span>
-          <span id="sku-preview-badge" class="font-mono font-black text-base text-bitWalnut tracking-wider select-all">BDS-BOS-BIG-SOLID-E</span>
-        </div>
-
-        <!-- QR CODE + MASTER PHOTO SELECTOR (MODAL TRIGGER) -->
+        <!-- QR CODE + MASTER PHOTO TRIGGER -->
         <div class="grid grid-cols-2 gap-2">
-          <div class="p-2 bg-white rounded-2xl border-2 border-bitBorder flex flex-col items-center justify-center min-h-[120px]">
+          <div class="p-2 bg-white rounded-2xl border border-bitBorder flex flex-col items-center justify-center min-h-[110px]">
             <div id="qrcode-container" class="p-1 bg-white"></div>
-            <span class="text-[9px] font-bold text-gray-400 mt-1 uppercase">Live QR</span>
+            <span class="text-[9px] font-bold text-gray-400 mt-1 uppercase">Live QR Preview</span>
           </div>
 
-          <div onclick="openPhotoPickerModal()" class="border-2 border-dashed border-bitBorder hover:bg-bitCream rounded-2xl p-2 text-center cursor-pointer flex flex-col items-center justify-center transition">
+          <div onclick="openPhotoPickerModal()" class="border-2 border-dashed border-bitBorderDark hover:border-bitWalnut rounded-2xl p-2 text-center cursor-pointer bg-bitCream flex flex-col items-center justify-center transition">
             <div id="sku-photo-preview-wrap" class="hidden mb-1">
-              <img id="sku-img-preview" class="w-16 h-16 object-cover rounded-xl border-2 border-bitBorder" alt="Master">
+              <img id="sku-img-preview" class="w-16 h-16 object-cover rounded-xl border" alt="Master">
             </div>
             <span id="sku-photo-icon" class="text-2xl mb-1">📷</span>
-            <span id="sku-photo-label" class="text-[10px] font-bold text-bitWalnut">Add Master Photo</span>
+            <span id="sku-photo-label" class="text-[10px] font-bold text-gray-600">Add Master Photo</span>
           </div>
         </div>
 
-        <!-- PACK & QUANTITY SPLIT -->
-        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100">
+        <!-- PACK COUNTS -->
+        <div class="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
           <div>
-            <label class="block text-[10px] font-bold text-gray-600 mb-1">Pack Count</label>
-            <input type="number" id="sku-pack-count" value="4" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border-2 border-bitBorder font-mono font-bold text-xs text-center outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
+            <input type="number" id="sku-pack-count" value="10" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-gray-600 mb-1">Pcs / Pack</label>
-            <input type="number" id="sku-pcs-per-pack" value="10" min="1" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border-2 border-bitBorder font-mono font-bold text-xs text-center outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Pcs / Pack</label>
+            <input type="number" id="sku-pcs-per-pack" value="10" min="1" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-gray-600 mb-1">Partial Pcs</label>
-            <input type="number" id="sku-partial-pcs" value="7" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border-2 border-bitBorder font-mono font-bold text-xs text-center outline-none">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
+            <input type="number" id="sku-partial-pcs" value="7" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
         </div>
 
         <div class="flex items-center justify-between text-xs font-bold pt-1">
           <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" id="chk-print-only" class="w-4 h-4 rounded border-2 border-bitBorder text-bitWalnut focus:ring-0">
-            <span class="text-[11px] font-bold text-bitWalnut">Print Label Only (No stock intake)</span>
+            <input type="checkbox" id="chk-print-only" class="w-4 h-4 rounded border-gray-300 text-bitWalnut focus:ring-0">
+            <span class="text-[11px] font-bold text-gray-600">Print Label Only (No stock intake)</span>
           </label>
-          <div class="text-right">
-            Total Pcs: <span id="sku-total-calc" class="font-display text-base text-bitWalnut">47</span>
+          <div class="text-right text-gray-600">
+            Total Pcs: <span id="sku-total-calc" class="font-bold text-sm text-bitWalnut">107</span>
           </div>
         </div>
 
-        <button type="button" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut text-white rounded-2xl font-bold text-xs shadow-md cursor-pointer hover:bg-black">
-          Save SKU & Print Labels ➔
+        <button type="button" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+          Save SKU & Print Labels →
         </button>
       </div>
     </section>
 
-    <!-- TAB 4: MOVEMENT STATION (BATCH STAGING QUEUE) -->
+    <!-- TAB 4: MOVEMENT STATION (BATCH STAGING QUEUE + INLINE ADJUSTER) -->
     <section id="tab-move" class="tab-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border-2 border-bitBorder shadow-[3px_3px_0px_#231B15] space-y-3.5">
-        <div class="border-b-2 border-bitCream pb-3">
-          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/30 text-bitWalnut border border-bitBorder uppercase">Logistics</span>
-          <h2 class="text-xl font-display text-bitWalnut mt-1">Movement Station</h2>
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Logistics</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Movement Station</h2>
           
           <div class="grid grid-cols-2 gap-2 mt-2">
-            <button type="button" onclick="setMovementMode('DELIVERED_TO_SHOP')" id="btn-mode-delivered" class="py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitMarigold text-bitWalnut cursor-pointer">
+            <button type="button" onclick="setMovementMode('DELIVERED_TO_SHOP')" id="btn-mode-delivered" class="py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
               Werqroom ➔ Shop
             </button>
-            <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitCream text-gray-600 cursor-pointer">
+            <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer">
               Shop ➔ Display
             </button>
           </div>
         </div>
 
-        <!-- BARCODE / CAMERA SCANNER ROW -->
-        <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitBorder focus-within:ring-2 focus-within:ring-bitWalnut">
+        <!-- SCANNER ROW -->
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
           <div class="flex items-center justify-between mb-1">
-            <label class="text-[11px] font-bold text-bitWalnut uppercase">Scan Bag QR (Eyoyo / HW)</label>
+            <label class="text-[11px] font-bold text-gray-600 uppercase">Scan Bag QR (Eyoyo / HW)</label>
             <button type="button" onclick="startCameraScanner('move-scanner-input', handleScannedMovement)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
               <span>📷 Camera</span>
             </button>
@@ -357,29 +366,29 @@
           <input type="text" id="move-scanner-input" placeholder="Scan standard or -P partial bag..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
         </div>
 
-        <!-- BATCH STAGING TABLE -->
+        <!-- BATCH STAGING TABLE WITH INLINE COUNT OVERRIDES -->
         <div class="space-y-2 pt-1">
-          <div class="flex items-center justify-between text-xs font-bold text-bitWalnut">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-600">
             <span>Staged Batch Items</span>
-            <span id="batch-item-count" class="px-2 py-0.5 bg-bitCream border border-bitBorder rounded-full text-[10px]">0 items</span>
+            <span id="batch-item-count" class="px-2 py-0.5 bg-bitCream border border-bitBorderDark rounded-full text-[10px]">0 items</span>
           </div>
 
           <div id="batch-movement-queue" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-            <div class="text-center py-6 text-xs text-gray-400 font-bold border-2 border-dashed border-bitCream rounded-2xl">
+            <div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">
               Scan bag QR codes to build your batch movement list.
             </div>
           </div>
         </div>
 
-        <!-- EXPLICIT COMMIT BATCH ACTION BUTTON -->
-        <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen text-white rounded-2xl font-bold text-xs shadow-md border-2 border-bitBorder cursor-pointer transition disabled:opacity-50" disabled>
-          Commit Batch Stock Movement ➔
+        <!-- COMMIT BATCH ACTION BUTTON -->
+        <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen hover:bg-[#6ba523] text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition disabled:opacity-40" disabled>
+          Commit Batch Stock Movement →
         </button>
       </div>
     </section>
 
     <!-- 4-TAB BOTTOM NAVIGATION WITH ACCURATE ACTIVE HIGHLIGHT -->
-    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t-2 border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-lg">
+    <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-20 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-tab-dropoff" class="nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
         <span>Drop-Off</span>
@@ -401,100 +410,103 @@
 
   <!-- ==================== PHOTO SOURCE SELECTION MODAL ==================== -->
   <div id="photo-picker-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-3 shadow-2xl border-2 border-bitBorder">
-      <div class="flex items-center justify-between border-b pb-2">
-        <h3 class="font-display text-base text-bitWalnut">Select Photo Source</h3>
+    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Select Photo Source</h3>
         <button type="button" onclick="closePhotoPickerModal()" class="text-gray-400 font-bold p-1">✕</button>
       </div>
 
       <div class="space-y-2">
-        <!-- LIVE CAMERA OPTION -->
-        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder rounded-2xl flex items-center space-x-3 cursor-pointer">
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
           <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
-          <span class="text-xl">📷</span>
+          <span class="text-lg">📷</span>
           <span class="text-xs font-bold text-bitWalnut">Take Photo with Camera</span>
         </label>
 
-        <!-- PHOTO LIBRARY OPTION -->
-        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border-2 border-bitBorder rounded-2xl flex items-center space-x-3 cursor-pointer">
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
           <input type="file" accept="image/*" class="hidden" onchange="handleChosenMasterPhoto(this)">
-          <span class="text-xl">🖼️</span>
+          <span class="text-lg">🖼️</span>
           <span class="text-xs font-bold text-bitWalnut">Choose from Photo Library</span>
         </label>
       </div>
     </div>
   </div>
 
-  <!-- ==================== NIIMBOT 3-MODE PRINT MODAL ==================== -->
-  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border-2 border-bitBorder my-auto">
-      <div class="flex items-center justify-between border-b-2 border-bitCream pb-2">
+  <!-- ==================== 50x30mm DUAL-LABEL NIIMBOT MODAL ==================== -->
+  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder my-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
         <div>
-          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/30 px-2 py-0.5 rounded-full border border-bitBorder">Niimbot Output</span>
-          <h3 class="font-display text-lg text-bitWalnut mt-1">Print Mode Selection</h3>
+          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">50 × 30 mm Roll</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Label Print Station</h3>
         </div>
         <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
 
       <!-- 3 EXPLICIT PRINT MODES -->
-      <div class="space-y-2">
-        <!-- MODE 1: BATCH PRINT -->
-        <label class="p-3 bg-bitCream border-2 border-bitBorder rounded-2xl flex items-center justify-between cursor-pointer">
-          <div class="flex items-center space-x-2.5">
-            <input type="radio" name="print-mode-choice" value="BATCH" checked onchange="updatePrintCardDisplay()" class="w-4 h-4 text-bitWalnut">
-            <div>
-              <span class="text-xs font-bold text-bitWalnut block">Batch Print</span>
-              <span class="text-[10px] text-gray-500 block">Print all standard full packs</span>
-            </div>
-          </div>
-          <span id="badge-batch-qty" class="px-2 py-0.5 bg-bitWalnut text-white text-[10px] font-bold rounded-full">4x</span>
+      <div class="grid grid-cols-3 gap-1.5 text-center">
+        <label class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block">
+          <input type="radio" name="print-mode-choice" value="BATCH" checked onchange="updatePrintCardDisplay()" class="hidden">
+          <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
+          <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
         </label>
 
-        <!-- MODE 2: SINGLE PRINT -->
-        <label class="p-3 bg-bitCream border-2 border-bitBorder rounded-2xl flex items-center justify-between cursor-pointer">
-          <div class="flex items-center space-x-2.5">
-            <input type="radio" name="print-mode-choice" value="SINGLE" onchange="updatePrintCardDisplay()" class="w-4 h-4 text-bitWalnut">
-            <div>
-              <span class="text-xs font-bold text-bitWalnut block">Single Print</span>
-              <span class="text-[10px] text-gray-500 block">Print exactly 1 label copy</span>
-            </div>
-          </div>
-          <span class="px-2 py-0.5 bg-bitCream border border-bitBorder text-bitWalnut text-[10px] font-bold rounded-full">1x</span>
+        <label class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block">
+          <input type="radio" name="print-mode-choice" value="SINGLE" onchange="updatePrintCardDisplay()" class="hidden">
+          <span class="text-[11px] font-bold text-gray-700 block">Single</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
         </label>
 
-        <!-- MODE 3: PARTIAL PACK ONLY -->
-        <label id="lbl-mode-partial" class="p-3 bg-bitMarigold/20 border-2 border-bitBorder rounded-2xl flex items-center justify-between cursor-pointer">
-          <div class="flex items-center space-x-2.5">
-            <input type="radio" name="print-mode-choice" value="PARTIAL" onchange="updatePrintCardDisplay()" class="w-4 h-4 text-bitWalnut">
-            <div>
-              <span class="text-xs font-bold text-bitWalnut block">🟡 Partial Pack Only</span>
-              <span class="text-[10px] text-gray-600 block">Print loose piece yellow-dot tag</span>
-            </div>
-          </div>
-          <span class="px-2 py-0.5 bg-bitMarigold border border-bitBorder text-bitWalnut text-[10px] font-bold rounded-full">1x</span>
+        <label id="lbl-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block">
+          <input type="radio" name="print-mode-choice" value="PARTIAL" onchange="updatePrintCardDisplay()" class="hidden">
+          <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
         </label>
       </div>
 
-      <!-- DYNAMIC QR PREVIEW BOX -->
-      <div id="print-qr-display-box" class="bg-bitCream p-3.5 rounded-2xl border-2 border-bitBorder flex items-center space-x-3">
-        <div id="active-print-qr" class="p-1 bg-white border border-bitBorder rounded-lg shrink-0"></div>
-        <div class="min-w-0">
-          <span id="active-print-sku" class="text-xs font-mono font-bold text-bitWalnut block break-all">BDS-BOS-BIG-SOLID-E</span>
-          <span id="active-print-meta" class="text-[10px] text-gray-500 block font-bold mt-0.5">Scan into Niimbot App</span>
+      <!-- 50x30mm PREVIEW CONTAINER (SPLIT INTO TWO 50x15mm ROWS) -->
+      <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
+        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
+        
+        <!-- CARD MATCHING 50x30 RATIO (Two identical 50x15mm labels) -->
+        <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
+          <!-- TOP SUB-LABEL (50x15mm) -->
+          <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
+            <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
+
+          <!-- BOTTOM SUB-LABEL (50x15mm) -->
+          <div class="flex items-center space-x-2 pt-1.5">
+            <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3.5 bg-bitWalnut text-white rounded-2xl font-bold text-xs shadow-md cursor-pointer hover:bg-black">
+      <!-- 1-CLICK COPY ACTION FOR NIIMBOT APP -->
+      <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
+        <span>📋</span>
+        <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
+      </button>
+
+      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
         ✓ Done Printing & Applied on Bags
       </button>
     </div>
   </div>
 
-  <!-- CAMERA SCANNER OVERLAY MODAL -->
+  <!-- CAMERA SCANNER OVERLAY -->
   <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border-2 border-bitBorder">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
       <div class="flex items-center justify-between border-b pb-2">
-        <h3 class="font-display text-base text-bitWalnut">Scan Barcode / QR</h3>
+        <h3 class="font-bold text-sm text-bitWalnut">Scan Barcode / QR</h3>
         <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
       <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
@@ -529,7 +541,7 @@
     let stagedBatchMovements = [];
     let pendingSkuData = null;
 
-    // ================= INITIALIZATION & PIN GATE =================
+    // ================= INITIALIZATION =================
     async function initApp() {
       if (db) {
         try {
@@ -584,8 +596,8 @@
     function updateGatePinDots() {
       for (let i = 1; i <= 4; i++) {
         const dot = document.getElementById(`gate-pin-dot-${i}`);
-        if (i <= enteredGatePin.length) dot.className = "w-4 h-4 rounded-full border-2 border-bitBorder bg-bitMarigold";
-        else dot.className = "w-4 h-4 rounded-full border-2 border-bitBorder bg-white";
+        if (i <= enteredGatePin.length) dot.className = "w-3.5 h-3.5 rounded-full bg-bitMarigold border-2 border-bitMarigold";
+        else dot.className = "w-3.5 h-3.5 rounded-full border-2 border-bitBorderDark bg-white";
       }
     }
 
@@ -615,7 +627,7 @@
       }
     }
 
-    // ================= NAVIGATION ROUTING & HIGHLIGHT FIX =================
+    // ================= ROUTING & TAB HIGHLIGHTING =================
     function goToView(viewId) {
       document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
       document.getElementById(viewId).classList.remove('hidden');
@@ -636,7 +648,6 @@
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
 
-      // ACCURATE TAB ACTIVE INDICATOR FIX
       const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
       tabs.forEach(t => {
         const btn = document.getElementById(`nav-tab-${t}`);
@@ -661,7 +672,6 @@
       const typ = (document.getElementById('sku-type-input')?.value || 'BIG').trim().toUpperCase();
       const identRaw = (document.getElementById('sku-ident-input')?.value || 'SOLID E').trim().toUpperCase().replace(/\s+/g, '-');
 
-      // 4-PART FORMULA: Category-SubCat-Type-Identifier
       const fullSku = `${cat}-${sub}-${typ}-${identRaw || '______'}`;
       document.getElementById('sku-preview-badge').textContent = fullSku;
 
@@ -669,6 +679,13 @@
         renderQrCode('qrcode-container', fullSku, 80);
       }
       return fullSku;
+    }
+
+    function copyMasterSkuText() {
+      const sku = document.getElementById('sku-preview-badge').textContent;
+      navigator.clipboard.writeText(sku).then(() => {
+        alert(`Copied: ${sku}`);
+      });
     }
 
     function renderQrCode(containerId, text, size = 80) {
@@ -688,7 +705,7 @@
       return total;
     }
 
-    // ================= MASTER PHOTO PICKER (CAMERA VS GALLERY) =================
+    // ================= MASTER PHOTO PICKER =================
     function openPhotoPickerModal() {
       document.getElementById('photo-picker-modal').style.display = 'flex';
     }
@@ -712,10 +729,9 @@
       }
     }
 
-    // ================= 3-MODE NIIMBOT PRINT MODAL =================
+    // ================= 50x30mm NIIMBOT MODAL =================
     function openPrintStationModal() {
       const sku = generateFourPartSku();
-      const name = document.getElementById('sku-name-input').value.trim();
       const cat = document.getElementById('sku-cat-input').value.trim();
       const sub = document.getElementById('sku-subcat-input').value.trim();
       const typ = document.getElementById('sku-type-input').value.trim();
@@ -724,21 +740,15 @@
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
       const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
       const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
-      const total = calculateTotalPcs();
       const isPrintOnly = document.getElementById('chk-print-only').checked;
 
-      if (!name) {
-        alert("Please enter the Item Display Name.");
-        return;
-      }
-
       pendingSkuData = {
-        sku: sku, name: name, category: cat, subcategory: sub, type: typ, identifier: ident,
-        pack_count: packs, pcs_per_pack: perPack, partial_pcs: partial, total_pcs: total,
+        sku: sku, name: `${sub} ${typ} ${ident}`, category: cat, subcategory: sub, type: typ, identifier: ident,
+        pack_count: packs, pcs_per_pack: perPack, partial_pcs: partial, total_pcs: calculateTotalPcs(),
         is_print_only: isPrintOnly, image_url: currentSkuMasterPhoto || null
       };
 
-      document.getElementById('badge-batch-qty').textContent = `${packs}x`;
+      document.getElementById('badge-batch-qty').textContent = `${packs}x full`;
       
       const lblPartial = document.getElementById('lbl-mode-partial');
       if (partial > 0) {
@@ -758,24 +768,34 @@
     function updatePrintCardDisplay() {
       if (!pendingSkuData) return;
       const selectedMode = document.querySelector('input[name="print-mode-choice"]:checked')?.value || 'BATCH';
-      const qrBox = document.getElementById('active-print-qr');
-      const skuTxt = document.getElementById('active-print-sku');
-      const metaTxt = document.getElementById('active-print-meta');
 
+      let printSku = pendingSkuData.sku;
       if (selectedMode === 'PARTIAL') {
-        const partialSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
-        skuTxt.textContent = partialSku;
-        metaTxt.textContent = `🟡 Print 1x (Apply Yellow Dot) • Contains ${pendingSkuData.partial_pcs} loose pcs`;
-        renderQrCode('active-print-qr', partialSku, 84);
-      } else if (selectedMode === 'SINGLE') {
-        skuTxt.textContent = pendingSkuData.sku;
-        metaTxt.textContent = "Print exactly 1 label copy";
-        renderQrCode('active-print-qr', pendingSkuData.sku, 84);
-      } else {
-        skuTxt.textContent = pendingSkuData.sku;
-        metaTxt.textContent = `Batch Print: ${pendingSkuData.pack_count} label copies`;
-        renderQrCode('active-print-qr', pendingSkuData.sku, 84);
+        printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
       }
+
+      document.getElementById('sub-sku-1').textContent = printSku;
+      document.getElementById('sub-sku-2').textContent = printSku;
+
+      renderQrCode('sub-qr-1', printSku, 48);
+      renderQrCode('sub-qr-2', printSku, 48);
+    }
+
+    function copyCurrentSkuToClipboard() {
+      if (!pendingSkuData) return;
+      const selectedMode = document.querySelector('input[name="print-mode-choice"]:checked')?.value || 'BATCH';
+      let printSku = pendingSkuData.sku;
+      if (selectedMode === 'PARTIAL') {
+        printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
+      }
+
+      navigator.clipboard.writeText(printSku).then(() => {
+        const btnText = document.getElementById('btn-copy-label-text');
+        btnText.textContent = "✓ Copied! Paste in Niimbot";
+        setTimeout(() => {
+          btnText.textContent = "Copy SKU for Niimbot App";
+        }, 2000);
+      });
     }
 
     async function finalizeLabelPrintAndCommit() {
@@ -783,7 +803,6 @@
 
       if (db) {
         try {
-          // Always register the SKU definition
           await db.from('items').upsert([{
             sku: pendingSkuData.sku,
             name: pendingSkuData.name,
@@ -793,7 +812,6 @@
             image_url: pendingSkuData.image_url
           }]);
 
-          // ONLY write inventory batch intake if "Print Only" is UNCHECKED
           if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
             await db.from('intake_batches').insert([{
               waybill: activeIntakeWaybill || 'MANUAL-INTAKE',
@@ -812,24 +830,24 @@
       }
 
       alert(pendingSkuData.is_print_only 
-        ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only: No inventory added).` 
+        ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only: No stock added).` 
         : `✓ SKU [${pendingSkuData.sku}] saved and ${pendingSkuData.pack_count} packs added to Werqroom!`);
 
       closePrintStation();
     }
 
-    // ================= MOVEMENT STATION BATCH QUEUE & COMMIT =================
+    // ================= MOVEMENT STATION BATCH QUEUE & INLINE ADJUSTER =================
     function setMovementMode(mode) {
       currentMovementMode = mode;
       const btnDelivered = document.getElementById('btn-mode-delivered');
       const btnReplenish = document.getElementById('btn-mode-replenish');
 
       if (mode === 'DELIVERED_TO_SHOP') {
-        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitMarigold text-bitWalnut cursor-pointer";
-        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitCream text-gray-600 cursor-pointer";
+        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
       } else {
-        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitMarigold text-bitWalnut cursor-pointer";
-        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitBorder bg-bitCream text-gray-600 cursor-pointer";
+        btnReplenish.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnDelivered.className = "py-2 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
       }
       setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
     }
@@ -858,7 +876,6 @@
         pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
       }
 
-      // Fetch product picture and name from database cache or fallback
       let itemThumbnail = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
       let itemName = cleanSku;
 
@@ -879,10 +896,18 @@
         name: itemName,
         thumbnail: itemThumbnail,
         isPartial: isPartial,
-        pcs: pcs,
-        mode: currentMovementMode
+        standardPcs: isPartial ? pcs : 10,
+        actualPcs: pcs,
+        isMismatch: false
       });
 
+      renderBatchQueue();
+    }
+
+    function adjustBatchItemQty(idx, delta) {
+      const item = stagedBatchMovements[idx];
+      item.actualPcs = Math.max(1, item.actualPcs + delta);
+      item.isMismatch = (item.actualPcs !== item.standardPcs);
       renderBatchQueue();
     }
 
@@ -896,7 +921,7 @@
 
       if (stagedBatchMovements.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-6 text-xs text-gray-400 font-bold border-2 border-dashed border-bitCream rounded-2xl">
+          <div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">
             Scan bag QR codes to build your batch movement list.
           </div>
         `;
@@ -904,18 +929,21 @@
       }
 
       container.innerHTML = stagedBatchMovements.map((item, idx) => `
-        <div class="bg-bitCream p-2.5 rounded-2xl border-2 border-bitBorder flex items-center justify-between gap-2">
+        <div class="bg-bitCream p-2.5 rounded-2xl border ${item.isMismatch ? 'border-amber-400 bg-amber-50/50' : 'border-bitBorderDark'} flex items-center justify-between gap-2">
           <div class="flex items-center space-x-2.5 min-w-0">
-            <img src="${item.thumbnail}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder shrink-0" alt="Item">
+            <img src="${item.thumbnail}" class="w-10 h-10 object-cover rounded-xl border border-gray-200 shrink-0" alt="Item">
             <div class="min-w-0">
               <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${item.rawCode}</span>
-              <span class="text-[10px] text-gray-500 font-bold block truncate">${item.name}</span>
+              ${item.isMismatch ? '<span class="text-[9px] font-bold text-amber-700 block">⚠️ Mismatch count logged</span>' : ''}
             </div>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.isPartial ? 'bg-bitMarigold border border-bitBorder' : 'bg-bitGreen text-white'}">
-              ${item.pcs} pcs
-            </span>
+            <!-- INLINE ADJUSTER -->
+            <div class="flex items-center bg-white border border-bitBorderDark rounded-lg px-1 py-0.5 space-x-1">
+              <button type="button" onclick="adjustBatchItemQty(${idx}, -1)" class="w-5 h-5 flex items-center justify-center font-bold text-xs text-gray-500 hover:bg-gray-100 rounded">-</button>
+              <span class="text-xs font-bold font-sans w-5 text-center">${item.actualPcs}</span>
+              <button type="button" onclick="adjustBatchItemQty(${idx}, 1)" class="w-5 h-5 flex items-center justify-center font-bold text-xs text-gray-500 hover:bg-gray-100 rounded">+</button>
+            </div>
             <button type="button" onclick="removeBatchItem(${idx})" class="text-gray-400 hover:text-bitPink font-bold text-xs p-1">✕</button>
           </div>
         </div>
@@ -930,24 +958,24 @@
     async function commitBatchMovement() {
       if (stagedBatchMovements.length === 0) return;
 
-      const totalPcs = stagedBatchMovements.reduce((acc, curr) => acc + curr.pcs, 0);
+      const totalPcs = stagedBatchMovements.reduce((acc, curr) => acc + curr.actualPcs, 0);
 
       if (db) {
         try {
           const payload = stagedBatchMovements.map(m => ({
             sku: m.sku,
-            action: m.mode,
+            action: currentMovementMode,
             bag_type: m.isPartial ? 'PARTIAL' : 'STANDARD',
-            pcs_moved: m.pcs,
-            source_location: m.mode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
-            dest_location: m.mode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
+            pcs_moved: m.actualPcs,
+            source_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'WERQROOM' : 'SHOP_STORAGE',
+            dest_location: currentMovementMode === 'DELIVERED_TO_SHOP' ? 'SHOP_STORAGE' : 'DISPLAY_PEG',
             moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }));
           await db.from('stock_movements').insert(payload);
         } catch (e) {}
       }
 
-      // Update Top Counter Tiles
+      // Update counters
       const werqEl = document.getElementById('werqroom-count');
       const storeEl = document.getElementById('storage-count');
       let wCount = parseInt(werqEl.textContent) || 0;
@@ -1055,7 +1083,7 @@
         return;
       }
       list.innerHTML = whiteBinParcels.map(p => `
-        <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitBorder flex items-center justify-between">
+        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
             <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder" alt="Parcel">
             <div>
@@ -1070,7 +1098,6 @@
 
     function startUnboxParcel(waybill) {
       activeIntakeWaybill = waybill;
-      document.getElementById('qr-waybill-tag').textContent = `Waybill: ${waybill}`;
       switchShelfTab('tab-qrbuilder');
     }
 

@@ -343,14 +343,60 @@
           </button>
         </div>
 
-        <div id="fields-inhouse" class="space-y-3 hidden">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Description</label>
-            <input type="text" id="inhouse-craft-notes" placeholder="e.g. Handmade Clay Batch 04, Re-strung Charms" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+        <!-- IN-HOUSE INTAKE: PRODUCTION VS REPURPOSE -->
+        <div id="fields-inhouse" class="space-y-3.5 hidden">
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setInhouseCraftMode('PRODUCTION')" id="btn-inhouse-prod" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+              💎 New Production
+            </button>
+            <button type="button" onclick="setInhouseCraftMode('REPURPOSE')" id="btn-inhouse-repurpose" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer">
+              ♻️ Repurpose / Remake
+            </button>
           </div>
-          <button type="button" onclick="proceedInhouseToQr()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-            Proceed to QR Builder →
-          </button>
+
+          <!-- TRACK A: NEW PRODUCTION -->
+          <div id="inhouse-production-subview" class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Description</label>
+              <input type="text" id="inhouse-prod-notes" placeholder="e.g. Handmade Clay Batch 04, Beaded Lanyards" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
+            </div>
+            <button type="button" onclick="proceedInhouseProductionToQr()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+              Proceed to QR Builder →
+            </button>
+          </div>
+
+          <!-- TRACK B: REPURPOSE / REMAKE (DEDUCTS PULLED WHITE BIN STOCK) -->
+          <div id="inhouse-repurpose-subview" class="space-y-3 hidden">
+            <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 font-medium">
+              Scan the pulled item being unstrung/remade. Scanned units are deducted from the <strong>White Bin</strong> and linked to your new SKU.
+            </div>
+
+            <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-[11px] font-bold text-gray-600 uppercase">Scan Pulled Item QR / Waybill</label>
+                <button type="button" onclick="startCameraScanner('repurpose-source-sku-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+                  <span>📷 Scan Camera</span>
+                </button>
+              </div>
+              <input type="text" id="repurpose-source-sku-input" placeholder="e.g. BDS-BOS-BIG-SOLID-E..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-gray-600 mb-1">Packs Being Remade</label>
+                <input type="number" id="repurpose-qty-input" value="1" min="1" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-center outline-none">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-gray-600 mb-1">Salvaged Reason</label>
+                <input type="text" id="repurpose-reason-input" placeholder="e.g. Broken cord, harvested clasps" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+              </div>
+            </div>
+
+            <button type="button" onclick="proceedInhouseRepurposeToQr()" class="w-full py-3.5 bg-bitGreen hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+              Deduct White Bin Stock & Build New SKU →
+            </button>
+          </div>
+        </div>
         </div>
       </div>
     </section>
@@ -380,6 +426,11 @@
             <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Direct Intake</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">QR Builder</h2>
           </div>
+        </div>
+        <!-- REPURPOSED SOURCE LINK BADGE -->
+        <div id="repurposed-source-badge" class="hidden p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 flex items-center justify-between">
+          <span id="repurposed-source-text">♻️ Repurposed from: -</span>
+          <button type="button" onclick="clearRepurposedLink()" class="text-amber-700 hover:text-black font-bold p-1">✕</button>
         </div>
 
         <div class="grid grid-cols-3 gap-2">
@@ -2451,11 +2502,79 @@ Month / Cycle: ${currentReportMonth}
       if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
     }
 
-    function proceedInhouseToQr() {
-      const notes = document.getElementById('inhouse-craft-notes').value.trim() || 'New In-House Craft';
+   function setInhouseCraftMode(mode) {
+      const btnProd = document.getElementById('btn-inhouse-prod');
+      const btnRepur = document.getElementById('btn-inhouse-repurpose');
+      const viewProd = document.getElementById('inhouse-production-subview');
+      const viewRepur = document.getElementById('inhouse-repurpose-subview');
+
+      if (mode === 'PRODUCTION') {
+        btnProd.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnRepur.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
+        viewProd.classList.remove('hidden');
+        viewRepur.classList.add('hidden');
+      } else {
+        btnRepur.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        btnProd.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
+        viewRepur.classList.remove('hidden');
+        viewProd.classList.add('hidden');
+        setTimeout(() => document.getElementById('repurpose-source-sku-input')?.focus(), 100);
+      }
+    }
+
+    function proceedInhouseProductionToQr() {
+      const notes = document.getElementById('inhouse-prod-notes').value.trim() || 'New In-House Craft';
       activeIntakeWaybill = `CRAFT-${Date.now().toString().slice(-6)}`;
       document.getElementById('qr-waybill-tag').textContent = `In-House: ${notes}`;
+      clearRepurposedLink();
       switchShelfTab('tab-qrbuilder');
+    }
+
+    async function proceedInhouseRepurposeToQr() {
+      const sourceSku = document.getElementById('repurpose-source-sku-input').value.trim().toUpperCase();
+      const qty = parseInt(document.getElementById('repurpose-qty-input').value) || 1;
+      const reason = document.getElementById('repurpose-reason-input').value.trim() || 'Harvested for remake';
+
+      if (!sourceSku) {
+        alert("Please scan or enter the pulled item QR / barcode being repurposed.");
+        return;
+      }
+
+      if (db) {
+        try {
+          await db.from('stock_movements').insert([{
+            sku: sourceSku,
+            action: 'REPURPOSED_FROM_WHITE_BIN',
+            bag_type: 'STANDARD',
+            pcs_moved: qty * 10,
+            source_location: 'WHITE_BIN',
+            dest_location: 'DISASSEMBLED_PRODUCTION',
+            pull_out_reason: reason,
+            moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+          }]);
+
+          await db.from('parcels').update({ status: 'REPURPOSED' }).eq('waybill', sourceSku);
+        } catch (e) {}
+      }
+
+      const whiteEl = document.getElementById('whitebin-count');
+      const currentBin = parseInt(whiteEl.textContent) || 0;
+      whiteEl.textContent = Math.max(0, currentBin - qty);
+      document.getElementById('whitebin-badge-count').textContent = `${Math.max(0, currentBin - qty)} Parcels`;
+
+      document.getElementById('repurposed-source-badge').classList.remove('hidden');
+      document.getElementById('repurposed-source-text').textContent = `♻️ Repurposed from: ${sourceSku}`;
+
+      activeIntakeWaybill = `REPURPOSE-${Date.now().toString().slice(-6)}`;
+      document.getElementById('qr-waybill-tag').textContent = `Repurposed Intake`;
+
+      alert(`✓ Deducted ${qty} pack(s) of [${sourceSku}] from White Bin!\nOpening QR Builder to generate new finished SKU.`);
+      switchShelfTab('tab-qrbuilder');
+    }
+
+    function clearRepurposedLink() {
+      const badge = document.getElementById('repurposed-source-badge');
+      if (badge) badge.classList.add('hidden');
     }
 
     function previewGenericPhoto(input, imgId, wrapId, labelId) {

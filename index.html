@@ -900,6 +900,27 @@
     </div>
   </div>
   
+  <!-- IMAGE PREVIEW & UPDATE MODAL -->
+  <div id="image-preview-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-4 space-y-3 shadow-2xl border border-bitBorder flex flex-col items-center">
+      <div class="w-full flex items-center justify-between pb-1 border-b border-gray-100">
+        <span id="preview-modal-sku" class="font-mono font-bold text-xs text-bitWalnut truncate">SKU Preview</span>
+        <button type="button" onclick="closeImagePreviewModal()" class="text-gray-400 font-bold p-1 text-base">&times;</button>
+      </div>
+      
+      <!-- ENLARGED IMAGE -->
+      <div class="w-full aspect-square rounded-2xl overflow-hidden bg-gray-50 border border-bitBorder flex items-center justify-center">
+        <img id="preview-modal-img" src="" alt="Enlarged Preview" class="w-full h-full object-contain">
+      </div>
+      
+      <!-- UPDATE BUTTON -->
+      <button type="button" id="preview-modal-update-btn" onclick="triggerUpdateFromPreview()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer shadow-sm">
+        <span>📷</span>
+        <span>Update Photo</span>
+      </button>
+    </div>
+  </div>
+  
   <!-- STOCK CATALOG MODAL -->
   <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <!-- HIDDEN FILE INPUT FOR STAFF CATALOG PHOTO CAPTURE -->
@@ -1572,6 +1593,27 @@
     // ================= SHELF HELP =================
    // Cache for movement logs to serve history popups without refetching
     let activeSearchMovements = {};
+    let currentPreviewSku = null;
+
+    function openImagePreviewModal(sku, imgUrl) {
+      currentPreviewSku = sku;
+      document.getElementById('preview-modal-sku').textContent = sku;
+      const previewImg = document.getElementById('preview-modal-img');
+      previewImg.src = imgUrl || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80';
+      document.getElementById('image-preview-modal').style.display = 'flex';
+    }
+
+    function closeImagePreviewModal() {
+      document.getElementById('image-preview-modal').style.display = 'none';
+      currentPreviewSku = null;
+    }
+
+    function triggerUpdateFromPreview() {
+      if (!currentPreviewSku) return;
+      const sku = currentPreviewSku;
+      closeImagePreviewModal();
+      triggerCatalogPhotoCapture(sku);
+    }
 
     async function runShelfHelpSearch(query) {
       const q = (query || document.getElementById('shelf-help-search-input').value).trim();
@@ -1633,9 +1675,9 @@
 
           return '<div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3 mb-3">' +
             '<div class="flex items-start space-x-3">' +
-              '<div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture(\'' + item.sku + '\')" title="Tap to update photo">' +
-                '<img id="shelf-help-thumb-' + item.sku + '" src="' + thumbSrc + '" class="w-14 h-14 object-cover rounded-2xl border border-bitBorder bg-white" alt="' + item.sku + '">' +
-                '<div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-80 hover:opacity-100 transition text-xs text-white font-bold">📷</div>' +
+              '<div class="relative shrink-0 group cursor-pointer" onclick="openImagePreviewModal(\'' + item.sku + '\', \'' + thumbSrc + '\')" title="Tap to enlarge">' +
+                '<img id="shelf-help-thumb-' + item.sku + '" src="' + thumbSrc + '" class="w-14 h-14 object-cover rounded-2xl border border-bitBorder bg-white shadow-sm" alt="' + item.sku + '">' +
+                '<div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[10px] leading-none">🔍</div>' +
               '</div>' +
               '<div class="min-w-0 flex-1">' +
                 '<span class="text-xs font-mono font-bold text-bitWalnut block break-all">' + item.sku + '</span>' +
@@ -1822,7 +1864,7 @@
           <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
             <div class="flex items-center space-x-2.5 min-w-0">
               <!-- ITEM PHOTO WITH DIRECT SNAP/CHANGE BUTTON -->
-              <div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture('${i.sku}')" title="Tap to update item photo">
+              <div class="relative shrink-0 group cursor-pointer" onclick="openImagePreviewModal('${i.sku}', '${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80'}')" title="Tap to enlarge photo">
                 <img id="catalog-thumb-${i.sku}" src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-bitBorder bg-white" alt="${i.sku}">
                 <div class="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-70 hover:opacity-100 transition text-[11px] text-white font-bold">
                   📷

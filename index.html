@@ -433,20 +433,47 @@
           <button type="button" onclick="clearRepurposedLink()" class="text-amber-700 hover:text-black font-bold p-1">✕</button>
         </div>
 
+        <!-- 1 & 2: STANDARD DROPDOWNS | 3: DYNAMIC COMBOBOX -->
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
-            <input type="text" id="sku-cat-input" list="taxonomy-category-list" value="BDS" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
-            <datalist id="taxonomy-category-list"></datalist>
+            <select id="sku-cat-input" onchange="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
+              <option value="BDS">BDS (Beads)</option>
+              <option value="CHA">CHA (Charms)</option>
+              <option value="HUP">HUP (Hook Ups)</option>
+              <option value="PAR">PAR (Paracord)</option>
+              <option value="RTW">RTW (RTW)</option>
+              <option value="BTC">BTC (Bitcrew)</option>
+              <option value="BTB">BTB (Bitbuddy)</option>
+              <option value="PHB">PHB (Photobits)</option>
+              <option value="LNK">LNK (Links)</option>
+            </select>
           </div>
+
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">2. Sub-Cat</label>
-            <input type="text" id="sku-subcat-input" list="taxonomy-subcat-list" value="BOS" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
-            <datalist id="taxonomy-subcat-list"></datalist>
+            <select id="sku-subcat-input" onchange="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
+              <option value="BAS">BAS (Basic)</option>
+              <option value="BOS">BOS (Boss)</option>
+              <option value="FBS">FBS (Final Boss)</option>
+              <option value="SLV">SLV (Silver)</option>
+              <option value="GLD">GLD (Gold)</option>
+              <option value="RED">RED (Red)</option>
+              <option value="BLU">BLU (Blue)</option>
+              <option value="GRN">GRN (Green)</option>
+              <option value="BIG">BIG (Big)</option>
+              <option value="SML">SML (Small)</option>
+            </select>
           </div>
+
           <div>
-            <label class="block text-[10px] font-bold text-gray-500 mb-1">3. Type</label>
-            <input type="text" id="sku-type-input" list="taxonomy-type-list" value="BIG" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1">3. Type (Combobox)</label>
+            <input type="text" id="sku-type-input" list="taxonomy-type-list" value="BIG" 
+                   onfocus="this.dataset.prev = this.value; this.value = '';" 
+                   onblur="if(!this.value) this.value = this.dataset.prev || 'BIG'; generateFourPartSku();" 
+                   oninput="generateFourPartSku()" 
+                   placeholder="Select / Type..." 
+                   class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
             <datalist id="taxonomy-type-list"></datalist>
           </div>
         </div>
@@ -1378,19 +1405,13 @@
     }
 
     function populateTaxonomyComboboxes() {
-      const catList = document.getElementById('taxonomy-category-list');
-      const subList = document.getElementById('taxonomy-subcat-list');
       const typList = document.getElementById('taxonomy-type-list');
-
-      if (catList && activeTaxonomy.categories.length > 0) {
-        catList.innerHTML = activeTaxonomy.categories.map(c => `<option value="${c.code}">${c.label} (${c.code})</option>`).join('');
+      if (typList && activeTaxonomy.types && activeTaxonomy.types.length > 0) {
+        typList.innerHTML = activeTaxonomy.types.map(t => 
+          `<option value="${t.code}">${t.code} — ${t.label}</option>`
+        ).join('');
       }
-      if (subList && activeTaxonomy.subcategories.length > 0) {
-        subList.innerHTML = activeTaxonomy.subcategories.map(s => `<option value="${s.code}">${s.label} (${s.code})</option>`).join('');
-      }
-      if (typList && activeTaxonomy.types.length > 0) {
-        typList.innerHTML = activeTaxonomy.types.map(t => `<option value="${t.code}">${t.label} (${t.code})</option>`).join('');
-      }
+      generateFourPartSku();
     }
 
     function populateGateDropdown() {

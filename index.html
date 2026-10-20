@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Bitbit Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
+  <script src="[https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js](https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js)"></script>
+  <script src="[https://unpkg.com/html5-qrcode](https://unpkg.com/html5-qrcode)"></script>
+  <script src="[https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js](https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js)"></script>
 
   <style>
     @font-face {
@@ -50,12 +50,14 @@
 </head>
 <body class="bg-bitCream text-bitWalnut font-sans min-h-screen flex flex-col antialiased selection:bg-bitMarigold selection:text-bitWalnut relative">
 
-  <!-- ==================== LAUNCH PIN GATE ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 1: TOP NAVIGATION, BRAND HEADER & PIN LOCK GATE                     -->
+  <!-- ========================================================================= -->
   <div id="gate-lockscreen" class="fixed inset-0 bg-bitCream z-50 flex flex-col items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-5 shadow-xl border border-bitBorder">
       <div class="text-center space-y-2">
         <div class="w-12 h-12 mx-auto flex items-center justify-center">
-          <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+          <img src="logo.png" onerror="this.onerror=null; this.src='[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80)';" class="w-full h-full object-contain" alt="Bitbit">
         </div>
         <div>
           <h2 class="text-xl font-bold tracking-tight text-bitWalnut">Bitbit</h2>
@@ -66,7 +68,7 @@
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-600 mb-1">Select Name</label>
-          <select id="gate-crew-select" onchange="onGateCrewSelect()" class="w-full p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none focus:border-bitMarigold">
+          <select id="gate-crew-select" onchange="onGateCrewSelect()" class="w-full p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none focus:border-bitMarigold cursor-pointer">
             <option value="">-- Choose your name --</option>
           </select>
         </div>
@@ -101,14 +103,13 @@
     </div>
   </div>
 
-  <!-- TOP HEADER -->
   <header class="bg-white/90 backdrop-blur-md border-b border-bitBorder sticky top-0 z-20 px-4 py-3 flex items-center justify-between shadow-xs">
     <div class="flex items-center space-x-2.5">
       <button type="button" id="btn-back-hub" onclick="goToView('view-hub')" class="hidden text-bitWalnut font-bold text-xs bg-bitCream border border-bitBorderDark px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-bitMarigold/20">
         ← Hub
       </button>
       <div class="w-8 h-8 flex items-center justify-center shrink-0">
-        <img src="logo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80';" class="w-full h-full object-contain" alt="Bitbit">
+        <img src="logo.png" onerror="this.onerror=null; this.src='[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80)';" class="w-full h-full object-contain" alt="Bitbit">
       </div>
       <div>
         <h1 class="text-sm font-bold tracking-tight text-bitWalnut leading-none">Bitbit</h1>
@@ -125,7 +126,9 @@
     </button>
   </header>
 
-  <!-- ==================== VIEW 1: MAIN HUB ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 2: MAIN HUB (5 OPERATIONS PORTALS)                                  -->
+  <!-- ========================================================================= -->
   <main id="view-hub" class="view-screen flex-1 max-w-md w-full mx-auto p-5 flex flex-col justify-center space-y-3">
     <div class="text-center space-y-1 mb-2">
       <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut border border-bitBorder uppercase">Workspace</span>
@@ -176,7 +179,9 @@
     </div>
   </main>
 
-  <!-- ==================== VIEW 2: SHELF HELP ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 3: SHELF HELP (LIVE CHECKER, CATALOG & AUDIT)                       -->
+  <!-- ========================================================================= -->
   <main id="view-shelf-help" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
       <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -219,9 +224,10 @@
     </div>
   </main>
 
-  <!-- ==================== VIEW 3: SHELF CARE ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 4: SHELF CARE (COUNTERS, DROP-OFF, WHITE BIN)                       -->
+  <!-- ========================================================================= -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-36 space-y-4">
-    <!-- TOP COUNTERS -->
     <div class="grid grid-cols-3 gap-2">
       <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
@@ -238,10 +244,10 @@
         </div>
       </div>
       <div class="bg-white p-3 rounded-2xl border border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
-        <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">Werq Holding</span>
+        <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">White Bin</span>
         <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-bold text-bitWalnut" id="holding-count">0</span>
-          <span class="text-[10px] text-gray-400 font-bold">packs</span>
+          <span class="text-xl font-bold text-bitWalnut" id="whitebin-count">0</span>
+          <span class="text-[10px] text-gray-400 font-bold">parcels</span>
         </div>
       </div>
     </div>
@@ -266,12 +272,11 @@
           </div>
         </div>
 
-        <!-- COURIER DROP -->
         <div id="fields-courier" class="space-y-3">
           <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
             <div class="flex items-center justify-between mb-1">
               <label class="text-[11px] font-bold text-gray-600 uppercase">1. Waybill Barcode</label>
-              <button type="button" onclick="startCameraScanner('waybill-barcode-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
+              <button type="button" onclick="startCameraScanner('waybill-barcode-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
                 <span>📷 Scan Barcode</span>
               </button>
             </div>
@@ -305,7 +310,6 @@
           </button>
         </div>
 
-        <!-- MERCHANT INTAKE -->
         <div id="fields-merchant" class="space-y-3 hidden">
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">Merchant / Store Name *</label>
@@ -339,68 +343,25 @@
           </button>
         </div>
 
-        <!-- IN-HOUSE FORK -->
-        <div id="fields-inhouse" class="space-y-3.5 hidden">
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="setInhouseCraftMode('PRODUCTION')" id="btn-inhouse-prod" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
-              💎 New Production
-            </button>
-            <button type="button" onclick="setInhouseCraftMode('REPURPOSE')" id="btn-inhouse-repurpose" class="py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer">
-              ♻️ Repurpose / Remake
-            </button>
+        <div id="fields-inhouse" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Description</label>
+            <input type="text" id="inhouse-craft-notes" placeholder="e.g. Handmade Clay Batch 04, Re-strung Charms" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
           </div>
-
-          <div id="inhouse-production-subview" class="space-y-3">
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Description</label>
-              <input type="text" id="inhouse-prod-notes" placeholder="e.g. Handmade Clay Batch 04, Beaded Lanyards" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
-            </div>
-            <button type="button" onclick="proceedInhouseProductionToQr()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-              Proceed to QR Builder →
-            </button>
-          </div>
-
-          <div id="inhouse-repurpose-subview" class="space-y-3 hidden">
-            <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 font-medium">
-              Scan the original bag being unstrung/remade. Scanned units are deducted from the <strong>Werqroom Holding Bin</strong> and linked to your new SKU.
-            </div>
-
-            <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-[11px] font-bold text-gray-600 uppercase">Scan Pulled Bag QR</label>
-                <button type="button" onclick="startCameraScanner('repurpose-source-sku-input')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
-                  <span>📷 Scan Camera</span>
-                </button>
-              </div>
-              <input type="text" id="repurpose-source-sku-input" placeholder="e.g. BDS-BOS-BIG-SOLID-E..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] font-bold text-gray-600 mb-1">Packs Being Remade</label>
-                <input type="number" id="repurpose-qty-input" value="1" min="1" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-center outline-none">
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-gray-600 mb-1">Salvaged Reason</label>
-                <input type="text" id="repurpose-reason-input" placeholder="e.g. Broken cord, harvested clasps" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
-              </div>
-            </div>
-
-            <button type="button" onclick="proceedInhouseRepurposeToQr()" class="w-full py-3.5 bg-bitGreen hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-              Deduct Pulled Stock & Build New SKU →
-            </button>
-          </div>
+          <button type="button" onclick="proceedInhouseToQr()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            Proceed to QR Builder →
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- TAB 2: RECEIVED (WHITE BIN) -->
+    <!-- TAB 2: RECEIVED (WHITE BIN SORTING QUEUE) -->
     <section id="tab-received" class="tab-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Sorting Queue</span>
-            <h2 class="text-lg font-bold text-bitWalnut mt-1">White Bin Parcels</h2>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">White Bin Items</h2>
           </div>
           <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Parcels</span>
         </div>
@@ -408,6 +369,9 @@
       </div>
     </section>
 
+  <!-- ========================================================================= -->
+  <!-- BLOCK 5: QR BUILDER & MOVEMENT STATION (PULL-OUT FLOW)                   -->
+  <!-- ========================================================================= -->
     <!-- TAB 3: QR BUILDER -->
     <section id="tab-qrbuilder" class="tab-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
@@ -418,32 +382,27 @@
           </div>
         </div>
 
-        <div id="repurposed-source-badge" class="hidden p-2 bg-amber-50 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 flex items-center justify-between">
-          <span id="repurposed-source-text">♻️ Repurposed from: -</span>
-          <button type="button" onclick="clearRepurposedLink()" class="text-amber-700 hover:text-black">✕</button>
-        </div>
-
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
-            <input type="text" id="sku-cat-input" list="taxonomy-category-list" value="BDS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
+            <input type="text" id="sku-cat-input" list="taxonomy-category-list" value="BDS" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
             <datalist id="taxonomy-category-list"></datalist>
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">2. Sub-Cat</label>
-            <input type="text" id="sku-subcat-input" list="taxonomy-subcat-list" value="BOS" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
+            <input type="text" id="sku-subcat-input" list="taxonomy-subcat-list" value="BOS" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
             <datalist id="taxonomy-subcat-list"></datalist>
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">3. Type</label>
-            <input type="text" id="sku-type-input" list="taxonomy-type-list" value="BIG" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
+            <input type="text" id="sku-type-input" list="taxonomy-type-list" value="BIG" onfocus="this.select()" oninput="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
             <datalist id="taxonomy-type-list"></datalist>
           </div>
         </div>
 
         <div>
           <label class="block text-[10px] font-bold text-gray-500 mb-1">4. Identifier Code (Manual / Specific Variant)</label>
-          <input type="text" id="sku-ident-input" value="SOLID E" oninput="generateFourPartSku()" placeholder="e.g. SOLID E or 01..." class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
+          <input type="text" id="sku-ident-input" value="SOLID E" onfocus="this.select()" oninput="generateFourPartSku()" placeholder="e.g. SOLID E or 01..." class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
         </div>
 
         <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between">
@@ -451,7 +410,7 @@
             <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
             <span id="sku-preview-badge" class="font-mono font-bold text-sm text-bitWalnut tracking-wider select-all">BDS-BOS-BIG-SOLID-E</span>
           </div>
-          <button type="button" onclick="copyMasterSkuText()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50">
+          <button type="button" onclick="copyMasterSkuText()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50 cursor-pointer">
             📋 Copy
           </button>
         </div>
@@ -516,7 +475,7 @@
             <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer">
               Shop ➔ Display
             </button>
-            <button type="button" onclick="setMovementMode('PULLED_TO_WERQROOM')" id="btn-mode-pullout" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-bitPink cursor-pointer">
+            <button type="button" onclick="setMovementMode('PULLED_TO_WHITE_BIN')" id="btn-mode-pullout" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-bitPink cursor-pointer">
               Shop ➔ Pull-Out
             </button>
           </div>
@@ -572,7 +531,9 @@
     </nav>
   </main>
 
-  <!-- ==================== VIEW 4: SHELF SERVICE ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 6: SHELF SERVICE (REQUESTS DESK, OCR & PETTY)                       -->
+  <!-- ========================================================================= -->
   <main id="view-shelf-service" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
     <!-- SUB-TAB 1: REQUESTS DESK -->
     <section id="supplies-subtab-requests" class="supplies-pane space-y-3">
@@ -733,7 +694,9 @@
     </nav>
   </main>
 
-  <!-- ==================== VIEW 5: CARD TRANSACTIONS ==================== -->
+  <!-- ========================================================================= -->
+  <!-- BLOCK 7: CARD TRANSACTIONS & MODALS                                       -->
+  <!-- ========================================================================= -->
   <main id="view-card-logger" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-20 space-y-4">
     <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
       <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
@@ -823,9 +786,262 @@
     </div>
   </main>
 
-  <!-- ==================== VIEW 6: REPORTS HUB ==================== -->
+  <!-- STOCK CATALOG MODAL -->
+  <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitMarigold bg-amber-100 px-2 py-0.5 rounded-full">Catalog</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Master Item Catalog</h3>
+        </div>
+        <button type="button" onclick="closeStockCatalogModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div class="shrink-0">
+        <input type="text" id="catalog-filter-input" oninput="filterCatalogItems(this.value)" placeholder="Filter catalog..." class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+      </div>
+      <div id="catalog-items-scroll-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+    </div>
+  </div>
+
+  <!-- CONTINUOUS FLOOR AUDIT SCAN MODAL -->
+  <div id="floor-audit-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-red-800 bg-red-100 px-2 py-0.5 rounded-full">Floor Audit</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Continuous Scan Mode</h3>
+        </div>
+        <button type="button" onclick="closeFloorAuditModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag/Peg Barcode</label>
+          <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
+        </div>
+        <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
+      </div>
+      <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50" id="audit-scanned-log">
+        <div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>
+      </div>
+      <div class="pt-2 shrink-0 space-y-2">
+        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl cursor-pointer">
+          Complete Audit & Run Analysis →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOOR REQUEST MODAL -->
+  <div id="floor-request-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">File Floor Item Request</h3>
+        <button type="button" onclick="closeFloorRequestModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="setFloorRequestType('STOCK_RESTOCK')" id="btn-freq-stock" class="py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+            Stock Restock
+          </button>
+          <button type="button" onclick="setFloorRequestType('SUPPLY_CONSUMABLE')" id="btn-freq-supply" class="py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer">
+            Store Supply
+          </button>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Item SKU / Name *</label>
+          <input type="text" id="freq-item-name" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Thermal Tape" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Current Count</label>
+            <input type="number" id="freq-current-qty" value="0" min="0" oninput="updateFreqUrgencyBadge()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Urgency Priority</label>
+            <div id="freq-urgency-badge" class="p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800">
+              Needed ASAP (Out of Stock)
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Notes</label>
+          <input type="text" id="freq-notes" placeholder="e.g. Display peg is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+        </div>
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+          <label class="flex items-start space-x-2.5 cursor-pointer">
+            <input type="checkbox" id="chk-physical-verify" class="mt-0.5 w-4 h-4 rounded border-amber-400 text-bitWalnut focus:ring-0 shrink-0">
+            <span class="text-[11px] font-bold text-amber-950 leading-snug">
+              I solemnly swear that we do not have stocks — verified via system search and physical *
+            </span>
+          </label>
+        </div>
+        <button type="button" onclick="submitFloorRequest()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
+          Submit Request to Lead →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BSP ADVISORY MODAL -->
+  <div id="bsp-advisory-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder my-auto max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div class="flex items-center space-x-1.5">
+          <span class="text-base">📢</span>
+          <h3 class="font-bold text-sm text-bitWalnut">Customer Security Advisory</h3>
+        </div>
+        <button type="button" onclick="closeBspAdvisoryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div class="text-xs text-gray-600 space-y-2.5 font-medium leading-relaxed">
+        <p class="font-bold text-bitWalnut">Dear Valued Customer,</p>
+        <p>To securely locate, investigate, and resolve your failed transaction, our support team will request only the first 4 and last 6 digits of your card number.</p>
+        <p>We strictly adhere to consumer protection and data security rules mandated by the <strong>Bangko Sentral ng Pilipinas (BSP)</strong>:</p>
+        <ul class="list-disc pl-4 space-y-1.5 text-[11px] text-gray-700">
+          <li><strong>Legally Mandated for Investigations:</strong> Under BSP Memorandum No. M-2021-059 (supported by NPC Advisory Opinion No. 2021-026), sharing partial, masked details is an industry standard to track payment anomalies safely.</li>
+          <li><strong>Completely Masked & Safe:</strong> A partial card number cannot process unauthorized purchases without the missing middle digits, expiration date, or security CVV code.</li>
+          <li><strong>Identifies Payment Logs:</strong> The first 4 digits identify your card network and issuing bank; the last 6 digits allow the payment gateway to pinpoint the exact error log.</li>
+        </ul>
+        <div class="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1 text-[11px] text-red-900 font-bold">
+          <span class="block text-red-700 uppercase tracking-wider text-[10px]">🔒 Our Golden Rule for Your Safety</span>
+          <p>We will NEVER ask for, and you should NEVER share: Full 16 digits, Expiry Date, 3-digit CVV/CVC, or OTP/PIN.</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeBspAdvisoryModal()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+        Understood & Acknowledged
+      </button>
+    </div>
+  </div>
+
+  <!-- PHOTO PICKER MODAL -->
+  <div id="photo-picker-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Select Photo Source</h3>
+        <button type="button" onclick="closePhotoPickerModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+      <div class="space-y-2">
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
+          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
+          <span class="text-lg">📷</span>
+          <span class="text-xs font-bold text-bitWalnut">Take Photo with Camera</span>
+        </label>
+        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
+          <input type="file" accept="image/*" class="hidden" onchange="handleChosenMasterPhoto(this)">
+          <span class="text-lg">🖼️</span>
+          <span class="text-xs font-bold text-bitWalnut">Choose from Photo Library</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARCEL PHYSICAL VERIFICATION MODAL -->
+  <div id="verify-parcel-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Scan Match Required</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Confirm Physical Parcel</h3>
+        </div>
+        <button type="button" onclick="closeVerifyModal()" class="text-gray-400 font-bold p-1">✕</button>
+      </div>
+      <div class="space-y-2 text-center">
+        <img id="verify-modal-img" src="" class="w-full h-32 object-cover rounded-2xl border border-bitBorder bg-gray-50" alt="Parcel Contents">
+        <span class="text-[11px] text-gray-500 font-medium block">Logged open contents photo</span>
+      </div>
+      <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitWalnut">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-bold text-bitWalnut uppercase">Scan Box / Bag Barcode</label>
+          <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+            <span>📷 Camera</span>
+          </button>
+        </div>
+        <input type="text" id="verify-modal-input" placeholder="Scan with Eyoyo or type..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
+      </div>
+      <div id="verify-modal-error" class="text-xs font-bold text-red-600 text-center min-h-[16px]"></div>
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="confirmScanMatch()" class="flex-1 py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer transition">
+          Confirm Match →
+        </button>
+        <button type="button" onclick="closeVerifyModal()" class="py-3 px-4 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl cursor-pointer">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT STATION MODAL -->
+  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder my-auto">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">50 × 30 mm Roll</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-1">Label Print Station</h3>
+        </div>
+        <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div class="grid grid-cols-3 gap-1.5 text-center">
+        <button type="button" onclick="setPrintModeSelection('BATCH')" id="pill-mode-batch" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
+          <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
+        </button>
+        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-gray-700 block">Single</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
+        </button>
+        <button type="button" onclick="setPrintModeSelection('PARTIAL')" id="pill-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
+          <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
+        </button>
+      </div>
+      <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
+        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
+        <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
+          <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
+            <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
+          <div id="sub-label-2-wrap" class="flex items-center space-x-2 pt-1.5">
+            <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
+            <div class="min-w-0">
+              <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
+              <span id="sub-tag-2" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+            </div>
+          </div>
+          <div id="sub-label-2-placeholder" class="hidden py-4 text-center text-[9px] font-bold text-gray-300">
+            [ Second label slot empty ]
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
+        <span>📋</span>
+        <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
+      </button>
+      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
+        ✓ Done Printing & Applied on Bags
+      </button>
+    </div>
+  </div>
+
+  <!-- CAMERA SCANNER OVERLAY -->
+  <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Scan Barcode / QR</h3>
+        <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
+      <p class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- BLOCK 8: REPORTS HUB & JAVASCRIPT STATE ENGINE                            -->
+  <!-- ========================================================================= -->
   <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
-    <!-- SUB-TAB 1: ATTENDANCE -->
+    <!-- SUB-TAB 1: ATTENDANCE (WITH FIRST & SECOND HALF TOGGLES) -->
     <section id="rep-subtab-attendance" class="rep-pane space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -863,7 +1079,7 @@
       </div>
     </section>
 
-    <!-- SUB-TAB 2: EXPENSES -->
+    <!-- SUB-TAB 2: EXPENSES (WITH MONTH SELECTOR) -->
     <section id="rep-subtab-expenses" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -876,10 +1092,17 @@
           </button>
         </div>
 
-        <div class="flex space-x-1.5 text-xs font-bold">
-          <button type="button" onclick="filterReportExpenses('ALL')" id="pill-exprep-all" class="px-3 py-1 bg-bitWalnut text-white rounded-lg">All</button>
-          <button type="button" onclick="filterReportExpenses('WITH_OR')" id="pill-exprep-or" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">With OR</button>
-          <button type="button" onclick="filterReportExpenses('NO_OR')" id="pill-exprep-noor" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">Without OR</button>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
+            <input type="month" id="report-expenses-month-input" onchange="onExpensesMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+          </div>
+
+          <div class="flex space-x-1.5 text-xs font-bold">
+            <button type="button" onclick="filterReportExpenses('ALL')" id="pill-exprep-all" class="px-3 py-1 bg-bitWalnut text-white rounded-lg">All</button>
+            <button type="button" onclick="filterReportExpenses('WITH_OR')" id="pill-exprep-or" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">With OR</button>
+            <button type="button" onclick="filterReportExpenses('NO_OR')" id="pill-exprep-noor" class="px-3 py-1 bg-bitCream border border-bitBorderDark text-gray-600 rounded-lg">Without OR</button>
+          </div>
         </div>
 
         <div id="expenses-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
@@ -888,7 +1111,7 @@
       </div>
     </section>
 
-    <!-- SUB-TAB 3: CARD POS -->
+    <!-- SUB-TAB 3: CARD POS (WITH SELECT MONTH) -->
     <section id="rep-subtab-cards" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -901,13 +1124,18 @@
           </button>
         </div>
 
+        <div class="flex items-center justify-between gap-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
+          <input type="month" id="report-cards-month-input" onchange="onCardsMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
+        </div>
+
         <div id="cards-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
           <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading card dispute records...</div>
         </div>
       </div>
     </section>
 
-    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH -->
+    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH & AUDIT INTELLIGENCE -->
     <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -942,8 +1170,15 @@
             </ul>
           </div>
 
+          <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 space-y-1">
+            <span class="font-bold text-amber-950 text-[11px] uppercase tracking-wider block">3. Floor Pull-Outs to White Bin</span>
+            <div id="rep-health-pullout-note" class="text-[11px] text-amber-900 font-medium">
+              Loading pull-out records...
+            </div>
+          </div>
+
           <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">3. Top 5 Velocity SKUs (Stock-Out Risk)</span>
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">4. Top 5 Velocity SKUs (Stock-Out Risk)</span>
             <div id="rep-top5-velocity" class="space-y-1 text-[11px]">
               <div class="flex items-center justify-between">
                 <span>• BDS-BOS-BIG-SOLID-E</span>
@@ -953,11 +1188,11 @@
           </div>
 
           <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">4. Bottom 5 Slow-Movers (Pull-Out / Dead Stock)</span>
+            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">5. Bottom 5 Slow-Movers (Pull-Out Candidates)</span>
             <div id="rep-bottom5-dead" class="space-y-1 text-[11px]">
               <div class="flex items-center justify-between">
                 <span>• CHM-STN-OLD-01</span>
-                <span class="text-gray-500 font-bold">4 wks 0-sales [Pull / Remake]</span>
+                <span class="text-gray-500 font-bold">4 wks 0-sales [Move to White Bin]</span>
               </div>
             </div>
           </div>
@@ -986,282 +1221,8 @@
     </nav>
   </main>
 
-  <!-- ==================== STOCK CATALOG MODAL ==================== -->
-  <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
-        <div>
-          <span class="text-[10px] font-bold uppercase text-bitMarigold bg-amber-100 px-2 py-0.5 rounded-full">Catalog</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Master Item Catalog</h3>
-        </div>
-        <button type="button" onclick="closeStockCatalogModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-
-      <div class="shrink-0">
-        <input type="text" id="catalog-filter-input" oninput="filterCatalogItems(this.value)" placeholder="Filter catalog..." class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
-      </div>
-
-      <div id="catalog-items-scroll-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
-    </div>
-  </div>
-
-  <!-- ==================== CONTINUOUS FLOOR AUDIT SCAN MODAL ==================== -->
-  <div id="floor-audit-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
-        <div>
-          <span class="text-[10px] font-bold uppercase text-red-800 bg-red-100 px-2 py-0.5 rounded-full">Floor Audit</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Continuous Scan Mode</h3>
-        </div>
-        <button type="button" onclick="closeFloorAuditModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-
-      <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag/Peg Barcode</label>
-          <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
-        </div>
-        <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
-      </div>
-
-      <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50" id="audit-scanned-log">
-        <div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>
-      </div>
-
-      <div class="pt-2 shrink-0 space-y-2">
-        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl cursor-pointer">
-          Complete Audit & Run Analysis →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== FLOOR REQUEST MODAL ==================== -->
-  <div id="floor-request-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <h3 class="font-bold text-sm text-bitWalnut">File Floor Item Request</h3>
-        <button type="button" onclick="closeFloorRequestModal()" class="text-gray-400 font-bold p-1">✕</button>
-      </div>
-
-      <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="setFloorRequestType('STOCK_RESTOCK')" id="btn-freq-stock" class="py-2 text-xs font-bold rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
-            Stock Restock
-          </button>
-          <button type="button" onclick="setFloorRequestType('SUPPLY_CONSUMABLE')" id="btn-freq-supply" class="py-2 text-xs font-bold rounded-xl border border-bitBorderDark text-gray-500 cursor-pointer">
-            Store Supply
-          </button>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Item SKU / Name *</label>
-          <input type="text" id="freq-item-name" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Thermal Tape" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Current Count</label>
-            <input type="number" id="freq-current-qty" value="0" min="0" oninput="updateFreqUrgencyBadge()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Urgency Priority</label>
-            <div id="freq-urgency-badge" class="p-2 rounded-xl text-center text-[10px] font-bold bg-red-100 text-red-800">
-              Needed ASAP (Out of Stock)
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Notes</label>
-          <input type="text" id="freq-notes" placeholder="e.g. Display peg is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
-        </div>
-
-        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
-          <label class="flex items-start space-x-2.5 cursor-pointer">
-            <input type="checkbox" id="chk-physical-verify" class="mt-0.5 w-4 h-4 rounded border-amber-400 text-bitWalnut focus:ring-0 shrink-0">
-            <span class="text-[11px] font-bold text-amber-950 leading-snug">
-              I solemnly swear that we do not have stocks — verified via system search and physical *
-            </span>
-          </label>
-        </div>
-
-        <button type="button" onclick="submitFloorRequest()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">
-          Submit Request to Lead →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== BSP & NPC CUSTOMER SECURITY ADVISORY MODAL ==================== -->
-  <div id="bsp-advisory-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder my-auto max-h-[85vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <div class="flex items-center space-x-1.5">
-          <span class="text-base">📢</span>
-          <h3 class="font-bold text-sm text-bitWalnut">Customer Security Advisory</h3>
-        </div>
-        <button type="button" onclick="closeBspAdvisoryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-
-      <div class="text-xs text-gray-600 space-y-2.5 font-medium leading-relaxed">
-        <p class="font-bold text-bitWalnut">Dear Valued Customer,</p>
-        <p>To securely locate, investigate, and resolve your failed transaction, our support team will request only the first 4 and last 6 digits of your card number.</p>
-        <p>We strictly adhere to consumer protection and data security rules mandated by the <strong>Bangko Sentral ng Pilipinas (BSP)</strong>:</p>
-
-        <ul class="list-disc pl-4 space-y-1.5 text-[11px] text-gray-700">
-          <li><strong>Legally Mandated for Investigations:</strong> Under BSP Memorandum No. M-2021-059 (supported by NPC Advisory Opinion No. 2021-026), sharing partial, masked details is an industry standard to track payment anomalies safely.</li>
-          <li><strong>Completely Masked & Safe:</strong> A partial card number cannot process unauthorized purchases without the missing middle digits, expiration date, or security CVV code.</li>
-          <li><strong>Identifies Payment Logs:</strong> The first 4 digits identify your card network and issuing bank; the last 6 digits allow the payment gateway to pinpoint the exact error log.</li>
-        </ul>
-
-        <div class="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1 text-[11px] text-red-900 font-bold">
-          <span class="block text-red-700 uppercase tracking-wider text-[10px]">🔒 Our Golden Rule for Your Safety</span>
-          <p>We will NEVER ask for, and you should NEVER share: Full 16 digits, Expiry Date, 3-digit CVV/CVC, or OTP/PIN.</p>
-        </div>
-      </div>
-
-      <button type="button" onclick="closeBspAdvisoryModal()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-        Understood & Acknowledged
-      </button>
-    </div>
-  </div>
-
-  <!-- ==================== PHOTO SOURCE SELECTION MODAL ==================== -->
-  <div id="photo-picker-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <h3 class="font-bold text-sm text-bitWalnut">Select Photo Source</h3>
-        <button type="button" onclick="closePhotoPickerModal()" class="text-gray-400 font-bold p-1">✕</button>
-      </div>
-      <div class="space-y-2">
-        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
-          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
-          <span class="text-lg">📷</span>
-          <span class="text-xs font-bold text-bitWalnut">Take Photo with Camera</span>
-        </label>
-        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
-          <input type="file" accept="image/*" class="hidden" onchange="handleChosenMasterPhoto(this)">
-          <span class="text-lg">🖼️</span>
-          <span class="text-xs font-bold text-bitWalnut">Choose from Photo Library</span>
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== PARCEL PHYSICAL VERIFICATION MODAL ==================== -->
-  <div id="verify-parcel-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-        <div>
-          <span class="text-[10px] font-bold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Scan Match Required</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-1">Confirm Physical Parcel</h3>
-        </div>
-        <button type="button" onclick="closeVerifyModal()" class="text-gray-400 font-bold p-1">✕</button>
-      </div>
-
-      <div class="space-y-2 text-center">
-        <img id="verify-modal-img" src="" class="w-full h-32 object-cover rounded-2xl border border-bitBorder bg-gray-50" alt="Parcel Contents">
-        <span class="text-[11px] text-gray-500 font-medium block">Logged open contents photo</span>
-      </div>
-
-      <div class="bg-bitCream p-3 rounded-2xl border-2 border-bitWalnut">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-[11px] font-bold text-bitWalnut uppercase">Scan Box Waybill</label>
-          <button type="button" onclick="startCameraScanner('verify-modal-input', confirmScanMatch)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1">
-            <span>📷 Camera</span>
-          </button>
-        </div>
-        <input type="text" id="verify-modal-input" placeholder="Scan with Eyoyo or type..." class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none" autofocus>
-      </div>
-
-      <div id="verify-modal-error" class="text-xs font-bold text-red-600 text-center min-h-[16px]"></div>
-
-      <div class="flex gap-2 pt-1">
-        <button type="button" onclick="confirmScanMatch()" class="flex-1 py-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer transition">
-          Confirm Match →
-        </button>
-        <button type="button" onclick="closeVerifyModal()" class="py-3 px-4 bg-gray-100 text-gray-600 font-bold text-xs rounded-xl cursor-pointer">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 50x30mm NIIMBOT DUAL-LABEL MODAL ==================== -->
-  <div id="print-station-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder my-auto">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
-        <div>
-          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">50 × 30 mm Roll</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-1">Label Print Station</h3>
-        </div>
-        <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-
-      <div class="grid grid-cols-3 gap-1.5 text-center">
-        <button type="button" onclick="setPrintModeSelection('BATCH')" id="pill-mode-batch" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
-          <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
-          <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
-        </button>
-        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
-          <span class="text-[11px] font-bold text-gray-700 block">Single</span>
-          <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
-        </button>
-        <button type="button" onclick="setPrintModeSelection('PARTIAL')" id="pill-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
-          <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
-          <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
-        </button>
-      </div>
-
-      <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
-        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
-        <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
-          <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
-            <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
-            <div class="min-w-0">
-              <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
-            </div>
-          </div>
-          <div id="sub-label-2-wrap" class="flex items-center space-x-2 pt-1.5">
-            <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
-            <div class="min-w-0">
-              <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span id="sub-tag-2" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
-            </div>
-          </div>
-          <div id="sub-label-2-placeholder" class="hidden py-4 text-center text-[9px] font-bold text-gray-300">
-            [ Second label slot empty ]
-          </div>
-        </div>
-      </div>
-
-      <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
-        <span>📋</span>
-        <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
-      </button>
-
-      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
-        ✓ Done Printing & Applied on Bags
-      </button>
-    </div>
-  </div>
-
-  <!-- CAMERA SCANNER OVERLAY -->
-  <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
-      <div class="flex items-center justify-between border-b pb-2">
-        <h3 class="font-bold text-sm text-bitWalnut">Scan Barcode / QR</h3>
-        <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-      <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
-      <p class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
-    </div>
-  </div>
-
   <script>
-    const SUPABASE_URL = "https://nwuauzkurgwkfjmrnwdh.supabase.co";
+    const SUPABASE_URL = "[https://nwuauzkurgwkfjmrnwdh.supabase.co](https://nwuauzkurgwkfjmrnwdh.supabase.co)";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53dWF1emt1cmd3a2ZqbXJud2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTcyMzAsImV4cCI6MjEwNzczMzIzMH0.QKkYItXjaN7Io3ZEXQLDV_c0NHyKt1N_BrxFESVlGoI";
     
     let db = null;
@@ -1271,7 +1232,6 @@
       }
     } catch (e) {}
 
-    // ROSTER FALLBACK
     const DEFAULT_CREW = [
       { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e001', name: 'Mems', pin: '6363', role: 'admin' },
       { id: 'ceb28403-407b-47f4-b0eb-b09a70b30002', name: 'Louise', pin: '2514', role: 'admin' },
@@ -1284,46 +1244,9 @@
       { id: '9f3dc0bb-c35e-48c6-8427-6eccd91d0009', name: 'Gian', pin: '1234', role: 'crew' }
     ];
 
-    // INLINE FALLBACK TAXONOMY
-    const DEFAULT_TAXONOMY = {
-      categories: [
-        { code: 'RTW', label: 'RTW' }, { code: 'HUP', label: 'Hook Ups' }, { code: 'PAR', label: 'Paracord' },
-        { code: 'CHA', label: 'Charms' }, { code: 'BDS', label: 'Beads' }, { code: 'BTC', label: 'Bitcrew' },
-        { code: 'BTB', label: 'Bitbuddy' }, { code: 'PHB', label: 'Photobits' }, { code: 'LNK', label: 'Links' },
-        { code: 'SHP', label: 'Shape' }, { code: 'CLR', label: 'Color' }, { code: 'SZE', label: 'Size' }
-      ],
-      subcategories: [
-        { code: 'BAS', label: 'Basic' }, { code: 'BOS', label: 'Boss' }, { code: 'FBS', label: 'Final Boss' },
-        { code: 'CHA', label: 'Charms' }, { code: 'BDS', label: 'Beads' }, { code: 'BTC', label: 'Bitcrew' },
-        { code: 'BTB', label: 'Bitbuddy' }, { code: 'PHB', label: 'Photobits' }, { code: 'LNK', label: 'Links' },
-        { code: 'RND', label: 'Round' }, { code: 'CIR', label: 'Circle' }, { code: 'CUB', label: 'Cube' },
-        { code: 'SQR', label: 'Square' }, { code: 'HRT', label: 'Heart' }, { code: 'RED', label: 'Red' },
-        { code: 'ORG', label: 'Orange' }, { code: 'YLW', label: 'Yellow' }, { code: 'GRN', label: 'Green' },
-        { code: 'BLU', label: 'Blue' }, { code: 'PUR', label: 'Purple' }, { code: 'PNK', label: 'Pink' },
-        { code: 'BLK', label: 'Black' }, { code: 'WHT', label: 'White' }, { code: 'GRY', label: 'Grey / Gray' },
-        { code: 'SLV', label: 'Silver' }, { code: 'GLD', label: 'Gold' }, { code: 'SS-SLV', label: 'SS Silver' },
-        { code: 'SS-GLD', label: 'SS Gold' }, { code: 'BRZ', label: 'Bronze' }, { code: 'CPR', label: 'Copper' },
-        { code: 'BRN', label: 'Brown' }, { code: 'MIX', label: 'Mix' }, { code: 'PRD', label: 'Pride' },
-        { code: 'RGLD', label: 'Rose Gold' }, { code: 'IBLU', label: 'Ice Blue' }, { code: 'LBLU', label: 'Lake Blue' },
-        { code: 'BPNK', label: 'Bright Pink' }, { code: 'AGRN', label: 'Apple Green' }, { code: 'CLER', label: 'Clear' },
-        { code: 'GLS', label: 'Glass' }, { code: 'BIG', label: 'Big' }, { code: 'SML', label: 'Small' },
-        { code: 'MED', label: 'Medium' }, { code: 'LRG', label: 'Large' }
-      ],
-      types: [
-        { code: 'ALY', label: 'Alloy' }, { code: 'RES', label: 'Resin' }, { code: 'PAR', label: 'Paracord' },
-        { code: 'CLY', label: 'Clay' }, { code: 'ACY', label: 'Acrylic' }, { code: 'WDN', label: 'Wooden' },
-        { code: 'ENM', label: 'Enamel' }, { code: 'TEX', label: 'Textile' }, { code: 'FUR', label: 'Fur' },
-        { code: 'LTHR', label: 'Leather' }, { code: 'SNY', label: 'Shiny' }, { code: 'MRBL', label: 'Marble' },
-        { code: 'SLD', label: 'Solid' }, { code: 'SLCN', label: 'Silicone' }, { code: 'PSTL', label: 'Pastel' },
-        { code: 'DRK', label: 'Dark' }, { code: 'STRP', label: 'Strap' }, { code: 'PRL', label: 'Pearl' },
-        { code: 'SMP', label: 'Simple' }, { code: 'SPC', label: 'Special' }, { code: 'MGNT', label: 'Magnet' },
-        { code: 'ANTQ', label: 'Antique' }, { code: 'CRM', label: 'Ceramic' }, { code: 'HAIR', label: 'Hair' },
-        { code: 'FACE', label: 'Face' }, { code: 'BODY', label: 'Body' }, { code: 'LEGS', label: 'Legs' },
-        { code: 'ACC', label: 'Accessory' }
-      ]
-    };
+    // DYNAMIC SUPABASE TAXONOMY (Loaded from sku_taxonomy table)
+    let activeTaxonomy = { categories: [], subcategories: [], types: [] };
 
-    let activeTaxonomy = { ...DEFAULT_TAXONOMY };
     let crewMembers = [...DEFAULT_CREW];
     let currentActiveCrew = null;
     let selectedCrewForGate = null;
@@ -1337,32 +1260,24 @@
     let activeVerifyingParcel = null;
     let activeIntakeWaybill = "";
 
-    // MERCHANT INTAKE
     let merchantListPhotoData = "";
     let merchantContentPhotoData = "";
-
-    // IN-HOUSE REPURPOSE LINK
-    let activeRepurposedSourceSku = null;
 
     let currentPrintMode = 'BATCH';
     let currentMovementMode = "DELIVERED_TO_SHOP";
     let stagedBatchMovements = [];
     let pendingSkuData = null;
 
-    // CARD ISSUES
     let cardMultiProofFiles = [];
     let isMaskedCardOpen = false;
 
-    // SHELF SERVICE
     let currentSupplyFilter = 'ALL';
     let rawPendingRequests = [];
     let currentFreqType = 'STOCK_RESTOCK';
 
-    // CATALOG & AUDIT
     let masterCatalogCache = [];
     let liveAuditScans = {};
 
-    // REPORTS
     let currentReportMonth = new Date().toISOString().slice(0, 7);
     let currentAttendanceHalfFilter = 'FIRST_HALF';
     let currentExpenseReportFilter = 'ALL';
@@ -1373,9 +1288,10 @@
     // ================= INITIALIZATION & GATE =================
     async function initApp() {
       populateGateDropdown();
-      populateTaxonomyComboboxes();
 
       document.getElementById('report-month-input').value = currentReportMonth;
+      document.getElementById('report-expenses-month-input').value = currentReportMonth;
+      document.getElementById('report-cards-month-input').value = currentReportMonth;
 
       if (db) {
         try {
@@ -1586,7 +1502,7 @@
         resultArea.innerHTML = `
           <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3">
             <div class="flex items-start space-x-3">
-              <img src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+              <img src="${matchedItem.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
               <div class="min-w-0">
                 <span class="text-xs font-mono font-bold text-bitWalnut block break-all">${matchedItem.sku}</span>
                 <span class="text-xs font-bold text-gray-700 block">${matchedItem.name || 'Master Catalog Item'}</span>
@@ -1670,7 +1586,7 @@
       container.innerHTML = items.map(i => `
         <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
           <div class="flex items-center space-x-2.5 min-w-0">
-            <img src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
+            <img src="${i.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
             <div class="min-w-0">
               <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
               <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Charm Bag'}</span>
@@ -1716,8 +1632,8 @@
       if (isPartial) {
         const parts = code.split(/-P/i);
         cleanSku = parts[0];
-        const parsed = parseInt(parts[1]);
-        count = !isNaN(parsed) ? parsed : 5;
+        const parsedPcs = parseInt(parts[1]);
+        count = !isNaN(parsedPcs) ? parsedPcs : 5;
       }
 
       if (!liveAuditScans[cleanSku]) {
@@ -2200,7 +2116,7 @@
       `).join('');
     }
 
-    // ================= REPORTS HUB (MONTHLY & CUTOFF ENGINE) =================
+    // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
       ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
         document.getElementById(`rep-subtab-${t}`).classList.add('hidden');
@@ -2223,7 +2139,15 @@
     function onReportMonthChange() {
       currentReportMonth = document.getElementById('report-month-input').value;
       loadAttendanceReport();
+    }
+
+    function onExpensesMonthChange() {
+      currentReportMonth = document.getElementById('report-expenses-month-input').value;
       loadExpensesReport();
+    }
+
+    function onCardsMonthChange() {
+      currentReportMonth = document.getElementById('report-cards-month-input').value;
       loadCardDisputesReport();
     }
 
@@ -2399,6 +2323,14 @@
             document.getElementById('rep-health-total-units').textContent = `${items.length * 10} pcs`;
             document.getElementById('rep-health-retail-val').textContent = `₱${(items.length * 10 * 100).toLocaleString()}`;
           }
+
+          const { data: pullOuts } = await db.from('parcels').select('*').eq('source_type', 'pull_out');
+          const pullNote = document.getElementById('rep-health-pullout-note');
+          if (pullOuts && pullOuts.length > 0) {
+            pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin for reintroduction.`;
+          } else {
+            pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
+          }
         } catch (e) {}
       }
     }
@@ -2421,11 +2353,14 @@ Month / Cycle: ${currentReportMonth}
   * Keyrings & Extras: 5.8 weeks [Healthy]
 - Fastener/Findings Supply: Sufficient
 
-3. TOP 5 VELOCITY SKUs (Fast Movers - Stock-out Risk)
+3. FLOOR PULL-OUTS & REINTRODUCTION
+- Pull-outs routed to White Bin: Recorded live in system queue
+
+4. TOP 5 VELOCITY SKUs (Fast Movers - Stock-out Risk)
 - BDS-BOS-BIG-SOLID-E: Sold 42 | On Hand 18 | WoS 1.2 wks -> [Action: Reorder ASAP]
 
-4. BOTTOM 5 SLOW-MOVING SKUs (Pull-Out / Repurpose Candidates)
-- CHM-STN-OLD-01: Weeks with 0 Sales: 4 | Units On Hand: 35 -> [Action: Pull to Werqroom / Remake]`;
+5. BOTTOM 5 SLOW-MOVING SKUs (Pull-Out Candidates)
+- CHM-STN-OLD-01: Weeks with 0 Sales: 4 | Units On Hand: 35 -> [Action: Pull to White Bin]`;
 
       navigator.clipboard.writeText(md).then(() => alert("✓ Markdown Stock Health Report copied to clipboard!"));
     }
@@ -2440,112 +2375,92 @@ Month / Cycle: ${currentReportMonth}
       URL.revokeObjectURL(url);
     }
 
-    // ================= SHELF CARE (INTAKE & IN-HOUSE FORK) =================
-    function switchShelfTab(tabId) {
-      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
-
-      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`nav-tab-${t}`);
-        const indicator = btn.querySelector('.nav-indicator');
-        if (`tab-${t}` === tabId) {
-          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer";
-          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1";
-        } else {
-          btn.className = "nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer";
-          indicator.className = "nav-indicator w-8 h-1 rounded-full bg-transparent mb-1";
-        }
-      });
-
-      if (tabId === 'tab-received') loadWhiteBinParcels();
-      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
-    }
-
-    function selectIntakeSource(type) {
-      ['courier', 'merchant', 'inhouse'].forEach(t => {
-        const btn = document.getElementById(`src-btn-${t}`);
-        if (t === type) {
-          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        } else {
-          btn.className = "py-2 px-1 text-center font-bold text-xs rounded-xl border border-bitBorderDark text-gray-600 hover:border-bitWalnut cursor-pointer";
-        }
-      });
-      document.getElementById('fields-courier').classList.toggle('hidden', type !== 'courier');
-      document.getElementById('fields-merchant').classList.toggle('hidden', type !== 'merchant');
-      document.getElementById('fields-inhouse').classList.toggle('hidden', type !== 'inhouse');
-    }
-
-    function setInhouseCraftMode(mode) {
-      const btnProd = document.getElementById('btn-inhouse-prod');
-      const btnRepur = document.getElementById('btn-inhouse-repurpose');
-      const viewProd = document.getElementById('inhouse-production-subview');
-      const viewRepur = document.getElementById('inhouse-repurpose-subview');
-
-      if (mode === 'PRODUCTION') {
-        btnProd.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        btnRepur.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
-        viewProd.classList.remove('hidden');
-        viewRepur.classList.add('hidden');
-      } else {
-        btnRepur.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        btnProd.className = "py-2.5 px-2 text-center font-bold text-xs rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
-        viewRepur.classList.remove('hidden');
-        viewProd.classList.add('hidden');
-        setTimeout(() => document.getElementById('repurpose-source-sku-input')?.focus(), 100);
-      }
-    }
-
-    function proceedInhouseProductionToQr() {
-      const notes = document.getElementById('inhouse-prod-notes').value.trim() || 'New In-House Craft';
+    // ================= INTAKE & PHOTO HANDLERS =================
+    function proceedInhouseToQr() {
+      const notes = document.getElementById('inhouse-craft-notes').value.trim() || 'New In-House Craft';
       activeIntakeWaybill = `CRAFT-${Date.now().toString().slice(-6)}`;
       document.getElementById('qr-waybill-tag').textContent = `In-House: ${notes}`;
-      clearRepurposedLink();
       switchShelfTab('tab-qrbuilder');
     }
 
-    async function proceedInhouseRepurposeToQr() {
-      const sourceSku = document.getElementById('repurpose-source-sku-input').value.trim().toUpperCase();
-      const qty = parseInt(document.getElementById('repurpose-qty-input').value) || 1;
-      const reason = document.getElementById('repurpose-reason-input').value.trim() || 'Harvested for remake';
+    function previewGenericPhoto(input, imgId, wrapId, labelId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(imgId).src = e.target.result;
+          document.getElementById(wrapId).classList.remove('hidden');
+          document.getElementById(labelId).textContent = "✓ Photo Attached";
+          if (imgId === 'img-package-preview') packagePhotoData = e.target.result;
+          if (imgId === 'img-content-preview') contentPhotoData = e.target.result;
+          if (imgId === 'img-merch-list') merchantListPhotoData = e.target.result;
+          if (imgId === 'img-merch-content') merchantContentPhotoData = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
 
-      if (!sourceSku) {
-        alert("Please scan or enter the pulled bag SKU being repurposed.");
+    async function logCourierDropStrict() {
+      const barcode = document.getElementById('waybill-barcode-input').value.trim();
+      if (!barcode || !packagePhotoData || !contentPhotoData) {
+        alert("Please provide the Waybill Barcode, Outer Package Photo, and Content Photo.");
         return;
       }
 
+      const parcel = {
+        waybill: barcode, source_type: 'courier', image_url: contentPhotoData,
+        status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
       if (db) {
         try {
-          await db.from('stock_movements').insert([{
-            sku: sourceSku,
-            action: 'REPURPOSED_FROM_HOLDING',
-            bag_type: 'STANDARD',
-            pcs_moved: qty * 10,
-            source_location: 'WERQROOM_HOLDING',
-            dest_location: 'DISASSEMBLED_PRODUCTION',
-            pull_out_reason: reason,
-            moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-          }]);
+          await db.from('parcels').insert([parcel]);
         } catch (e) {}
       }
 
-      const holdEl = document.getElementById('holding-count');
-      holdEl.textContent = Math.max(0, (parseInt(holdEl.textContent) || 0) - qty);
-
-      activeRepurposedSourceSku = sourceSku;
-      document.getElementById('repurposed-source-badge').classList.remove('hidden');
-      document.getElementById('repurposed-source-text').textContent = `♻️ Repurposed from: ${sourceSku}`;
-
-      activeIntakeWaybill = `REPURPOSE-${Date.now().toString().slice(-6)}`;
-      document.getElementById('qr-waybill-tag').textContent = `Repurposed Intake`;
-
-      alert(`✓ Deducted ${qty} pack(s) of [${sourceSku}] from Werqroom Holding!\nOpening QR Builder to generate new finished SKU.`);
-      switchShelfTab('tab-qrbuilder');
+      whiteBinParcels.unshift(parcel);
+      document.getElementById('waybill-barcode-input').value = "";
+      document.getElementById('wrap-package-preview').classList.add('hidden');
+      document.getElementById('wrap-content-preview').classList.add('hidden');
+      document.getElementById('lbl-package').textContent = "Attach Outer Photo";
+      document.getElementById('lbl-content').textContent = "Attach Content Photo";
+      packagePhotoData = ""; contentPhotoData = "";
+      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
+      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+      alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
     }
 
-    function clearRepurposedLink() {
-      activeRepurposedSourceSku = null;
-      document.getElementById('repurposed-source-badge').classList.add('hidden');
+    async function logMerchantDrop() {
+      const merchant = document.getElementById('merchant-name-input').value.trim();
+      if (!merchant || !merchantListPhotoData || !merchantContentPhotoData) {
+        alert("Please provide the Merchant / Store Name, Attached Item List Photo, and Package Content Photo.");
+        return;
+      }
+
+      const syntheticWaybill = `MERCH-${Date.now().toString().slice(-6)}`;
+      const parcel = {
+        waybill: syntheticWaybill,
+        source_type: 'merchant',
+        image_url: merchantContentPhotoData,
+        status: 'PROCESSING',
+        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+      };
+
+      if (db) {
+        try {
+          await db.from('parcels').insert([parcel]);
+        } catch (e) {}
+      }
+
+      activeIntakeWaybill = syntheticWaybill;
+      document.getElementById('qr-waybill-tag').textContent = `Merchant: ${merchant} (${syntheticWaybill})`;
+      document.getElementById('merchant-name-input').value = "";
+      document.getElementById('wrap-merch-list').classList.add('hidden');
+      document.getElementById('wrap-merch-content').classList.add('hidden');
+      document.getElementById('lbl-merch-list').textContent = "Upload Item List / Receipt Photo";
+      document.getElementById('lbl-merch-content').textContent = "Upload Package Content Photo";
+      merchantListPhotoData = ""; merchantContentPhotoData = "";
+
+      switchShelfTab('tab-qrbuilder');
     }
 
     // ================= QR BUILDER ENGINE =================
@@ -2704,7 +2619,7 @@ Month / Cycle: ${currentReportMonth}
       closePrintStation();
     }
 
-    // WHITE BIN SCAN VERIFICATION
+    // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {
       if (db) {
         try {
@@ -2712,24 +2627,31 @@ Month / Cycle: ${currentReportMonth}
           if (data) whiteBinParcels = data;
         } catch (e) {}
       }
+      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
       document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
       const list = document.getElementById('whitebin-list');
       if (whiteBinParcels.length === 0) {
         list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">White Bin is empty.</div>`;
         return;
       }
-      list.innerHTML = whiteBinParcels.map(p => `
-        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between">
-          <div class="flex items-center space-x-2.5">
-            <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder" alt="Parcel">
-            <div>
-              <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
-              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+      list.innerHTML = whiteBinParcels.map(p => {
+        const isPullOut = (p.source_type === 'pull_out');
+        return `
+          <div class="bg-bitCream p-3 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <img src="${p.image_url || '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)'}" class="w-10 h-10 object-cover rounded-xl border border-bitBorder bg-white" alt="Parcel">
+              <div>
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
+                  ${isPullOut ? '<span class="px-1.5 py-0.2 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
+                </div>
+                <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+              </div>
             </div>
+            <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
           </div>
-          <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function startParcelVerificationModal(waybill) {
@@ -2769,18 +2691,18 @@ Month / Cycle: ${currentReportMonth}
           } catch (e) {}
         }
         whiteBinParcels = whiteBinParcels.filter(p => p.waybill !== activeVerifyingParcel.waybill);
+        document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
         document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
         closeVerifyModal();
-        document.getElementById('qr-waybill-tag').textContent = `Waybill: ${activeIntakeWaybill}`;
-        clearRepurposedLink();
+        document.getElementById('qr-waybill-tag').textContent = `Intake: ${activeIntakeWaybill}`;
         switchShelfTab('tab-qrbuilder');
       } else {
-        document.getElementById('verify-modal-error').textContent = "Scanned barcode does not match this parcel!";
+        document.getElementById('verify-modal-error').textContent = "Scanned barcode does not match this item!";
         document.getElementById('verify-modal-input').value = "";
       }
     }
 
-    // ================= MOVEMENT BATCH & PULL-OUT =================
+    // ================= MOVEMENT BATCH & PULL-OUT TO WHITE BIN =================
     function setMovementMode(mode) {
       currentMovementMode = mode;
       const btnDelivered = document.getElementById('btn-mode-delivered');
@@ -2798,9 +2720,9 @@ Month / Cycle: ${currentReportMonth}
       } else if (mode === 'REPLENISHED_TO_DISPLAY') {
         btnReplenish.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
         scanLabel.textContent = "Scan Shop Storage Bag ➔ Display Pegs";
-      } else if (mode === 'PULLED_TO_WERQROOM') {
+      } else if (mode === 'PULLED_TO_WHITE_BIN') {
         btnPullout.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitPink bg-pink-50 text-bitPink cursor-pointer";
-        scanLabel.textContent = "Scan Floor / Peg Bag ➔ Werqroom Holding";
+        scanLabel.textContent = "Scan Floor / Peg Bag ➔ White Bin";
       }
       setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
     }
@@ -2828,7 +2750,7 @@ Month / Cycle: ${currentReportMonth}
         pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
       }
 
-      let itemThumbnail = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+      let itemThumbnail = '[https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80](https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80)';
       let itemName = cleanSku;
       if (db) {
         try {
@@ -2902,9 +2824,9 @@ Month / Cycle: ${currentReportMonth}
       if (currentMovementMode === 'REPLENISHED_TO_DISPLAY') {
         srcLoc = 'SHOP_STORAGE';
         destLoc = 'DISPLAY_PEG';
-      } else if (currentMovementMode === 'PULLED_TO_WERQROOM') {
+      } else if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
         srcLoc = 'SHOP_STORAGE';
-        destLoc = 'WERQROOM_HOLDING';
+        destLoc = 'WHITE_BIN';
       }
 
       if (db) {
@@ -2915,110 +2837,42 @@ Month / Cycle: ${currentReportMonth}
             moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }));
           await db.from('stock_movements').insert(payload);
+
+          if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
+            for (const item of stagedBatchMovements) {
+              await db.from('parcels').insert([{
+                waybill: item.rawCode,
+                source_type: 'pull_out',
+                image_url: item.thumbnail,
+                status: 'IN_WHITE_BIN',
+                logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+              }]);
+            }
+          }
         } catch (e) {}
       }
 
       const werqEl = document.getElementById('werqroom-count');
       const storeEl = document.getElementById('storage-count');
-      const holdEl = document.getElementById('holding-count');
+      const whiteEl = document.getElementById('whitebin-count');
       let wCount = parseInt(werqEl.textContent) || 0;
       let sCount = parseInt(storeEl.textContent) || 0;
-      let hCount = parseInt(holdEl.textContent) || 0;
+      let binCount = parseInt(whiteEl.textContent) || 0;
 
       if (currentMovementMode === 'DELIVERED_TO_SHOP') {
         werqEl.textContent = Math.max(0, wCount - stagedBatchMovements.length);
         storeEl.textContent = sCount + stagedBatchMovements.length;
       } else if (currentMovementMode === 'REPLENISHED_TO_DISPLAY') {
         storeEl.textContent = Math.max(0, sCount - stagedBatchMovements.length);
-      } else if (currentMovementMode === 'PULLED_TO_WERQROOM') {
+      } else if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
         storeEl.textContent = Math.max(0, sCount - stagedBatchMovements.length);
-        holdEl.textContent = hCount + stagedBatchMovements.length;
+        whiteEl.textContent = binCount + stagedBatchMovements.length;
+        document.getElementById('whitebin-badge-count').textContent = `${binCount + stagedBatchMovements.length} Parcels`;
       }
 
-      alert(`✓ Movement Complete!\nTransferred ${stagedBatchMovements.length} packs (${totalPcs} pcs) under [${currentMovementMode.replace(/_/g, ' ')}].`);
+      alert(`✓ Movement Complete!\nTransferred ${stagedBatchMovements.length} item(s) (${totalPcs} pcs) under [${currentMovementMode.replace(/_/g, ' ')}].`);
       stagedBatchMovements = [];
       renderBatchQueue();
-    }
-
-    // ================= INTAKE & PHOTO HANDLERS =================
-    function previewGenericPhoto(input, imgId, wrapId, labelId) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById(imgId).src = e.target.result;
-          document.getElementById(wrapId).classList.remove('hidden');
-          document.getElementById(labelId).textContent = "✓ Photo Attached";
-          if (imgId === 'img-package-preview') packagePhotoData = e.target.result;
-          if (imgId === 'img-content-preview') contentPhotoData = e.target.result;
-          if (imgId === 'img-merch-list') merchantListPhotoData = e.target.result;
-          if (imgId === 'img-merch-content') merchantContentPhotoData = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    async function logCourierDropStrict() {
-      const barcode = document.getElementById('waybill-barcode-input').value.trim();
-      if (!barcode || !packagePhotoData || !contentPhotoData) {
-        alert("Please provide the Waybill Barcode, Outer Package Photo, and Content Photo.");
-        return;
-      }
-
-      const parcel = {
-        waybill: barcode, source_type: 'courier', image_url: contentPhotoData,
-        status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-      };
-
-      if (db) {
-        try {
-          await db.from('parcels').insert([parcel]);
-        } catch (e) {}
-      }
-
-      whiteBinParcels.unshift(parcel);
-      document.getElementById('waybill-barcode-input').value = "";
-      document.getElementById('wrap-package-preview').classList.add('hidden');
-      document.getElementById('wrap-content-preview').classList.add('hidden');
-      document.getElementById('lbl-package').textContent = "Attach Outer Photo";
-      document.getElementById('lbl-content').textContent = "Attach Content Photo";
-      packagePhotoData = ""; contentPhotoData = "";
-      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
-      alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
-    }
-
-    async function logMerchantDrop() {
-      const merchant = document.getElementById('merchant-name-input').value.trim();
-      if (!merchant || !merchantListPhotoData || !merchantContentPhotoData) {
-        alert("Please provide the Merchant / Store Name, Attached Item List Photo, and Package Content Photo.");
-        return;
-      }
-
-      const syntheticWaybill = `MERCH-${Date.now().toString().slice(-6)}`;
-      const parcel = {
-        waybill: syntheticWaybill,
-        source_type: 'merchant',
-        image_url: merchantContentPhotoData,
-        status: 'PROCESSING',
-        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-      };
-
-      if (db) {
-        try {
-          await db.from('parcels').insert([parcel]);
-        } catch (e) {}
-      }
-
-      activeIntakeWaybill = syntheticWaybill;
-      document.getElementById('qr-waybill-tag').textContent = `Merchant: ${merchant} (${syntheticWaybill})`;
-      document.getElementById('merchant-name-input').value = "";
-      document.getElementById('wrap-merch-list').classList.add('hidden');
-      document.getElementById('wrap-merch-content').classList.add('hidden');
-      document.getElementById('lbl-merch-list').textContent = "Upload Item List / Receipt Photo";
-      document.getElementById('lbl-merch-content').textContent = "Upload Package Content Photo";
-      merchantListPhotoData = ""; merchantContentPhotoData = "";
-      clearRepurposedLink();
-
-      switchShelfTab('tab-qrbuilder');
     }
 
     function startCameraScanner(targetInputId, onScanSuccessCallback) {

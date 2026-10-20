@@ -1587,7 +1587,13 @@
         resultArea.innerHTML = `
           <div class="bg-bitCream p-4 rounded-2xl border border-bitBorderDark space-y-3">
             <div class="flex items-start space-x-3">
-              <img src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=100&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+<!-- CLICKABLE THUMBNAIL WITH CAMERA TRIGGER -->
+            <div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture('${matchedItem.sku}')" title="Tap to take or update photo">
+              <img id="shelf-help-thumb-${matchedItem.sku}" src="${matchedItem.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-16 h-16 object-cover rounded-xl border border-bitBorder shrink-0 bg-white" alt="Master Match">
+              <div class="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-80 hover:opacity-100 transition text-sm text-white font-bold">
+                📷
+              </div>
+            </div>
               <div class="min-w-0">
                 <span class="text-xs font-mono font-bold text-bitWalnut block break-all">${matchedItem.sku}</span>
                 <span class="text-xs font-bold text-gray-700 block">${matchedItem.name || 'Master Catalog Item'}</span>
@@ -1643,7 +1649,7 @@
       document.getElementById('stock-catalog-modal').style.display = 'flex';
       if (db) {
         try {
-          const { data } = await db.from('items').select('*').order('sku');
+          const { data } = await db.from('items').select('*').order('sku').limit(2000);
           if (data) masterCatalogCache = data;
         } catch (e) {}
       }

@@ -866,6 +866,8 @@
 
   <!-- STOCK CATALOG MODAL -->
   <div id="stock-catalog-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <!-- HIDDEN FILE INPUT FOR STAFF CATALOG PHOTO CAPTURE -->
+    <input type="file" id="catalog-photo-direct-upload" accept="image/*" class="hidden" onchange="handleCatalogPhotoUpload(this)">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
         <div>
@@ -1660,28 +1662,115 @@
       renderStockCatalog(filtered);
     }
 
-    function renderStockCatalog(items) {
+    let currentUploadTargetSku = null;
+
+    async function renderStockCatalog(items) {
       const container = document.getElementById('catalog-items-scroll-list');
       if (items.length === 0) {
         container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">No catalog items found.</div>`;
         return;
       }
-      container.innerHTML = items.map(i => `
-        <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
-          <div class="flex items-center space-x-2.5 min-w-0">
-            <img src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-11 h-11 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="Item">
-            <div class="min-w-0">
-              <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
-              <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Charm Bag'}</span>
+
+      let stockCounts = {};
+      if (db) {
+        try {
+          const { data: batches } = await db.from('intake_batches').select('sku, pack_count');
+          if (batches) {
+            batches.forEach(b => {
+              stockCounts[b.sku] = (stockCounts[b.sku] || 0) + (b.pack_count || 0);
+            });
+          }
+        } catch (e) {}
+      }
+
+      container.innerHTML = items.map(i => {
+        const packs = stockCounts[i.sku] || 0;
+        return `
+          <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-2 text-xs">
+            <div class="flex items-center space-x-2.5 min-w-0">
+              <!-- ITEM PHOTO WITH DIRECT SNAP/CHANGE BUTTON -->
+              <div class="relative shrink-0 group cursor-pointer" onclick="triggerCatalogPhotoCapture('${i.sku}')" title="Tap to update item photo">
+                <img id="catalog-thumb-${i.sku}" src="${i.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80'}" class="w-12 h-12 object-cover rounded-xl border border-bitBorder bg-white" alt="${i.sku}">
+                <div class="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-70 hover:opacity-100 transition text-[11px] text-white font-bold">
+                  📷
+                </div>
+              </div>
+              <div class="min-w-0">
+                <span class="font-mono font-bold text-bitWalnut block truncate">${i.sku}</span>
+                <span class="text-[10px] text-gray-500 font-bold block truncate">${i.name || 'Catalog Item'}</span>
+                <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold ${packs > 0 ? 'bg-bitGreen/20 text-bitGreen' : 'bg-gray-200 text-gray-500'}">
+                  ${packs > 0 ? `${packs} packs in stock` : '0 packs (Out of stock)'}
+                </span>
+              </div>
             </div>
+            <button type="button" onclick="closeStockCatalogModal(); document.getElementById('shelf-help-search-input').value = '${i.sku}'; runShelfHelpSearch('${i.sku}');" class="px-2.5 py-1.5 bg-bitWalnut text-white text-[10px] font-bold rounded-lg shrink-0 cursor-pointer">
+              Check Stock ➔
+            </button>
           </div>
-          <button type="button" onclick="closeStockCatalogModal(); document.getElementById('shelf-help-search-input').value = '${i.sku}'; runShelfHelpSearch('${i.sku}');" class="px-2.5 py-1.5 bg-bitWalnut text-white text-[10px] font-bold rounded-lg shrink-0 cursor-pointer">
-            Check Stock ➔
-          </button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+function triggerCatalogPhotoCapture(sku) {
+      currentUploadTargetSku = sku;
+      const fileInput = document.getElementById('catalog-photo-direct-upload');
+      if (fileInput) {
+        fileInput.value = ''; // Reset selection
+        fileInput.click();
+      }
     }
 
+    async function handleCatalogPhotoUpload(input) {
+      if (!input.files || !input.files[0] || !currentUploadTargetSku) return;
+      const file = input.files[0];
+      const sku = currentUploadTargetSku;
+      
+      const thumbEl = document.getElementById(`catalog-thumb-${sku}`);
+      if (thumbEl) thumbEl.style.opacity = '0.3'; // Visual feedback: uploading...
+
+      try {
+        const fileExt = file.name ? file.name.split('.').pop() : 'jpg';
+        const cleanSkuName = sku.replace(/[^A-Za-z0-9_-]/g, '_');
+        const filePath = `catalog/${cleanSkuName}_${Date.now()}.${fileExt}`;
+
+        // 1. Upload to Supabase Storage bucket 'item-photos'
+        const { data, error: uploadErr } = await db.storage
+          .from('item-photos')
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadErr) {
+          alert("Storage upload error: " + uploadErr.message);
+          if (thumbEl) thumbEl.style.opacity = '1';
+          return;
+        }
+
+        // 2. Retrieve public URL
+        const { data: urlData } = db.storage
+          .from('item-photos')
+          .getPublicUrl(filePath);
+
+        const publicUrl = urlData.publicUrl;
+
+        // 3. Save URL directly to items table in Supabase
+        await db.from('items')
+          .update({ image_url: publicUrl })
+          .eq('sku', sku);
+
+        // 4. Update UI instantly
+        if (thumbEl) {
+          thumbEl.src = publicUrl;
+          thumbEl.style.opacity = '1';
+        }
+        
+        // Update local memory cache if present
+        const cachedItem = masterCatalogCache.find(m => m.sku === sku);
+        if (cachedItem) cachedItem.image_url = publicUrl;
+
+        alert(`✓ Photo saved and linked to ${sku}!`);
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+        if (thumbEl) thumbEl.style.opacity = '1';
+      }
+    }
     // ================= CONTINUOUS FLOOR AUDIT SCAN =================
     function startFloorAuditMode() {
       liveAuditScans = {};

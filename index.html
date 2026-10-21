@@ -3211,7 +3211,16 @@ if (badge) {
       if (!pendingSkuData) return;
       if (db) {
         try {
-          // 1. Always save / update catalog SKU entry
+          // 1. Check if SKU already exists in master catalog
+          const { data: existingItem } = await db
+            .from('items')
+            .select('sku')
+            .eq('sku', pendingSkuData.sku)
+            .maybeSingle();
+
+          const isNewSku = !existingItem;
+
+          // 2. Always upsert master item catalog entry
           await db.from('items').upsert([{
             sku: pendingSkuData.sku,
             identifier: pendingSkuData.sku,
@@ -3222,32 +3231,40 @@ if (badge) {
             image_url: pendingSkuData.image_url
           }]);
 
-          // 2. Only log intake & stock movement if NOT "Print Label Only" and packs > 0
+          // 3. Log directly to stock_movements (Unified Stage 2: Intake)
           if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
             const resolvedWaybill = activeIntakeWaybill || 'DIRECT';
+            const actionType = isNewSku ? 'NEW_SKU_INTAKE' : 'RESTOCK_INTAKE';
 
-            await db.from('intake_batches').insert([{
-              waybill: resolvedWaybill,
-              sku: pendingSkuData.sku,
-              pack_count: pendingSkuData.pack_count,
-              pcs_per_pack: pendingSkuData.pcs_per_pack,
-              partial_pcs: pendingSkuData.partial_pcs,
-              total_pcs: pendingSkuData.total_pcs,
-              intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-            }]);
-
-            await db.from('stock_movements').insert([{
-              sku: pendingSkuData.sku,
-              action: 'INTAKE_RECEIVED',
-              bag_type: 'STANDARD',
-              pcs_moved: pendingSkuData.total_pcs || (pendingSkuData.pack_count * (pendingSkuData.pcs_per_pack || 10)),
-              source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WERQROOM'
-            }]);
-
-            const werqEl = document.getElementById('werqroom-count');
-            if (werqEl) {
-              werqEl.textContent = (parseInt(werqEl.textContent) || 0) + pendingSkuData.pack_count;
+            // Create 1 movement entry per pack for consistent batch tracking
+            const movementRows = [];
+            for (let i = 0; i < pendingSkuData.pack_count; i++) {
+              movementRows.push({
+                sku: pendingSkuData.sku,
+                action: actionType,
+                bag_type: 'STANDARD',
+                pcs_moved: pendingSkuData.pcs_per_pack || 10,
+                source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WHITE_BIN',
+                dest_location: 'WERQROOM',
+                moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+              });
             }
+
+            // Log partial pack if present
+            if (pendingSkuData.partial_pcs > 0) {
+              movementRows.push({
+                sku: pendingSkuData.sku,
+                action: actionType,
+                bag_type: 'PARTIAL',
+                pcs_moved: pendingSkuData.partial_pcs,
+                source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WHITE_BIN',
+                dest_location: 'WERQROOM',
+                moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+              });
+            }
+
+            const { error: moveErr } = await db.from('stock_movements').insert(movementRows);
+            if (moveErr) throw moveErr;
           }
         } catch (e) {
           console.error('SKU / Intake Error:', e);
@@ -3256,7 +3273,6 @@ if (badge) {
         }
       }
 
-      // Reset intake waybill state back to direct intake for next operation
       activeIntakeWaybill = "DIRECT";
       refreshGlobalStockCounters();
       const tag = document.getElementById('qr-waybill-tag');
@@ -3264,7 +3280,7 @@ if (badge) {
 
       alert(pendingSkuData.is_print_only 
         ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only / No stock added).` 
-        : `✓ SKU [${pendingSkuData.sku}] saved & staged!`);
+        : `✓ Logged ${pendingSkuData.pack_count} pack(s) of [${pendingSkuData.sku}] directly into Werqroom stock!`);
       closePrintStation();
     }
 async function refreshGlobalStockCounters() {
@@ -3618,12 +3634,43 @@ async function refreshGlobalStockCounters() {
       }
     }
 
-    function generateEodReportText() {
+    // Executive concise summary for Telegram copying
+    function generateEodSummaryText() {
+      const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+
+      const newSkus = todayMovementsCache.filter(m => m.action === 'NEW_SKU_INTAKE');
+      const restocks = todayMovementsCache.filter(m => m.action === 'RESTOCK_INTAKE' || m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE');
+      const delivered = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
+      const displayed = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
+      const pullouts = todayMovementsCache.filter(m => m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN');
+
+      const sumPcs = (arr) => arr.reduce((acc, curr) => acc + (curr.pcs_moved || 10), 0);
+
+      let text = `=====================================\n`;
+      text += `📦 BITBIT EOD STOCK MOVEMENT REPORT\n`;
+      text += `Date: ${dateStr}\n`;
+      text += `Total Movements: ${todayMovementsCache.length} logs | ${totalPcs} pcs\n`;
+      text += `=====================================\n\n`;
+
+      text += `1. 📥 White Bin Dropped: ${whiteBinParcels.length} parcel(s)\n`;
+      text += `2. ✨ New SKU Intake: ${newSkus.length} log(s) (${sumPcs(newSkus)} pcs)\n`;
+      text += `   📦 Restock (Existing SKU): ${restocks.length} log(s) (${sumPcs(restocks)} pcs)\n`;
+      text += `3. 🚚 Delivered to Shop: ${delivered.length} log(s) (${sumPcs(delivered)} pcs)\n`;
+      text += `4. ✨ Displayed on Pegs: ${displayed.length} log(s) (${sumPcs(displayed)} pcs)\n`;
+      text += `5. 🔻 Pull-Out to White Bin: ${pullouts.length} log(s) (${sumPcs(pullouts)} pcs)\n\n`;
+      text += `Generated at: ${new Date().toLocaleTimeString()}\n`;
+
+      return text.trim();
+    }
+
+    // Detailed itemized log for .txt file downloads
+    function generateDetailedReportText() {
       const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
 
       let text = `=====================================\n`;
-      text += `📦 BITBIT EOD STOCK MOVEMENT REPORT\n`;
+      text += `📦 BITBIT DETAILED MOVEMENT LOG\n`;
       text += `Date: ${dateStr}\n`;
       text += `Total Movements: ${todayMovementsCache.length} logs | ${totalPcs} total pcs\n`;
       text += `=====================================\n\n`;
@@ -3673,9 +3720,9 @@ async function refreshGlobalStockCounters() {
         alert("No movements recorded yet today to report.");
         return;
       }
-      const text = generateEodReportText();
+      const text = generateEodSummaryText();
       navigator.clipboard.writeText(text).then(() => {
-        alert("✓ EOD Movement Summary copied! Ready to paste into Telegram.");
+        alert("✓ Clean EOD Summary copied! Ready to paste into Telegram.");
       });
     }
 
@@ -3684,7 +3731,7 @@ async function refreshGlobalStockCounters() {
         alert("No movements recorded yet today to download.");
         return;
       }
-      const text = generateEodReportText();
+      const text = generateDetailedReportText();
       const dateStr = new Date().toISOString().slice(0, 10);
       const blob = new Blob([text], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);

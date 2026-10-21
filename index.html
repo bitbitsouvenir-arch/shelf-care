@@ -2881,6 +2881,13 @@ Month / Cycle: ${currentReportMonth}
       });
 
       if (tabId === 'tab-received') loadWhiteBinParcels();
+      if (tabId === 'tab-qrbuilder') {
+        if (!activeIntakeWaybill) {
+          activeIntakeWaybill = "DIRECT";
+          const tag = document.getElementById('qr-waybill-tag');
+          if (tag) tag.textContent = "Direct Intake";
+        }
+      }
       if (tabId === 'tab-move') {
         setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
         loadTodayMovements();
@@ -3186,48 +3193,60 @@ if (badge) {
     async function finalizeLabelPrintAndCommit() {
       if (!pendingSkuData) return;
       if (db) {
-      try {
-        await db.from('items').upsert([{
-          sku: pendingSkuData.sku,
-          identifier: pendingSkuData.sku,
-          name: pendingSkuData.name,
-          category: pendingSkuData.category,
-          subcategory: pendingSkuData.subcategory,
-          type: pendingSkuData.type || 'ITEM',
-          image_url: pendingSkuData.image_url
-        }]);
-
-        if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
-          await db.from('intake_batches').insert([{
-            waybill: activeIncomingWaybill || 'MANUAL-INTAKE',
+        try {
+          // 1. Always save / update catalog SKU entry
+          await db.from('items').upsert([{
             sku: pendingSkuData.sku,
-            pack_count: pendingSkuData.pack_count,
-            pcs_per_pack: pendingSkuData.pcs_per_pack,
-            partial_pcs: pendingSkuData.partial_pcs,
-            total_pcs: pendingSkuData.total_pcs,
-            intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+            identifier: pendingSkuData.sku,
+            name: pendingSkuData.name,
+            category: pendingSkuData.category,
+            subcategory: pendingSkuData.subcategory,
+            type: pendingSkuData.type || 'ITEM',
+            image_url: pendingSkuData.image_url
           }]);
 
-          await db.from('stock_movements').insert([{
-            sku: pendingSkuData.sku,
-            action: 'INTAKE_RECEIVED',
-            bag_type: 'STANDARD',
-            pcs_moved: pendingSkuData.total_pcs || (pendingSkuData.pack_count * (pendingSkuData.pcs_per_pack || 10)),
-            source_location: 'WERQROOM'
-          }]);
+          // 2. Only log intake & stock movement if NOT "Print Label Only" and packs > 0
+          if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
+            const resolvedWaybill = activeIntakeWaybill || 'DIRECT';
 
-          const werqEl = document.getElementById('werqroom-count');
-          if (werqEl) {
-            werqEl.textContent = (parseInt(werqEl.textContent) || 0) + pendingSkuData.pack_count;
+            await db.from('intake_batches').insert([{
+              waybill: resolvedWaybill,
+              sku: pendingSkuData.sku,
+              pack_count: pendingSkuData.pack_count,
+              pcs_per_pack: pendingSkuData.pcs_per_pack,
+              partial_pcs: pendingSkuData.partial_pcs,
+              total_pcs: pendingSkuData.total_pcs,
+              intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+            }]);
+
+            await db.from('stock_movements').insert([{
+              sku: pendingSkuData.sku,
+              action: 'INTAKE_RECEIVED',
+              bag_type: 'STANDARD',
+              pcs_moved: pendingSkuData.total_pcs || (pendingSkuData.pack_count * (pendingSkuData.pcs_per_pack || 10)),
+              source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WERQROOM'
+            }]);
+
+            const werqEl = document.getElementById('werqroom-count');
+            if (werqEl) {
+              werqEl.textContent = (parseInt(werqEl.textContent) || 0) + pendingSkuData.pack_count;
+            }
           }
+        } catch (e) {
+          console.error('SKU / Intake Error:', e);
+          alert('Database Error: ' + (e.message || JSON.stringify(e)));
+          return;
         }
-      } catch (e) {
-        console.error('SKU / Intake Error:', e);
-        alert('Database Error: ' + (e.message || JSON.stringify(e)));
-        return;
       }
-    }
-      alert(pendingSkuData.is_print_only ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only).` : `✓ SKU [${pendingSkuData.sku}] saved!`);
+
+      // Reset intake waybill state back to direct intake for next operation
+      activeIntakeWaybill = "DIRECT";
+      const tag = document.getElementById('qr-waybill-tag');
+      if (tag) tag.textContent = "Direct Intake";
+
+      alert(pendingSkuData.is_print_only 
+        ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only / No stock added).` 
+        : `✓ SKU [${pendingSkuData.sku}] saved & staged!`);
       closePrintStation();
     }
 

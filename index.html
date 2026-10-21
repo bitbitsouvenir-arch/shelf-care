@@ -587,6 +587,25 @@
         <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen hover:bg-[#6ba523] text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition disabled:opacity-40" disabled>
           Commit Batch Stock Movement →
         </button>
+
+        <!-- TODAY'S MOVEMENT AUDIT & EOD SUMMARY -->
+        <div class="pt-4 border-t border-gray-100 space-y-2">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-bitWalnut block">Today's Movement Log</span>
+              <span id="move-today-summary-tally" class="text-[10px] text-gray-500 font-medium">0 items moved today</span>
+            </div>
+            <button type="button" onclick="copyTodayMovementSummary()" class="px-2.5 py-1.5 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
+              📋 Copy EOD Summary
+            </button>
+          </div>
+          <div id="move-today-logs-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">
+              Loading today's movement logs...
+            </div>
+          </div>
+        </div>
+        
       </div>
     </section>
 
@@ -1818,8 +1837,6 @@
       }
     }
 
-    let skuLookupTimer = null;
-
 let skuLookupTimer = null;
 
 async function handleSkuPasteLookup(pastedSku) {
@@ -2864,7 +2881,10 @@ Month / Cycle: ${currentReportMonth}
       });
 
       if (tabId === 'tab-received') loadWhiteBinParcels();
-      if (tabId === 'tab-move') setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+      if (tabId === 'tab-move') {
+        setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
+        loadTodayMovements();
+      }
     }
 
    function setInhouseCraftMode(mode) {
@@ -3470,8 +3490,112 @@ if (badge) {
       alert(`✓ Movement Complete!\nTransferred ${stagedBatchMovements.length} item(s) (${totalPcs} pcs) under [${currentMovementMode.replace(/_/g, ' ')}].`);
       stagedBatchMovements = [];
       renderBatchQueue();
+      loadTodayMovements();
     }
 
+    let todayMovementsCache = [];
+
+async function loadTodayMovements() {
+  const container = document.getElementById('move-today-logs-container');
+  const tallyEl = document.getElementById('move-today-summary-tally');
+  if (!container || !db) return;
+
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const { data, error } = await db
+      .from('stock_movements')
+      .select('sku, action, pcs_moved, bag_type, moved_by, created_at')
+      .gte('created_at', todayStart.toISOString())
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    todayMovementsCache = data || [];
+
+    if (tallyEl) {
+      const totalUnits = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+      tallyEl.textContent = `${todayMovementsCache.length} log(s) • ${totalUnits} pcs total today`;
+    }
+
+    if (todayMovementsCache.length === 0) {
+      container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">No movements logged yet today.</div>`;
+      return;
+    }
+
+    container.innerHTML = todayMovementsCache.map(m => {
+      const dt = new Date(m.created_at);
+      const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      let badgeBg = "bg-amber-100 text-amber-900 border-amber-300";
+      let actionLabel = "Werqroom ➔ Shop";
+
+      if (m.action === 'REPLENISHED_TO_DISPLAY') {
+        badgeBg = "bg-emerald-100 text-emerald-900 border-emerald-300";
+        actionLabel = "Shop ➔ Display";
+      } else if (m.action === 'PULLED_TO_WHITE_BIN' || m.action === 'PULL_OUT') {
+        badgeBg = "bg-rose-100 text-rose-900 border-rose-300";
+        actionLabel = "Shop ➔ Pull-Out";
+      }
+
+      return `
+        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+          <div class="min-w-0 flex-1 pr-2">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="font-mono font-bold text-bitWalnut">${m.sku}</span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border ${badgeBg}">${actionLabel}</span>
+            </div>
+            <span class="text-[10px] text-gray-500 font-medium block mt-0.5">${m.moved_by || 'Staff'} • ${m.pcs_moved || 10} pcs (${m.bag_type || 'STANDARD'})</span>
+          </div>
+          <span class="text-[10px] text-gray-400 font-mono font-bold shrink-0">${timeStr}</span>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Failed to load logs: ${err.message}</div>`;
+  }
+}
+
+function copyTodayMovementSummary() {
+  if (!todayMovementsCache || todayMovementsCache.length === 0) {
+    alert("No movements recorded yet today to report.");
+    return;
+  }
+
+  const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+
+  let text = `📦 BITBIT EOD STOCK MOVEMENT REPORT (${dateStr})\n`;
+  text += `Total Movements: ${todayMovementsCache.length} records (${totalPcs} pcs total)\n\n`;
+
+  const werqToShop = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
+  const shopToDisplay = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
+  const pullOuts = todayMovementsCache.filter(m => m.action === 'PULLED_TO_WHITE_BIN' || m.action === 'PULL_OUT');
+
+  if (werqToShop.length > 0) {
+    text += `🔹 WERQROOM ➔ SHOP (${werqToShop.length} logs):\n`;
+    werqToShop.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+    text += `\n`;
+  }
+
+  if (shopToDisplay.length > 0) {
+    text += `🔸 SHOP ➔ DISPLAY PEGS (${shopToDisplay.length} logs):\n`;
+    shopToDisplay.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+    text += `\n`;
+  }
+
+  if (pullOuts.length > 0) {
+    text += `🔻 SHOP ➔ PULL-OUT TO WHITE BIN (${pullOuts.length} logs):\n`;
+    pullOuts.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+    text += `\n`;
+  }
+
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    alert("✓ EOD Movement Summary copied to clipboard! Ready to paste into Slack/Telegram/GChat.");
+  });
+}
+    
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
       document.getElementById('camera-scanner-modal').style.display = 'flex';
       html5QrScanner = new Html5Qrcode("scanner-reader-view");

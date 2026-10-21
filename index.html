@@ -3116,22 +3116,25 @@ Month / Cycle: ${currentReportMonth}
       list.innerHTML = whiteBinParcels.map(p => {
         const isPullOut = (p.source_type === 'pull_out');
         return `
-          <div class="bg-bitCream p-3 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-  <div class="relative shrink-0 cursor-pointer group" onclick="openImagePreviewModal('${p.waybill}', '${p.image_url}')" title="Tap to enlarge parcel photo">
-    <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=120&q=80'}" class="w-14 h-14 object-cover rounded-xl border border-bitBorder bg-white shadow-sm" alt="Parcel">
-    <div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[9px] leading-none">🔍</div>
-  </div>
-                <div class="flex items-center space-x-1.5">
-                  <span class="text-xs font-mono font-bold text-bitWalnut block">${p.waybill}</span>
-                  ${isPullOut ? '<span class="px-1.5 py-0.2 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
-                </div>
-                <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
-              </div>
+        <div class="bg-bitCream p-3.5 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between gap-3">
+          <div class="flex items-center space-x-3 min-w-0">
+            <div class="relative shrink-0 cursor-pointer" onclick="openImagePreviewModal('${p.waybill}', '${p.image_url}')" title="Tap to enlarge parcel photo">
+              <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=120&q=80'}" class="w-14 h-14 object-cover rounded-xl border border-bitBorder bg-white shadow-sm" alt="Parcel">
+              <div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[9px] leading-none">🔍</div>
             </div>
-            <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="px-3 py-1.5 bg-bitWalnut text-white text-xs font-bold rounded-xl cursor-pointer">Open ➔</button>
+            <div class="min-w-0">
+              <div class="flex items-center space-x-1.5 flex-wrap">
+                <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${p.waybill}</span>
+                ${isPullOut ? '<span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
+              </div>
+              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+            </div>
           </div>
-        `;
+          <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="shrink-0 px-3.5 py-2 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer shadow-sm">
+            Open &rarr;
+          </button>
+        </div>
+      `;
       }).join('');
     }
 

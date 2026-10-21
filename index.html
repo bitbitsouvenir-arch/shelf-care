@@ -1792,9 +1792,6 @@ function closeMovementHistoryModal() {
   document.getElementById('movement-history-modal').style.display = 'none';
 }
 
-    function closeMovementHistoryModal() {
-      document.getElementById('movement-history-modal').style.display = 'none';
-    }
 
     async function openNewArrivalsModal() {
       const modal = document.getElementById('new-arrivals-modal');
@@ -3405,19 +3402,6 @@ async function refreshGlobalStockCounters() {
     }
 
     // ================= MOVEMENT BATCH & PULL-OUT TO WHITE BIN =================
-    navigator.clipboard.writeText(text.trim()).then(() => {
-      alert("✓ EOD Movement Summary copied to clipboard! Ready to paste into Slack/Telegram/GChat.");
-    });
-  } // <--- END YOUR HIGHLIGHT HERE
-```[cite: 9]
-
----
-
-### Once your highlight spans from `function setMovementMode(mode) {` (Line 3408) down to `}` (around Line 3683):
-
-Paste the complete updated code block[cite: 17]:
-
-```javascript
     function setMovementMode(mode) {
       currentMovementMode = mode;
       const btnDelivered = document.getElementById('btn-mode-delivered');

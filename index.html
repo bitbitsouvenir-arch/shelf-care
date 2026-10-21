@@ -1651,36 +1651,22 @@
           const totalIntakePacks = itemIntakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0);
 
           const itemMovements = (movements || []).filter(m => m.sku === item.sku);
-          const shopPacks = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-const werqPacks = Math.max(0, totalIntakePacks - shopPacks);
-const totalPacks = werqPacks + shopPacks;
-```
-
-`shopPacks` is only counting the rows matching `DELIVERED_TO_SHOP`, ignoring the subtraction when items are replenished to display (`REPLENISHED_TO_DISPLAY`) or pulled out[cite: 23, 24].
-
----
-
-### Replace Lines 1654 to 1656
-
-Highlight **Lines 1654, 1655, and 1656**[cite: 24] and replace them with:
-
-```javascript
-    const deliveredCount = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
+          const deliveredCount = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
     const replenishedCount = itemMovements.filter(m => m.action === 'REPLENISHED_TO_DISPLAY' || m.action === 'PULL_OUT').length;
     const shopPacks = Math.max(0, deliveredCount - replenishedCount);
     const werqPacks = Math.max(0, totalIntakePacks - deliveredCount);
     const totalPacks = werqPacks + shopPacks;
 
-          activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-          return {
-            ...item,
-            werqPacks,
-            shopPacks,
-            totalPacks,
-            movementCount: itemMovements.length
-          };
-        });
+    return {
+      ...item,
+      werqPacks,
+      shopPacks,
+      totalPacks,
+      movementCount: itemMovements.length
+    };
+  });
 
         itemsWithStock.sort((a, b) => b.totalPacks - a.totalPacks);
 

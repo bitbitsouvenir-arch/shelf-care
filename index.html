@@ -550,13 +550,13 @@
           
           <div class="grid grid-cols-3 gap-1.5 mt-2">
             <button type="button" onclick="setMovementMode('DELIVERED_TO_SHOP')" id="btn-mode-delivered" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
-              Werqroom ➔ Shop
+              🚚 Delivered to Shop
             </button>
             <button type="button" onclick="setMovementMode('REPLENISHED_TO_DISPLAY')" id="btn-mode-replenish" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer">
-              Shop ➔ Display
+              ✨ Displayed
             </button>
-            <button type="button" onclick="setMovementMode('PULLED_TO_WHITE_BIN')" id="btn-mode-pullout" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-bitPink cursor-pointer">
-              Shop ➔ Pull-Out
+            <button type="button" onclick="setMovementMode('PULL_OUT')" id="btn-mode-pullout" class="py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-bitPink cursor-pointer">
+              🔻 Pull-Out
             </button>
           </div>
         </div>
@@ -593,18 +593,23 @@
           <div class="flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-bitWalnut block">Today's Movement Log</span>
-              <span id="move-today-summary-tally" class="text-[10px] text-gray-500 font-medium">0 items moved today</span>
+              <span id="move-today-summary-tally" class="text-[10px] text-gray-500 font-medium">0 movements today</span>
             </div>
-            <button type="button" onclick="copyTodayMovementSummary()" class="px-2.5 py-1.5 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
-              📋 Copy EOD Summary
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="copyTodayMovementSummary()" class="px-2.5 py-1.5 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
+                📋 Copy
+              </button>
+              <button type="button" onclick="downloadTodayMovementReport()" class="px-2.5 py-1.5 bg-bitWalnut hover:bg-black text-white text-[10px] font-bold rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
+                📥 .txt
+              </button>
+            </div>
           </div>
           <div id="move-today-logs-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
             <div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">
               Loading today's movement logs...
             </div>
           </div>
-        </div>
+      </div>
         
       </div>
     </section>
@@ -1731,47 +1736,61 @@
       }
     }
 
-    function openMovementHistoryModal(sku) {
-      document.getElementById('history-modal-sku').textContent = sku;
-      const timelineContainer = document.getElementById('history-modal-timeline');
-      const logs = activeSearchMovements[sku] || [];
+    // Single source of truth for movement labels and badges across App, Audit Trail & Logs
+function getMovementBadgeConfig(action) {
+  switch (action) {
+    case 'NEW_SKU_INTAKE':
+      return { label: '✨ New SKU', badgeBg: 'bg-purple-100 text-purple-900 border-purple-300' };
+    case 'RESTOCK_INTAKE':
+    case 'INTAKE_RECEIVED':
+    case 'NEW_INTAKE':
+      return { label: '📦 New Stock', badgeBg: 'bg-sky-100 text-sky-900 border-sky-300' };
+    case 'DELIVERED_TO_SHOP':
+      return { label: '🚚 Delivered to Shop', badgeBg: 'bg-amber-100 text-amber-900 border-amber-300' };
+    case 'REPLENISHED_TO_DISPLAY':
+      return { label: '✨ Displayed', badgeBg: 'bg-emerald-100 text-emerald-900 border-emerald-300' };
+    case 'PULL_OUT':
+    case 'PULLED_TO_WHITE_BIN':
+    case 'RETURNED':
+      return { label: '🔻 Pull-Out', badgeBg: 'bg-rose-100 text-rose-900 border-rose-300' };
+    default:
+      return { label: action.replace(/_/g, ' '), badgeBg: 'bg-gray-100 text-gray-800 border-gray-300' };
+  }
+}
 
-      if (logs.length === 0) {
-        timelineContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic">No movements recorded yet for this item.</div>';
-      } else {
-        timelineContainer.innerHTML = logs.map(m => {
-          const d = new Date(m.created_at);
-          const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-          let tagClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
-      let tagText = "Replenished / Restocked";
+function openMovementHistoryModal(sku) {
+  document.getElementById('history-modal-sku').textContent = sku;
+  const timelineContainer = document.getElementById('history-modal-timeline');
+  const logs = activeSearchMovements[sku] || [];
 
-      if (m.action === "NEW_INTAKE" || m.action === "INTAKE_RECEIVED") {
-        tagClass = "bg-sky-100 text-sky-800 border border-sky-300";
-        tagText = "✨ Newly Added";
-      } else if (m.action === "DELIVERED_TO_SHOP") {
-        tagClass = "bg-amber-100 text-amber-800 border border-amber-300";
-        tagText = "Delivered to Shop";
-      } else if (m.action === "PULL_OUT" || m.action === "RETURNED") {
-        tagClass = "bg-rose-100 text-rose-800 border border-rose-300";
-        tagText = "Pull-Out / Returned";
-      }
-          const mover = m.moved_by || "Staff";
+  if (logs.length === 0) {
+    timelineContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic">No movements recorded yet for this item.</div>';
+  } else {
+    timelineContainer.innerHTML = logs.map(m => {
+      const d = new Date(m.created_at);
+      const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      const conf = getMovementBadgeConfig(m.action);
+      const mover = m.moved_by || "Staff";
 
-          return '<div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1">' +
-            '<div class="flex items-center justify-between">' +
-              '<span class="font-bold px-2 py-0.5 rounded-full text-[10px] ' + tagClass + '">' + tagText + '</span>' +
-              '<span class="text-gray-400 font-mono text-[10px]">' + formattedDate + '</span>' +
-            '</div>' +
-            '<div class="text-[11px] text-gray-600 flex justify-between">' +
-              '<span>Handled by: <strong>' + mover + '</strong></span>' +
-              '<span>Qty: <strong>' + (m.pcs_moved || 10) + ' pcs</strong></span>' +
-            '</div>' +
-          '</div>';
-        }).join("");
-      }
+      return '<div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1">' +
+        '<div class="flex items-center justify-between">' +
+          '<span class="font-bold px-2 py-0.5 rounded-full text-[10px] border ' + conf.badgeBg + '">' + conf.label + '</span>' +
+          '<span class="text-gray-400 font-mono text-[10px]">' + formattedDate + '</span>' +
+        '</div>' +
+        '<div class="text-[11px] text-gray-600 flex justify-between">' +
+          '<span>Handled by: <strong>' + mover + '</strong></span>' +
+          '<span>Qty: <strong>' + (m.pcs_moved || 10) + ' pcs</strong></span>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+  }
 
-      document.getElementById('movement-history-modal').style.display = 'flex';
-    }
+  document.getElementById('movement-history-modal').style.display = 'flex';
+}
+
+function closeMovementHistoryModal() {
+  document.getElementById('movement-history-modal').style.display = 'none';
+}
 
     function closeMovementHistoryModal() {
       document.getElementById('movement-history-modal').style.display = 'none';
@@ -3386,6 +3405,19 @@ async function refreshGlobalStockCounters() {
     }
 
     // ================= MOVEMENT BATCH & PULL-OUT TO WHITE BIN =================
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      alert("✓ EOD Movement Summary copied to clipboard! Ready to paste into Slack/Telegram/GChat.");
+    });
+  } // <--- END YOUR HIGHLIGHT HERE
+```[cite: 9]
+
+---
+
+### Once your highlight spans from `function setMovementMode(mode) {` (Line 3408) down to `}` (around Line 3683):
+
+Paste the complete updated code block[cite: 17]:
+
+```javascript
     function setMovementMode(mode) {
       currentMovementMode = mode;
       const btnDelivered = document.getElementById('btn-mode-delivered');
@@ -3394,18 +3426,19 @@ async function refreshGlobalStockCounters() {
       const scanLabel = document.getElementById('move-scanner-label');
 
       [btnDelivered, btnReplenish, btnPullout].forEach(b => {
-        b.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
+        if (b) b.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
       });
 
       if (mode === 'DELIVERED_TO_SHOP') {
-        btnDelivered.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        scanLabel.textContent = "Scan Werqroom Bag QR ➔ Shop";
+        if (btnDelivered) btnDelivered.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        if (scanLabel) scanLabel.textContent = "Scan Werqroom Bag QR ➔ Shop";
       } else if (mode === 'REPLENISHED_TO_DISPLAY') {
-        btnReplenish.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        scanLabel.textContent = "Scan Shop Storage Bag ➔ Display Pegs";
-      } else if (mode === 'PULLED_TO_WHITE_BIN') {
-        btnPullout.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitPink bg-pink-50 text-bitPink cursor-pointer";
-        scanLabel.textContent = "Scan Floor / Peg Bag ➔ White Bin";
+        if (btnReplenish) btnReplenish.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        if (scanLabel) scanLabel.textContent = "Scan Shop Storage Bag ➔ Display Pegs";
+      } else if (mode === 'PULL_OUT' || mode === 'PULLED_TO_WHITE_BIN') {
+        currentMovementMode = 'PULL_OUT';
+        if (btnPullout) btnPullout.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitPink bg-pink-50 text-bitPink cursor-pointer";
+        if (scanLabel) scanLabel.textContent = "Scan Floor / Shop Bag ➔ White Bin";
       }
       setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
     }
@@ -3464,8 +3497,10 @@ async function refreshGlobalStockCounters() {
       const container = document.getElementById('batch-movement-queue');
       const counter = document.getElementById('batch-item-count');
       const commitBtn = document.getElementById('btn-commit-batch');
-      counter.textContent = `${stagedBatchMovements.length} items`;
-      commitBtn.disabled = stagedBatchMovements.length === 0;
+      if (counter) counter.textContent = `${stagedBatchMovements.length} items`;
+      if (commitBtn) commitBtn.disabled = stagedBatchMovements.length === 0;
+
+      if (!container) return;
 
       if (stagedBatchMovements.length === 0) {
         container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">Scan bag QR codes to build batch movement list.</div>`;
@@ -3507,8 +3542,8 @@ async function refreshGlobalStockCounters() {
       if (currentMovementMode === 'REPLENISHED_TO_DISPLAY') {
         srcLoc = 'SHOP_STORAGE';
         destLoc = 'DISPLAY_PEG';
-      } else if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
-        srcLoc = 'SHOP_STORAGE';
+      } else if (currentMovementMode === 'PULL_OUT' || currentMovementMode === 'PULLED_TO_WHITE_BIN') {
+        srcLoc = 'SHOP_FLOOR';
         destLoc = 'WHITE_BIN';
       }
 
@@ -3521,7 +3556,7 @@ async function refreshGlobalStockCounters() {
           }));
           await db.from('stock_movements').insert(payload);
 
-          if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
+          if (currentMovementMode === 'PULL_OUT' || currentMovementMode === 'PULLED_TO_WHITE_BIN') {
             for (const item of stagedBatchMovements) {
               await db.from('parcels').insert([{
                 waybill: item.rawCode,
@@ -3532,28 +3567,13 @@ async function refreshGlobalStockCounters() {
               }]);
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error("Batch movement insert error:", e);
+        }
       }
 
-      const werqEl = document.getElementById('werqroom-count');
-      const storeEl = document.getElementById('storage-count');
-      const whiteEl = document.getElementById('whitebin-count');
-      let wCount = parseInt(werqEl.textContent) || 0;
-      let sCount = parseInt(storeEl.textContent) || 0;
-      let binCount = parseInt(whiteEl.textContent) || 0;
-
-      if (currentMovementMode === 'DELIVERED_TO_SHOP') {
-        werqEl.textContent = Math.max(0, wCount - stagedBatchMovements.length);
-        storeEl.textContent = sCount + stagedBatchMovements.length;
-      } else if (currentMovementMode === 'REPLENISHED_TO_DISPLAY') {
-        storeEl.textContent = Math.max(0, sCount - stagedBatchMovements.length);
-      } else if (currentMovementMode === 'PULLED_TO_WHITE_BIN') {
-        storeEl.textContent = Math.max(0, sCount - stagedBatchMovements.length);
-        whiteEl.textContent = binCount + stagedBatchMovements.length;
-        document.getElementById('whitebin-badge-count').textContent = `${binCount + stagedBatchMovements.length} Parcels`;
-      }
-
-      alert(`✓ Movement Complete!\nTransferred ${stagedBatchMovements.length} item(s) (${totalPcs} pcs) under [${currentMovementMode.replace(/_/g, ' ')}].`);
+      const conf = getMovementBadgeConfig(currentMovementMode);
+      alert(`✓ Movement Complete!\nTransferred ${stagedBatchMovements.length} item(s) (${totalPcs} pcs) under [${conf.label}].`);
       stagedBatchMovements = [];
       renderBatchQueue();
       loadTodayMovements();
@@ -3562,105 +3582,134 @@ async function refreshGlobalStockCounters() {
 
     let todayMovementsCache = [];
 
-async function loadTodayMovements() {
-  const container = document.getElementById('move-today-logs-container');
-  const tallyEl = document.getElementById('move-today-summary-tally');
-  if (!container || !db) return;
+    async function loadTodayMovements() {
+      const container = document.getElementById('move-today-logs-container');
+      const tallyEl = document.getElementById('move-today-summary-tally');
+      if (!container || !db) return;
 
-  try {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
+      try {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
-    const { data, error } = await db
-      .from('stock_movements')
-      .select('sku, action, pcs_moved, bag_type, moved_by, created_at')
-      .gte('created_at', todayStart.toISOString())
-      .order('created_at', { ascending: false });
+        const { data, error } = await db
+          .from('stock_movements')
+          .select('sku, action, pcs_moved, bag_type, moved_by, created_at')
+          .gte('created_at', todayStart.toISOString())
+          .order('created_at', { ascending: false });
 
-    if (error) throw error;
+        if (error) throw error;
 
-    todayMovementsCache = data || [];
+        todayMovementsCache = data || [];
 
-    if (tallyEl) {
-      const totalUnits = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
-      tallyEl.textContent = `${todayMovementsCache.length} log(s) • ${totalUnits} pcs total today`;
+        if (tallyEl) {
+          const totalUnits = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+          tallyEl.textContent = `${todayMovementsCache.length} log(s) • ${totalUnits} pcs total today`;
+        }
+
+        if (todayMovementsCache.length === 0) {
+          container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">No movements logged yet today.</div>`;
+          return;
+        }
+
+        container.innerHTML = todayMovementsCache.map(m => {
+          const dt = new Date(m.created_at);
+          const timeStr = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+          const conf = getMovementBadgeConfig(m.action);
+
+          return `
+            <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
+              <div class="min-w-0 flex-1 pr-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-mono font-bold text-bitWalnut">${m.sku}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${conf.badgeBg}">${conf.label}</span>
+                </div>
+                <span class="text-[10px] text-gray-500 font-medium block mt-0.5">${m.moved_by || 'Staff'} • ${m.pcs_moved || 10} pcs (${m.bag_type || 'STANDARD'})</span>
+              </div>
+              <span class="text-[10px] text-gray-400 font-mono font-bold shrink-0">${timeStr}</span>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Failed to load logs: ${err.message}</div>`;
+      }
     }
 
-    if (todayMovementsCache.length === 0) {
-      container.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">No movements logged yet today.</div>`;
-      return;
-    }
+    function generateEodReportText() {
+      const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
 
-    container.innerHTML = todayMovementsCache.map(m => {
-      const dt = new Date(m.created_at);
-      const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      let text = `=====================================\n`;
+      text += `📦 BITBIT EOD STOCK MOVEMENT REPORT\n`;
+      text += `Date: ${dateStr}\n`;
+      text += `Total Movements: ${todayMovementsCache.length} logs | ${totalPcs} total pcs\n`;
+      text += `=====================================\n\n`;
 
-      let badgeBg = "bg-amber-100 text-amber-900 border-amber-300";
-      let actionLabel = "Werqroom ➔ Shop";
+      const newSkus = todayMovementsCache.filter(m => m.action === 'NEW_SKU_INTAKE');
+      const restocks = todayMovementsCache.filter(m => m.action === 'RESTOCK_INTAKE' || m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE');
+      const delivered = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
+      const displayed = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
+      const pullouts = todayMovementsCache.filter(m => m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN');
 
-      if (m.action === 'REPLENISHED_TO_DISPLAY') {
-        badgeBg = "bg-emerald-100 text-emerald-900 border-emerald-300";
-        actionLabel = "Shop ➔ Display";
-      } else if (m.action === 'PULLED_TO_WHITE_BIN' || m.action === 'PULL_OUT') {
-        badgeBg = "bg-rose-100 text-rose-900 border-rose-300";
-        actionLabel = "Shop ➔ Pull-Out";
+      if (newSkus.length > 0) {
+        text += `✨ 1. NEW SKU INTAKE (${newSkus.length} logs):\n`;
+        newSkus.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+        text += `\n`;
       }
 
-      return `
-        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
-          <div class="min-w-0 flex-1 pr-2">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="font-mono font-bold text-bitWalnut">${m.sku}</span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border ${badgeBg}">${actionLabel}</span>
-            </div>
-            <span class="text-[10px] text-gray-500 font-medium block mt-0.5">${m.moved_by || 'Staff'} • ${m.pcs_moved || 10} pcs (${m.bag_type || 'STANDARD'})</span>
-          </div>
-          <span class="text-[10px] text-gray-400 font-mono font-bold shrink-0">${timeStr}</span>
-        </div>
-      `;
-    }).join('');
-  } catch (err) {
-    container.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Failed to load logs: ${err.message}</div>`;
-  }
-}
+      if (restocks.length > 0) {
+        text += `📦 2. NEW STOCK / RESTOCK (${restocks.length} logs):\n`;
+        restocks.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+        text += `\n`;
+      }
 
-function copyTodayMovementSummary() {
-  if (!todayMovementsCache || todayMovementsCache.length === 0) {
-    alert("No movements recorded yet today to report.");
-    return;
-  }
+      if (delivered.length > 0) {
+        text += `🚚 3. DELIVERED TO SHOP (${delivered.length} logs):\n`;
+        delivered.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+        text += `\n`;
+      }
 
-  const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+      if (displayed.length > 0) {
+        text += `✨ 4. DISPLAYED ON PEGS (${displayed.length} logs):\n`;
+        displayed.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+        text += `\n`;
+      }
 
-  let text = `📦 BITBIT EOD STOCK MOVEMENT REPORT (${dateStr})\n`;
-  text += `Total Movements: ${todayMovementsCache.length} records (${totalPcs} pcs total)\n\n`;
+      if (pullouts.length > 0) {
+        text += `🔻 5. PULL-OUT TO WHITE BIN (${pullouts.length} logs):\n`;
+        pullouts.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
+        text += `\n`;
+      }
 
-  const werqToShop = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
-  const shopToDisplay = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
-  const pullOuts = todayMovementsCache.filter(m => m.action === 'PULLED_TO_WHITE_BIN' || m.action === 'PULL_OUT');
+      text += `Generated at: ${new Date().toLocaleTimeString()}\n`;
+      return text.trim();
+    }
 
-  if (werqToShop.length > 0) {
-    text += `🔹 WERQROOM ➔ SHOP (${werqToShop.length} logs):\n`;
-    werqToShop.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-    text += `\n`;
-  }
+    function copyTodayMovementSummary() {
+      if (!todayMovementsCache || todayMovementsCache.length === 0) {
+        alert("No movements recorded yet today to report.");
+        return;
+      }
+      const text = generateEodReportText();
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✓ EOD Movement Summary copied! Ready to paste into Telegram.");
+      });
+    }
 
-  if (shopToDisplay.length > 0) {
-    text += `🔸 SHOP ➔ DISPLAY PEGS (${shopToDisplay.length} logs):\n`;
-    shopToDisplay.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-    text += `\n`;
-  }
-
-  if (pullOuts.length > 0) {
-    text += `🔻 SHOP ➔ PULL-OUT TO WHITE BIN (${pullOuts.length} logs):\n`;
-    pullOuts.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-    text += `\n`;
-  }
-
-  navigator.clipboard.writeText(text.trim()).then(() => {
-    alert("✓ EOD Movement Summary copied to clipboard! Ready to paste into Slack/Telegram/GChat.");
-  });
+    function downloadTodayMovementReport() {
+      if (!todayMovementsCache || todayMovementsCache.length === 0) {
+        alert("No movements recorded yet today to download.");
+        return;
+      }
+      const text = generateEodReportText();
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bitbit_EOD_Movement_${dateStr}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 }
     
     function startCameraScanner(targetInputId, onScanSuccessCallback) {

@@ -3078,22 +3078,48 @@ Month / Cycle: ${currentReportMonth}
     async function finalizeLabelPrintAndCommit() {
       if (!pendingSkuData) return;
       if (db) {
-        try {
-          await db.from('items').upsert([{
-            sku: pendingSkuData.sku, name: pendingSkuData.name, category: pendingSkuData.category,
-            subcategory: pendingSkuData.subcategory, type: pendingSkuData.type, image_url: pendingSkuData.image_url
+      try {
+        await db.from('items').upsert([{
+          sku: pendingSkuData.sku,
+          identifier: pendingSkuData.sku,
+          name: pendingSkuData.name,
+          category: pendingSkuData.category,
+          subcategory: pendingSkuData.subcategory,
+          type: pendingSkuData.type || 'ITEM',
+          image_url: pendingSkuData.image_url
+        }]);
+
+        if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
+          await db.from('intake_batches').insert([{
+            waybill: activeIncomingWaybill || 'MANUAL-INTAKE',
+            sku: pendingSkuData.sku,
+            pack_count: pendingSkuData.pack_count,
+            pcs_per_pack: pendingSkuData.pcs_per_pack,
+            partial_pcs: pendingSkuData.partial_pcs,
+            total_pcs: pendingSkuData.total_pcs,
+            intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
           }]);
-          if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
-            await db.from('intake_batches').insert([{
-              waybill: activeIntakeWaybill || 'MANUAL-INTAKE', sku: pendingSkuData.sku, pack_count: pendingSkuData.pack_count,
-              pcs_per_pack: pendingSkuData.pcs_per_pack, partial_pcs: pendingSkuData.partial_pcs, total_pcs: pendingSkuData.total_pcs,
-              intake_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-            }]);
-            const werqEl = document.getElementById('werqroom-count');
+
+          await db.from('stock_movements').insert([{
+            sku: pendingSkuData.sku,
+            action: 'INTAKE_RECEIVED',
+            bag_type: 'STANDARD',
+            pcs_moved: pendingSkuData.total_pcs || (pendingSkuData.pack_count * (pendingSkuData.pcs_per_pack || 10)),
+            source_location: 'WERQROOM',
+            destination_location: 'WERQROOM'
+          }]);
+
+          const werqEl = document.getElementById('werqroom-count');
+          if (werqEl) {
             werqEl.textContent = (parseInt(werqEl.textContent) || 0) + pendingSkuData.pack_count;
           }
-        } catch (e) {}
+        }
+      } catch (e) {
+        console.error('SKU / Intake Error:', e);
+        alert('Database Error: ' + (e.message || JSON.stringify(e)));
+        return;
       }
+    }
       alert(pendingSkuData.is_print_only ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only).` : `✓ SKU [${pendingSkuData.sku}] saved!`);
       closePrintStation();
     }

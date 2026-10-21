@@ -457,16 +457,9 @@
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">2. Sub-Cat</label>
             <select id="sku-subcat-input" onchange="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
-              <option value="BAS">BAS (Basic)</option>
-              <option value="BOS">BOS (Boss)</option>
-              <option value="FBS">FBS (Final Boss)</option>
-              <option value="SLV">SLV (Silver)</option>
-              <option value="GLD">GLD (Gold)</option>
-              <option value="RED">RED (Red)</option>
-              <option value="BLU">BLU (Blue)</option>
-              <option value="GRN">GRN (Green)</option>
-              <option value="BIG">BIG (Big)</option>
-              <option value="SML">SML (Small)</option>
+              <option value="BAS">BAS (BASIC)</option>
+              <option value="BOS">BOS (BOSS)</option>
+              <option value="FBS">FBS (FINAL BOSS)</option>
             </select>
           </div>
 
@@ -487,15 +480,20 @@
           <input type="text" id="sku-ident-input" value="SOLID E" onfocus="this.select()" oninput="generateFourPartSku()" placeholder="e.g. SOLID E or 01..." class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut">
         </div>
 
-        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between">
-          <div>
-            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
-            <span id="sku-preview-badge" class="font-mono font-bold text-sm text-bitWalnut tracking-wider select-all">BDS-BOS-BIG-SOLID-E</span>
-          </div>
-          <button type="button" onclick="copyMasterSkuText()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50 cursor-pointer">
-            📋 Copy
-          </button>
-        </div>
+       <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between gap-2">
+  <div class="flex-1">
+    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Live Master SKU</span>
+    <input type="text" 
+           id="sku-preview-badge" 
+           value="BDS-BOS-BIG-SOLID-E" 
+           class="w-full font-mono font-bold text-sm text-bitWalnut bg-amber-100/70 hover:bg-amber-100 focus:bg-white px-2 py-1 rounded-lg border border-amber-300 uppercase tracking-wider outline-none focus:ring-2 focus:ring-bitWalnut transition" 
+           placeholder="PASTE SKU HERE"
+           oninput="handleSkuPasteLookup(this.value.trim())" />
+  </div>
+  <button type="button" onclick="copyMasterSkuText()" class="self-end px-2.5 py-1.5 bg-white border border-bitBorderDark text-[10px] font-bold rounded-lg hover:bg-gray-50 cursor-pointer shadow-xs shrink-0">
+    📋 Copy
+  </button>
+</div>
 
         <div class="grid grid-cols-2 gap-2">
           <div class="p-2 bg-white rounded-2xl border border-bitBorder flex flex-col items-center justify-center min-h-[110px]">
@@ -1820,6 +1818,67 @@
       }
     }
 
+    let skuLookupTimer = null;
+
+async function handleSkuPasteLookup(pastedSku) {
+  if (!pastedSku || !db) return;
+
+  clearTimeout(skuLookupTimer);
+  skuLookupTimer = setTimeout(async () => {
+    try {
+      const cleanSku = pastedSku.toUpperCase().trim();
+
+      // 1. Check if SKU exists in catalog
+      const { data, error } = await db
+        .from('items')
+        .select('*')
+        .eq('sku', cleanSku)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        // 2. Set image preview if master photo exists
+        if (data.image_url) {
+          const imgEl = document.getElementById('sku-img-preview');
+          const previewWrap = document.getElementById('sku-photo-preview');
+          const iconEl = document.getElementById('sku-photo-icon');
+          const labelEl = document.getElementById('sku-photo-label');
+
+          if (imgEl && previewWrap) {
+            imgEl.src = data.image_url;
+            previewWrap.classList.remove('hidden');
+            if (iconEl) iconEl.classList.add('hidden');
+            if (labelEl) labelEl.textContent = 'Existing Master Photo Loaded';
+          }
+
+          if (typeof pendingSkuData !== 'undefined') {
+            pendingSkuData.image_url = data.image_url;
+          }
+        }
+
+        // 3. Update pendingSkuData with existing item details
+        if (typeof pendingSkuData !== 'undefined') {
+          pendingSkuData.sku = cleanSku;
+          pendingSkuData.name = data.name || cleanSku;
+          pendingSkuData.category = data.category;
+          pendingSkuData.subcategory = data.subcategory;
+          pendingSkuData.type = data.type;
+        }
+
+        // 4. Update the live QR preview box
+        if (typeof updateQrPreview === 'function') {
+          updateQrPreview(cleanSku);
+        } else if (typeof generateQrCode === 'function') {
+          generateQrCode(cleanSku);
+        }
+      }
+    } catch (err) {
+      console.warn('SKU auto-lookup notice:', err.message);
+    }
+  }, 250);
+}
+    
     function closeNewArrivalsModal() {
       document.getElementById('new-arrivals-modal').style.display = 'none';
     }
@@ -2975,13 +3034,21 @@ Month / Cycle: ${currentReportMonth}
       const identRaw = (document.getElementById('sku-ident-input')?.value || 'SOLID E').trim().toUpperCase().replace(/\s+/g, '-');
       const fullSku = `${cat}-${sub}-${typ}-${identRaw || '______'}`;
       
-      document.getElementById('sku-preview-badge').textContent = fullSku;
+      const badge = document.getElementById('sku-preview-badge');
+if (badge) {
+  if ('value' in badge) {
+    badge.value = fullSku;
+  } else {
+    badge.textContent = fullSku;
+  }
+}
       if (identRaw) renderQrCode('qrcode-container', fullSku, 80);
       return fullSku;
     }
 
     function copyMasterSkuText() {
-      const sku = document.getElementById('sku-preview-badge').textContent;
+      const badgeEl = document.getElementById('sku-preview-badge');
+  const sku = badgeEl ? (badgeEl.value || badgeEl.textContent || '') : '';
       navigator.clipboard.writeText(sku).then(() => alert(`Copied: ${sku}`));
     }
 

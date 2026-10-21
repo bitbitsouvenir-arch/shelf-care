@@ -3105,8 +3105,7 @@ Month / Cycle: ${currentReportMonth}
             action: 'INTAKE_RECEIVED',
             bag_type: 'STANDARD',
             pcs_moved: pendingSkuData.total_pcs || (pendingSkuData.pack_count * (pendingSkuData.pcs_per_pack || 10)),
-            source_location: 'WERQROOM',
-            destination_location: 'WERQROOM'
+            source_location: 'WERQROOM'
           }]);
 
           const werqEl = document.getElementById('werqroom-count');

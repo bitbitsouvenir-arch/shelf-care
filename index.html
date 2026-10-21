@@ -1662,25 +1662,34 @@
         }
 
         const skus = matchedItems.map(m => m.sku);
-        // Unified query: fetch all movement stages for these SKUs
-        const { data: movements } = await db
-          .from('stock_movements')
-          .select('sku, action, pcs_moved, moved_by, created_at')
-          .in('sku', skus);
+
+        // Fetch legacy batches AND all stock movements together
+        const [batchesRes, movementsRes] = await Promise.all([
+          db.from('intake_batches').select('sku, pack_count').in('sku', skus),
+          db.from('stock_movements').select('sku, action, pcs_moved, moved_by, created_at').in('sku', skus)
+        ]);
+
+        const legacyBatches = batchesRes.data || [];
+        const movements = movementsRes.data || [];
 
         const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
         activeSearchMovements = {};
 
         const itemsWithStock = matchedItems.map(item => {
-          const itemMovements = (movements || []).filter(m => m.sku === item.sku);
+          const itemMovements = movements.filter(m => m.sku === item.sku);
 
-          // All intake actions (new unified + legacy)
-          const intakeCount = itemMovements.filter(m => 
+          // 1. Tally legacy packs from intake_batches
+          const legacyPacks = legacyBatches
+            .filter(b => b.sku === item.sku)
+            .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+
+          // 2. Tally unified lifecycle intake packs from stock_movements
+          const unifiedIntakePacks = itemMovements.filter(m => 
             m.action === 'NEW_SKU_INTAKE' || 
-            m.action === 'RESTOCK_INTAKE' || 
-            m.action === 'INTAKE_RECEIVED' || 
-            m.action === 'NEW_INTAKE'
+            m.action === 'RESTOCK_INTAKE'
           ).length;
+
+          const totalIntakes = legacyPacks + unifiedIntakePacks;
 
           const deliveredCount = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
           const depletedFromShop = itemMovements.filter(m => 
@@ -1689,7 +1698,7 @@
             m.action === 'PULLED_TO_WHITE_BIN'
           ).length;
 
-          const werqPacks = Math.max(0, intakeCount - deliveredCount);
+          const werqPacks = Math.max(0, totalIntakes - deliveredCount);
           const shopPacks = Math.max(0, deliveredCount - depletedFromShop);
           const totalPacks = werqPacks + shopPacks;
 

@@ -1699,9 +1699,9 @@
               '<button type="button" onclick="openMovementHistoryModal(\'' + item.sku + '\')" class="py-2 bg-white hover:bg-gray-100 text-bitWalnut border border-bitBorder font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-1">' +
                 '🕒 History (' + item.movementCount + ')' +
               '</button>' +
-              '<button type="button" onclick="triggerFloorRequestFromChecker(\'' + item.sku + '\')" class="py-2 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-xl cursor-pointer">' +
-                '+ Request Restock' +
-              '</button>' +
+              '<button type="button" onclick="openFloorRequestModal(\'' + item.sku + '\', ' + (item.total_packs || 0) + ')" class="flex-1 py-2 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-sm">' +
+'+ Request Restock' +
+'</button>' +
             '</div>' +
           '</div>';
         }).join("");
@@ -1722,9 +1722,19 @@
         timelineContainer.innerHTML = logs.map(m => {
           const d = new Date(m.created_at);
           const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-          const isShop = m.action === "DELIVERED_TO_SHOP";
-          const tagClass = isShop ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800";
-          const tagText = isShop ? "Delivered to Shop" : "Replenished / Restocked";
+          let tagClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
+      let tagText = "Replenished / Restocked";
+
+      if (m.action === "NEW_INTAKE" || m.action === "INTAKE_RECEIVED") {
+        tagClass = "bg-sky-100 text-sky-800 border border-sky-300";
+        tagText = "✨ Newly Added";
+      } else if (m.action === "DELIVERED_TO_SHOP") {
+        tagClass = "bg-amber-100 text-amber-800 border border-amber-300";
+        tagText = "Delivered to Shop";
+      } else if (m.action === "PULL_OUT" || m.action === "RETURNED") {
+        tagClass = "bg-rose-100 text-rose-800 border border-rose-300";
+        tagText = "Pull-Out / Returned";
+      }
           const mover = m.moved_by || "Staff";
 
           return '<div class="p-2.5 bg-gray-50 rounded-xl border border-gray-200 space-y-1">' +
@@ -2025,11 +2035,21 @@ function triggerCatalogPhotoCapture(sku) {
     }
 
     // ================= FLOOR RESTOCK REQUEST MODAL =================
-    function openFloorRequestModal() {
-      document.getElementById('floor-request-modal').style.display = 'flex';
-      document.getElementById('chk-physical-verify').checked = false;
-      updateFreqUrgencyBadge();
-    }
+    function openFloorRequestModal(sku = '', qty = 0) {
+  document.getElementById('floor-request-modal').style.display = 'flex';
+  document.getElementById('chk-physical-verify').checked = false;
+  
+  const itemInput = document.getElementById('freq-item-name');
+  if (itemInput) itemInput.value = sku;
+
+  const qtyInput = document.getElementById('freq-current-qty');
+  if (qtyInput) qtyInput.value = qty;
+
+  const notesInput = document.getElementById('freq-notes');
+  if (notesInput) notesInput.value = '';
+
+  updateFreqUrgencyBadge();
+}
 
     function closeFloorRequestModal() {
       document.getElementById('floor-request-modal').style.display = 'none';

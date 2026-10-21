@@ -1662,35 +1662,47 @@
         }
 
         const skus = matchedItems.map(m => m.sku);
-        const { data: intakes } = await db.from('intake_batches').select('sku, pack_count').in('sku', skus);
-        const { data: movements } = await db.from('stock_movements').select('sku, action, pcs_moved, moved_by, created_at').in('sku', skus);
+        // Unified query: fetch all movement stages for these SKUs
+        const { data: movements } = await db
+          .from('stock_movements')
+          .select('sku, action, pcs_moved, moved_by, created_at')
+          .in('sku', skus);
 
         const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
-
         activeSearchMovements = {};
 
         const itemsWithStock = matchedItems.map(item => {
-          const itemIntakes = (intakes || []).filter(b => b.sku === item.sku);
-          const totalIntakePacks = itemIntakes.reduce((acc, curr) => acc + (curr.pack_count || 0), 0);
-
           const itemMovements = (movements || []).filter(m => m.sku === item.sku);
+
+          // All intake actions (new unified + legacy)
+          const intakeCount = itemMovements.filter(m => 
+            m.action === 'NEW_SKU_INTAKE' || 
+            m.action === 'RESTOCK_INTAKE' || 
+            m.action === 'INTAKE_RECEIVED' || 
+            m.action === 'NEW_INTAKE'
+          ).length;
+
           const deliveredCount = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-    const replenishedCount = itemMovements.filter(m => m.action === 'REPLENISHED_TO_DISPLAY' || m.action === 'PULL_OUT').length;
-    const shopPacks = Math.max(0, deliveredCount - replenishedCount);
-    const werqPacks = Math.max(0, totalIntakePacks - deliveredCount);
-    const totalPacks = werqPacks + shopPacks;
+          const depletedFromShop = itemMovements.filter(m => 
+            m.action === 'REPLENISHED_TO_DISPLAY' || 
+            m.action === 'PULL_OUT' || 
+            m.action === 'PULLED_TO_WHITE_BIN'
+          ).length;
 
-    activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          const werqPacks = Math.max(0, intakeCount - deliveredCount);
+          const shopPacks = Math.max(0, deliveredCount - depletedFromShop);
+          const totalPacks = werqPacks + shopPacks;
 
-    return {
-      ...item,
-      werqPacks,
-      shopPacks,
-      totalPacks,
-      movementCount: itemMovements.length
-    };
-  });
+          activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+          return {
+            ...item,
+            werqPacks,
+            shopPacks,
+            totalPacks,
+            movementCount: itemMovements.length
+          };
+        });
         itemsWithStock.sort((a, b) => b.totalPacks - a.totalPacks);
 
         resultArea.innerHTML = itemsWithStock.map(item => {

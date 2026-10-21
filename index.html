@@ -1820,6 +1820,8 @@
 
     let skuLookupTimer = null;
 
+let skuLookupTimer = null;
+
 async function handleSkuPasteLookup(pastedSku) {
   if (!pastedSku || !db) return;
 
@@ -1828,7 +1830,7 @@ async function handleSkuPasteLookup(pastedSku) {
     try {
       const cleanSku = pastedSku.toUpperCase().trim();
 
-      // 1. Check if SKU exists in catalog
+      // 1. Check if SKU exists in Supabase catalog
       const { data, error } = await db
         .from('items')
         .select('*')
@@ -1841,7 +1843,7 @@ async function handleSkuPasteLookup(pastedSku) {
         // 2. Set image preview if master photo exists
         if (data.image_url) {
           const imgEl = document.getElementById('sku-img-preview');
-          const previewWrap = document.getElementById('sku-photo-preview');
+          const previewWrap = document.getElementById('sku-photo-preview-wrap');
           const iconEl = document.getElementById('sku-photo-icon');
           const labelEl = document.getElementById('sku-photo-label');
 
@@ -1852,26 +1854,23 @@ async function handleSkuPasteLookup(pastedSku) {
             if (labelEl) labelEl.textContent = 'Existing Master Photo Loaded';
           }
 
-          if (typeof pendingSkuData !== 'undefined') {
+          currentSkuMasterPhoto = data.image_url;
+          if (typeof pendingSkuData !== 'undefined' && pendingSkuData) {
             pendingSkuData.image_url = data.image_url;
           }
         }
 
         // 3. Update pendingSkuData with existing item details
-        if (typeof pendingSkuData !== 'undefined') {
+        if (typeof pendingSkuData !== 'undefined' && pendingSkuData) {
           pendingSkuData.sku = cleanSku;
           pendingSkuData.name = data.name || cleanSku;
-          pendingSkuData.category = data.category;
-          pendingSkuData.subcategory = data.subcategory;
-          pendingSkuData.type = data.type;
+          pendingSkuData.category = data.category || pendingSkuData.category;
+          pendingSkuData.subcategory = data.subcategory || pendingSkuData.subcategory;
+          pendingSkuData.type = data.type || pendingSkuData.type;
         }
 
         // 4. Update the live QR preview box
-        if (typeof updateQrPreview === 'function') {
-          updateQrPreview(cleanSku);
-        } else if (typeof generateQrCode === 'function') {
-          generateQrCode(cleanSku);
-        }
+        renderQrCode('qrcode-container', cleanSku, 80);
       }
     } catch (err) {
       console.warn('SKU auto-lookup notice:', err.message);

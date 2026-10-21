@@ -1594,6 +1594,7 @@
         backBtn.classList.remove('hidden');
         if (viewId === 'view-shelf-care') {
           switchShelfTab('tab-dropoff');
+          refreshGlobalStockCounters();
           loadWhiteBinParcels();
         } else if (viewId === 'view-shelf-service') {
           switchSuppliesSubTab('requests');
@@ -3241,6 +3242,7 @@ if (badge) {
 
       // Reset intake waybill state back to direct intake for next operation
       activeIntakeWaybill = "DIRECT";
+      refreshGlobalStockCounters();
       const tag = document.getElementById('qr-waybill-tag');
       if (tag) tag.textContent = "Direct Intake";
 
@@ -3249,7 +3251,52 @@ if (badge) {
         : `✓ SKU [${pendingSkuData.sku}] saved & staged!`);
       closePrintStation();
     }
+async function refreshGlobalStockCounters() {
+  if (!db) return;
+  try {
+    // 1. Fetch total intake packs across all batches
+    const { data: batches } = await db
+      .from('intake_batches')
+      .select('pack_count');
 
+    const totalIntakePacks = (batches || []).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+
+    // 2. Fetch all movements to compute net location balances
+    const { data: movements } = await db
+      .from('stock_movements')
+      .select('action');
+
+    const deliveredCount = (movements || []).filter(m => m.action === 'DELIVERED_TO_SHOP').length;
+    const depletedFromShop = (movements || []).filter(m => 
+      m.action === 'REPLENISHED_TO_DISPLAY' || 
+      m.action === 'PULLED_TO_WHITE_BIN' || 
+      m.action === 'PULL_OUT'
+    ).length;
+
+    // 3. Compute live packs
+    const liveWerqroomPacks = Math.max(0, totalIntakePacks - deliveredCount);
+    const liveShopPacks = Math.max(0, deliveredCount - depletedFromShop);
+
+    // 4. Update the DOM counters
+    const werqEl = document.getElementById('werqroom-count');
+    const shopEl = document.getElementById('storage-count');
+    if (werqEl) werqEl.textContent = liveWerqroomPacks;
+    if (shopEl) shopEl.textContent = liveShopPacks;
+
+    // 5. Sync White Bin parcel count
+    const { count: whiteBinCount } = await db
+      .from('parcels')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'IN_WHITE_BIN');
+
+    const whiteEl = document.getElementById('whitebin-count');
+    const badgeEl = document.getElementById('whitebin-badge-count');
+    if (whiteEl && whiteBinCount !== null) whiteEl.textContent = whiteBinCount;
+    if (badgeEl && whiteBinCount !== null) badgeEl.textContent = `${whiteBinCount} Parcels`;
+  } catch (err) {
+    console.warn('Error refreshing stock counters:', err.message);
+  }
+}
     // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {
       if (db) {
@@ -3510,6 +3557,7 @@ if (badge) {
       stagedBatchMovements = [];
       renderBatchQueue();
       loadTodayMovements();
+      refreshGlobalStockCounters();
     }
 
     let todayMovementsCache = [];

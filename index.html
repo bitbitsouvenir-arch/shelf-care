@@ -3585,70 +3585,63 @@ if (badge) {
 async function refreshGlobalStockCounters() {
       if (!db) return;
       try {
-        const [itemsRes, batchesRes, movesRes, parcelsRes] = await Promise.all([
+        const { count: whiteBinCount } = await db
+          .from('parcels')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'IN_WHITE_BIN');
+
+        const whiteEl = document.getElementById('whitebin-count');
+        const badgeEl = document.getElementById('whitebin-badge-count');
+        if (whiteEl && whiteBinCount !== null) whiteEl.textContent = whiteBinCount;
+        if (badgeEl && whiteBinCount !== null) badgeEl.textContent = `${whiteBinCount} Parcels`;
+
+        // Calculate both locations directly from catalog items
+        const [itemsRes, batchesRes, movesRes] = await Promise.all([
           db.from('items').select('sku'),
           db.from('intake_batches').select('sku, pack_count'),
-          db.from('stock_movements').select('sku, action'),
-          db.from('parcels').select('*', { count: 'exact', head: true }).eq('status', 'IN_WHITE_BIN')
+          db.from('stock_movements').select('sku, action')
         ]);
 
         const items = itemsRes.data || [];
         const batches = batchesRes.data || [];
         const moves = movesRes.data || [];
 
-        // Gather all SKUs across catalog and logged movements
-        const allSkus = Array.from(new Set([
-          ...items.map(i => (i.sku || '').trim().toUpperCase()),
-          ...moves.map(m => (m.sku || '').trim().toUpperCase()),
-          ...batches.map(b => (b.sku || '').trim().toUpperCase())
-        ])).filter(Boolean);
+        let totalWerq = 0;
+        let totalShop = 0;
 
-        let totalWerqPacks = 0;
-        let totalShopPacks = 0;
+        items.forEach(it => {
+          const sku = (it.sku || '').trim().toUpperCase();
+          if (!sku) return;
 
-        allSkus.forEach(sku => {
-          const legacyPacks = batches
+          const legacy = batches
             .filter(b => (b.sku || '').trim().toUpperCase() === sku)
             .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
 
           const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === sku);
 
-          // Matches "New SKU", "NEW_SKU_INTAKE", "RESTOCK_INTAKE", "Intake", etc.
           const intakes = itemMoves.filter(m => {
-            const act = (m.action || '').toUpperCase();
-            return act.includes('INTAKE') || act.includes('NEW SKU') || act === 'NEW_SKU';
+            const a = (m.action || '').toUpperCase();
+            return a.includes('INTAKE') || a.includes('NEW SKU') || a === 'NEW_SKU';
           }).length;
 
-          // Matches "Delivered to Shop", "DELIVERED_TO_SHOP", etc.
           const delivered = itemMoves.filter(m => {
-            const act = (m.action || '').toUpperCase();
-            return act.includes('DELIVERED') || act.includes('SHOP');
+            const a = (m.action || '').toUpperCase();
+            return a.includes('DELIVERED') || a.includes('SHOP');
           }).length;
 
-          // Matches "Displayed", "REPLENISHED_TO_DISPLAY", "Pull-Out", etc.
           const depleted = itemMoves.filter(m => {
-            const act = (m.action || '').toUpperCase();
-            return act.includes('DISPLAY') || act.includes('PULL');
+            const a = (m.action || '').toUpperCase();
+            return a.includes('DISPLAY') || a.includes('PULL');
           }).length;
 
-          const totalIntakes = legacyPacks + intakes;
-          const werqPacks = Math.max(0, totalIntakes - delivered);
-          const shopPacks = Math.max(0, delivered - depleted);
-
-          totalWerqPacks += werqPacks;
-          totalShopPacks += shopPacks;
+          totalWerq += Math.max(0, legacy + intakes - delivered);
+          totalShop += Math.max(0, delivered - depleted);
         });
 
         const werqEl = document.getElementById('werqroom-count');
         const shopEl = document.getElementById('storage-count');
-        if (werqEl) werqEl.textContent = totalWerqPacks;
-        if (shopEl) shopEl.textContent = totalShopPacks;
-
-        const whiteBinCount = parcelsRes.count;
-        const whiteEl = document.getElementById('whitebin-count');
-        const badgeEl = document.getElementById('whitebin-badge-count');
-        if (whiteEl && whiteBinCount !== null) whiteEl.textContent = whiteBinCount;
-        if (badgeEl && whiteBinCount !== null) badgeEl.textContent = `${whiteBinCount} Parcels`;
+        if (werqEl) werqEl.textContent = totalWerq;
+        if (shopEl) shopEl.textContent = totalShop;
       } catch (err) {
         console.warn('Error refreshing stock counters:', err.message);
       }

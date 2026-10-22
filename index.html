@@ -469,7 +469,7 @@
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
-            <select id="sku-cat-input" onchange="generateFourPartSku()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
+            <select id="sku-cat-input" onchange="const p = document.getElementById('sku-pcs-per-pack'); if(p) delete p.dataset.manual; generateFourPartSku();" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
               <option value="BDS">BDS (Beads)</option>
               <option value="CHA">CHA (Charms)</option>
               <option value="HUP">HUP (Hook Ups)</option>
@@ -541,15 +541,15 @@
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
-            <input type="number" id="sku-pack-count" value="10" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" id="sku-pack-count" value="1" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">Pcs / Pack</label>
-            <input type="number" id="sku-pcs-per-pack" value="10" min="1" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" id="sku-pcs-per-pack" value="20" min="1" onfocus="this.dataset.manual='true'" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
-            <input type="number" id="sku-partial-pcs" value="7" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" id="sku-partial-pcs" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
         </div>
 
@@ -559,7 +559,7 @@
             <span class="text-[11px] font-bold text-gray-600">Print Label Only (No stock intake)</span>
           </label>
           <div class="text-right text-gray-600">
-            Total Pcs: <span id="sku-total-calc" class="font-bold text-sm text-bitWalnut">107</span>
+            Total Pcs: <span id="sku-total-calc" class="font-bold text-sm text-bitWalnut">20</span>
           </div>
         </div>
 
@@ -3375,6 +3375,19 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
     // ================= QR BUILDER ENGINE =================
     function generateFourPartSku() {
       const cat = (document.getElementById('sku-cat-input')?.value || 'BDS').trim().toUpperCase();
+
+      // Dynamic Pcs / Pack default based on selected Category
+      const pcsInput = document.getElementById('sku-pcs-per-pack');
+      if (pcsInput && !pcsInput.dataset.manual) {
+        if (cat === 'BDS') {
+          pcsInput.value = 20;
+        } else if (cat === 'LNK') {
+          pcsInput.value = 50;
+        } else {
+          pcsInput.value = 10;
+        }
+        calculateTotalPcs();
+      }
       const sub = (document.getElementById('sku-subcat-input')?.value || 'BOS').trim().toUpperCase();
       
       let typRaw = (document.getElementById('sku-type-input')?.value || 'BIG').trim().toUpperCase();

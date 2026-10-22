@@ -2650,8 +2650,7 @@ function triggerCatalogPhotoCapture(sku) {
       if (subTab === 'attendance') loadAttendanceReport();
       if (subTab === 'expenses') loadExpensesReport();
       if (subTab === 'cards') loadCardDisputesReport();
-      if (subTab === 'audit') loadStockHealthReport();
-    }
+if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }    }
 
     function onReportMonthChange() {
       const el = document.getElementById('report-month-input');
@@ -3497,7 +3496,7 @@ async function refreshGlobalStockCounters() {
         console.warn('Error refreshing stock counters:', err.message);
       }
     }
-    }
+  
     // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {
       if (db) {

@@ -2671,13 +2671,7 @@ function triggerCatalogPhotoCapture(sku) {
 
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
-      if (subTab === 'cards') {
-        goToView('view-card-logger');
-        return;
-      }
-
-      const tabs = ['attendance', 'expenses', 'audit'];
-      tabs.forEach(t => {
+      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
         const pane = document.getElementById(`rep-subtab-${t}`);
         if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);
@@ -2697,6 +2691,8 @@ function triggerCatalogPhotoCapture(sku) {
         if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
       }
 
+      if (subTab === 'cards') loadCardDisputesReport();
+      if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
       if (subTab === 'expenses') loadExpensesReport();
       if (subTab === 'attendance') loadAttendanceReport();
     }
@@ -3007,8 +3003,7 @@ function triggerCatalogPhotoCapture(sku) {
       if (!db) return;
 
       try {
-        // Query without created_at order clause to avoid the missing column error
-        const { data: audits, error } = await db.from('inventory_audits').select('*');
+        const { data: audits, error } = await db.from('inventory_audits').select('*').order('created_at', { ascending: false });
         if (error) throw error;
 
         auditHistoryCache = audits || [];
@@ -3018,16 +3013,8 @@ function triggerCatalogPhotoCapture(sku) {
           return;
         }
 
-        // Sort defensively using whatever date column exists, or fallback to 0
-        auditHistoryCache.sort((a, b) => {
-          const timeA = new Date(a.created_at || a.audited_at || a.date || a.timestamp || 0).getTime();
-          const timeB = new Date(b.created_at || b.audited_at || b.date || b.timestamp || 0).getTime();
-          return timeB - timeA;
-        });
-
         listContainer.innerHTML = auditHistoryCache.map(a => {
-          const rawDate = a.created_at || a.audited_at || a.date || a.timestamp;
-          const dt = rawDate ? new Date(rawDate) : new Date();
+          const dt = new Date(a.created_at);
           const dateOnly = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
           const units = a.total_scanned_units || 0;
@@ -3064,10 +3051,8 @@ function triggerCatalogPhotoCapture(sku) {
       document.getElementById('weekly-health-placeholder').classList.add('hidden');
       document.getElementById('weekly-health-content').classList.remove('hidden');
 
-      const rawDate = currentSelectedAudit.created_at || currentSelectedAudit.audited_at || currentSelectedAudit.date || currentSelectedAudit.timestamp;
-      const dt = rawDate ? new Date(rawDate) : new Date();
+      const dt = new Date(currentSelectedAudit.created_at);
       const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-
       document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
 
       const totalUnits = currentSelectedAudit.total_scanned_units || 0;
@@ -3093,8 +3078,7 @@ function triggerCatalogPhotoCapture(sku) {
     function copyWeeklyHealthReport() {
       if (!currentSelectedAudit) return alert("Please select an audit first.");
 
-      const rawDate = currentSelectedAudit.created_at || currentSelectedAudit.audited_at || currentSelectedAudit.date || currentSelectedAudit.timestamp;
-      const dt = rawDate ? new Date(rawDate) : new Date();
+      const dt = new Date(currentSelectedAudit.created_at);
       const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
       const monthCycle = dt.toISOString().slice(0, 7);
       const totalUnits = currentSelectedAudit.total_scanned_units || 0;
@@ -3127,7 +3111,7 @@ Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
         alert("✓ Weekly Stock Health Report copied with audit date header!");
       });
     }
-    
+
     function downloadBlob(content, filename, contentType) {
       const blob = new Blob([content], { type: contentType });
       const url = URL.createObjectURL(blob);

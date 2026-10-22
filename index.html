@@ -1258,15 +1258,12 @@
             <input type="month" id="report-month-input" onchange="onReportMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
           </div>
 
-          <div class="grid grid-cols-3 gap-1 text-[10px] font-bold text-center">
-            <button type="button" onclick="setAttendanceHalfFilter('FIRST_HALF')" id="btn-half-1st" class="p-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+          <div class="grid grid-cols-2 gap-1.5 text-xs font-bold text-center">
+            <button type="button" onclick="setAttendanceHalfFilter('FIRST_HALF')" id="btn-half-1st" class="py-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer">
               1st Half (1st–15th)
             </button>
-            <button type="button" onclick="setAttendanceHalfFilter('SECOND_HALF')" id="btn-half-2nd" class="p-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer">
+            <button type="button" onclick="setAttendanceHalfFilter('SECOND_HALF')" id="btn-half-2nd" class="py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
               2nd Half (16th–End)
-            </button>
-            <button type="button" onclick="setAttendanceHalfFilter('ALL')" id="btn-half-all" class="p-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer">
-              Full Month
             </button>
           </div>
         </div>
@@ -3704,6 +3701,7 @@ async function refreshGlobalStockCounters() {
         `;
       }).join('');
     }
+    
     // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {
       if (db) {
@@ -3712,35 +3710,49 @@ async function refreshGlobalStockCounters() {
           if (data) whiteBinParcels = data;
         } catch (e) {}
       }
-      document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
-      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
+
+      // Safe DOM updates with null-checks
+      const whiteCountEl = document.getElementById('whitebin-count');
+      if (whiteCountEl) whiteCountEl.textContent = whiteBinParcels.length;
+
+      const badgeCountEl = document.getElementById('whitebin-badge-count');
+      if (badgeCountEl) badgeCountEl.textContent = `${whiteBinParcels.length} Parcels`;
+
+      const locTallyEl = document.getElementById('loc-browser-tally');
+      if (locTallyEl && currentLocationFilter === 'WHITE_BIN') {
+        locTallyEl.textContent = `${whiteBinParcels.length} Parcel${whiteBinParcels.length === 1 ? '' : 's'}`;
+      }
+
       const list = document.getElementById('whitebin-list');
+      if (!list) return;
+
       if (whiteBinParcels.length === 0) {
-        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">White Bin is empty.</div>`;
+        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold border border-dashed border-bitBorder rounded-2xl">White Bin is empty.</div>`;
         return;
       }
+
       list.innerHTML = whiteBinParcels.map(p => {
         const isPullOut = (p.source_type === 'pull_out');
         return `
-        <div class="bg-bitCream p-3.5 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between gap-3">
-          <div class="flex items-center space-x-3 min-w-0">
-            <div class="relative shrink-0 cursor-pointer" onclick="openImagePreviewModal('${p.waybill}', '${p.image_url}')" title="Tap to enlarge parcel photo">
-              <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=120&q=80'}" class="w-14 h-14 object-cover rounded-xl border border-bitBorder bg-white shadow-sm" alt="Parcel">
-              <div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[9px] leading-none">🔍</div>
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center space-x-1.5 flex-wrap">
-                <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${p.waybill}</span>
-                ${isPullOut ? '<span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
+          <div class="bg-bitCream p-3.5 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between gap-3">
+            <div class="flex items-center space-x-3 min-w-0">
+              <div class="relative shrink-0 cursor-pointer" onclick="openImagePreviewModal('${p.waybill}', '${p.image_url}')" title="Tap to enlarge parcel photo">
+                <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=120&q=80'}" class="w-14 h-14 object-cover rounded-xl border border-bitBorder bg-white shadow-sm" alt="Parcel">
+                <div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[9px] leading-none">🔍</div>
               </div>
-              <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+              <div class="min-w-0">
+                <div class="flex items-center space-x-1.5 flex-wrap">
+                  <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${p.waybill}</span>
+                  ${isPullOut ? '<span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
+                </div>
+                <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
+              </div>
             </div>
+            <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="shrink-0 px-3.5 py-2 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer shadow-sm">
+              Open &rarr;
+            </button>
           </div>
-          <button type="button" onclick="startParcelVerificationModal('${p.waybill}')" class="shrink-0 px-3.5 py-2 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer shadow-sm">
-            Open &rarr;
-          </button>
-        </div>
-      `;
+        `;
       }).join('');
     }
 

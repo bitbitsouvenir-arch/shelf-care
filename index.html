@@ -194,11 +194,7 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 mb-3">
-        <button type="button" onclick="openStockCatalogModal()" class="py-2.5 px-2 bg-white hover:bg-gray-50 border border-bitBorder rounded-xl font-bold text-xs text-bitWalnut shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
-          <span>📖</span>
-          <span>Master Catalog</span>
-        </button>
+      <div class="w-full mb-3">
         <button type="button" onclick="openNewArrivalsModal()" class="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
           <span>✨</span>
           <span>New (7 Days)</span>
@@ -1737,27 +1733,49 @@
       if (!db) return;
 
       try {
-        const { data: matchedItems } = await db.from('items')
-          .select('*')
-          .or('sku.ilike.%' + q + '%,name.ilike.%' + q + '%')
-          .limit(20);
+        // 1. Search catalog items matching term
+    const itemsPromise = db.from('items')
+      .select('*')
+      .or('sku.ilike.%' + q + '%,name.ilike.%' + q + '%')
+      .limit(100);
 
-        if (!matchedItems || matchedItems.length === 0) {
-          resultArea.innerHTML = '<div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2"><span class="text-xs font-bold text-red-800 block">Item Not Found in Catalog</span><p class="text-[11px] text-red-700">No SKU or name matches "' + q + '".</p></div>';
-          return;
-        }
+    // 2. Also search stock_movements matching term (catches items even if missing from catalog)
+    const movesPromise = db.from('stock_movements')
+      .select('sku, action, pcs_moved, moved_by, created_at')
+      .ilike('sku', '%' + q + '%')
+      .order('created_at', { ascending: false })
+      .limit(500);
 
-        const skus = matchedItems.map(m => m.sku);
+    const [itemsRes, directMovesRes] = await Promise.all([itemsPromise, movesPromise]);
 
-        // Fetch legacy batches AND all stock movements together
-        const [batchesRes, movementsRes] = await Promise.all([
-          db.from('intake_batches').select('sku, pack_count').in('sku', skus),
-          db.from('stock_movements').select('sku, action, pcs_moved, moved_by, created_at').in('sku', skus)
-        ]);
+    const catalogItems = itemsRes.data || [];
+    const directMoves = directMovesRes.data || [];
 
-        const legacyBatches = batchesRes.data || [];
-        const movements = movementsRes.data || [];
+    // Collect all unique SKUs found
+    const allFoundSkus = Array.from(new Set([
+      ...catalogItems.map(it => (it.sku || '').trim().toUpperCase()),
+      ...directMoves.map(m => (m.sku || '').trim().toUpperCase())
+    ])).filter(Boolean);
 
+    if (allFoundSkus.length === 0) {
+      resultArea.innerHTML = '<div class="bg-red-50 p-4 rounded-2xl border border-red-200 text-center space-y-2"><span class="text-xs font-bold text-red-800 block">No matching SKU or item found</span><p class="text-[11px] text-red-700">Check the spelling or scan the QR label directly.</p></div>';
+      return;
+    }
+
+    // Build unified item objects
+    const catalogMap = new Map();
+    catalogItems.forEach(it => {
+      if (it.sku) catalogMap.set(it.sku.trim().toUpperCase(), it);
+    });
+
+    const matchedItems = allFoundSkus.map(s => {
+      return catalogMap.get(s) || { sku: s, name: s, image_url: null };
+    });
+
+    // Fetch any intake batches for these SKUs
+    const batchesRes = await db.from('intake_batches').select('sku, pack_count').in('sku', allFoundSkus);
+    const legacyBatches = batchesRes.data || [];
+    const movements = directMoves;
         const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
         activeSearchMovements = {};
 
@@ -1827,13 +1845,10 @@
                 '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.shopPacks + ' packs</span>' +
               '</div>' +
             '</div>' +
-            '<div class="grid grid-cols-2 gap-2 pt-1">' +
-              '<button type="button" onclick="openMovementHistoryModal(\'' + item.sku + '\')" class="py-2 bg-white hover:bg-gray-100 text-bitWalnut border border-bitBorder font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-1">' +
+            '<div class="w-full pt-1">' +
+            '<button type="button" onclick="openMovementHistoryModal(\'' + item.sku + '\')" class="w-full py-2 bg-white hover:bg-gray-100 text-bitWalnut border border-bitBorder font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm">' +
                 '🕒 History (' + item.movementCount + ')' +
               '</button>' +
-              '<button type="button" onclick="openFloorRequestModal(\'' + item.sku + '\', ' + (item.total_packs || 0) + ')" class="flex-1 py-2 bg-bitWalnut hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-sm">' +
-'+ Request Restock' +
-'</button>' +
             '</div>' +
           '</div>';
         }).join("");

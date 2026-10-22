@@ -1662,20 +1662,8 @@
       return { sku: raw, isPartial: false, pcs: pcsPerPackForCategory(raw.split('-')[0]) };
     }
 
-    const DEFAULT_CREW = [
-      { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e001', name: 'Mems', pin: '6363', role: 'admin' },
-      { id: 'ceb28403-407b-47f4-b0eb-b09a70b30002', name: 'Louise', pin: '2514', role: 'admin' },
-      { id: '5b7f0a7c-4c2a-4956-be10-d60642920003', name: 'Isca', pin: '1234', role: 'lead' },
-      { id: 'd1d38f84-e807-4375-8a94-cf2d268b0004', name: 'Alex', pin: '1234', role: 'lead' },
-      { id: '9e034f33-d5a2-493a-8303-8c7b89800005', name: 'Deejae', pin: '1234', role: 'payroll' },
-      { id: '2138ea2c-304a-4f30-bef0-f683003df006', name: 'Kath', pin: '1234', role: 'crew' },
-      { id: '5a4233ac-03bf-4eac-96e9-9aae922a0007', name: 'Sasha', pin: '1234', role: 'crew' },
-      { id: '6bc3fcff-07ba-44a9-8795-d62b868dc008', name: 'Ashley', pin: '1234', role: 'crew' },
-      { id: '9f3dc0bb-c35e-48c6-8427-6eccd91d0009', name: 'Gian', pin: '1234', role: 'crew' }
-    ];
-
     let activeTaxonomy = { categories: [], subcategories: [], types: [] };
-    let crewMembers = [...DEFAULT_CREW];
+    let crewMembers = []; // names only, from the server; PINs never come to the phone
     let currentActiveCrew = null;
     let selectedCrewForGate = null;
     let enteredGatePin = "";
@@ -1739,25 +1727,36 @@
       // Start the attendance toggle on the half of the month we're in, with matching button styles
       setAttendanceHalfFilter(new Date().getDate() <= 15 ? 'FIRST_HALF' : 'SECOND_HALF');
 
-      if (db) {
-        try {
-          const { data: crewData } = await db.from('crew_members').select('*').order('name');
-          if (crewData && crewData.length > 0) {
-            crewMembers = crewData;
-            populateGateDropdown();
-          }
+      await loadCrewList();
 
-          const { data: taxData } = await db.from('sku_taxonomy').select('*');
-          if (taxData && taxData.length > 0) {
-            activeTaxonomy.categories = taxData.filter(t => t.type === 'category');
-            activeTaxonomy.subcategories = taxData.filter(t => t.type === 'subcategory');
-            activeTaxonomy.types = taxData.filter(t => t.type === 'type');
-            populateTaxonomyComboboxes();
-          }
-        } catch (e) {}
-      }
+      // Still logged in on this phone and used within the last 10 minutes? Carry on without a PIN.
+      if (await resumeSession()) return;
 
       document.getElementById('gate-lockscreen').style.display = 'flex';
+      generateFourPartSku();
+    }
+
+    async function loadCrewList() {
+      const { data, error } = db ? await db.rpc('list_crew') : { data: null, error: { message: 'offline' } };
+      if (error || !data) {
+        alert("Can't load the staff list. Check the internet, then reload the page.");
+        return;
+      }
+      crewMembers = data;
+      populateGateDropdown();
+    }
+
+    // Things that need a logged-in person (the database only answers staff after login)
+    async function loadAfterLogin() {
+      try {
+        const { data: taxData } = await db.from('sku_taxonomy').select('*');
+        if (taxData && taxData.length > 0) {
+          activeTaxonomy.categories = taxData.filter(t => t.type === 'category');
+          activeTaxonomy.subcategories = taxData.filter(t => t.type === 'subcategory');
+          activeTaxonomy.types = taxData.filter(t => t.type === 'type');
+          populateTaxonomyComboboxes();
+        }
+      } catch (e) {}
       generateFourPartSku();
     }
 
@@ -1820,24 +1819,91 @@
       }
     }
 
+    let isCheckingPin = false;
     async function verifyGatePin() {
-      if (!selectedCrewForGate) return;
-
-      if (enteredGatePin === String(selectedCrewForGate.pin)) {
-        currentActiveCrew = selectedCrewForGate;
-        document.getElementById('crew-name').textContent = currentActiveCrew.name;
-        document.getElementById('crew-role-badge').textContent = currentActiveCrew.designation || currentActiveCrew.role;
-        document.getElementById('crew-avatar').textContent = currentActiveCrew.name.charAt(0);
-
-        document.getElementById('gate-lockscreen').style.display = 'none';
-        goToView('view-hub');
-
-        // First login of the day for this person → Start-your-day screen (time in, optionally open the store)
-        if (!(await hasTimedInToday(currentActiveCrew.name))) openStartDayModal();
-      } else {
-        document.getElementById('gate-pin-error').textContent = "Incorrect PIN, try again";
-        setTimeout(clearGatePin, 500);
+      if (!selectedCrewForGate || isCheckingPin) return;
+      const errEl = document.getElementById('gate-pin-error');
+      isCheckingPin = true;
+      errEl.textContent = 'Checking...';
+      let res, body = {};
+      try {
+        res = await fetch(SUPABASE_URL + '/functions/v1/pin-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON },
+          body: JSON.stringify({ crew_id: selectedCrewForGate.id, pin: enteredGatePin })
+        });
+        body = await res.json().catch(() => ({}));
+      } catch (e) {
+        isCheckingPin = false;
+        errEl.textContent = "Can't reach the server. Check the internet.";
+        setTimeout(clearGatePin, 1200);
+        return;
       }
+      isCheckingPin = false;
+
+      if (!res.ok || !body.session) {
+        if (body.error === 'locked') {
+          errEl.textContent = 'Too many wrong tries. Wait 5 minutes or ask Mems.';
+        } else if (body.error === 'wrong_pin') {
+          errEl.textContent = 'Incorrect PIN' + (body.tries_left != null ? ` (${body.tries_left} tries left)` : '') + '.';
+        } else {
+          errEl.textContent = 'Login problem: ' + (body.detail || body.error || res.status) + '.';
+        }
+        setTimeout(() => { enteredGatePin = ''; updateGatePinDots(); }, 600);
+        return;
+      }
+
+      const { error } = await db.auth.setSession(body.session);
+      if (error) { errEl.textContent = 'Login problem: ' + error.message; setTimeout(clearGatePin, 1200); return; }
+      await enterAppAs(body.crew, true);
+    }
+
+    // Shows the app for this person; on a fresh login, checks whether they still need to time in today
+    async function enterAppAs(crew, freshLogin) {
+      currentActiveCrew = crew;
+      document.getElementById('crew-name').textContent = crew.name;
+      document.getElementById('crew-role-badge').textContent = crew.designation || crew.role;
+      document.getElementById('crew-avatar').textContent = crew.name.charAt(0);
+      document.getElementById('gate-lockscreen').style.display = 'none';
+      clearGatePin();
+      markActivity();
+      await loadAfterLogin();
+      goToView('view-hub');
+
+      // First login of the day for this person → Start-your-day screen (time in, optionally open the store)
+      if (!(await hasTimedInToday(crew.name))) openStartDayModal();
+    }
+
+    // ================= SESSION & AUTO-LOCK =================
+    const IDLE_LOCK_MS = 10 * 60 * 1000;
+    const LAST_ACTIVE_KEY = 'bitbit-last-active';
+
+    function markActivity() {
+      try { localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now())); } catch (e) {}
+      lastActivityAt = Date.now();
+    }
+    let lastActivityAt = Date.now();
+    ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, () => {
+      if (currentActiveCrew && Date.now() - lastActivityAt > 15000) markActivity(); // save at most every 15s
+      else lastActivityAt = Date.now();
+    }, { passive: true }));
+
+    // Lock after 10 minutes without use; the person stays timed in
+    setInterval(() => {
+      if (currentActiveCrew && Date.now() - lastActivityAt >= IDLE_LOCK_MS) lockStation(false, true);
+    }, 30000);
+
+    async function resumeSession() {
+      if (!db) return false;
+      const { data } = await db.auth.getSession();
+      if (!data || !data.session) return false;
+      let last = 0;
+      try { last = Number(localStorage.getItem(LAST_ACTIVE_KEY)) || 0; } catch (e) {}
+      if (Date.now() - last >= IDLE_LOCK_MS) { await db.auth.signOut({ scope: 'local' }); return false; }
+      const { data: me } = await db.rpc('my_profile');
+      if (!me || !me[0]) { await db.auth.signOut({ scope: 'local' }); return false; }
+      await enterAppAs(me[0], false);
+      return true;
     }
 
     // ================= TIME IN / TIME OUT =================
@@ -1908,7 +1974,7 @@
       document.getElementById('lock-modal').style.display = 'flex';
     }
 
-    async function lockStation(endShift) {
+    async function lockStation(endShift, auto) {
       if (endShift && currentActiveCrew) {
         try {
           await recordTimeOut();
@@ -1918,7 +1984,9 @@
         alert(`✓ ${currentActiveCrew.name} timed out at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}. See you!`);
       }
       document.getElementById('lock-modal').style.display = 'none';
+      ['day-summary-modal', 'start-day-modal'].forEach(id => { const m = document.getElementById(id); if (m) m.style.display = 'none'; });
       currentActiveCrew = null;
+      try { await db.auth.signOut({ scope: 'local' }); } catch (e) {} // this phone only
       document.getElementById('gate-crew-select').value = "";
       document.getElementById('gate-pin-container').classList.add('hidden');
       document.getElementById('gate-lockscreen').style.display = 'flex';
@@ -2895,16 +2963,21 @@ function triggerCatalogPhotoCapture(sku) {
             <span class="block">Declared Remaining: <strong>₱${parseFloat(p.cash_on_hand_declared).toFixed(2)}</strong></span>
             <span class="block text-gray-500 italic">"${p.purpose}" • by ${p.requested_by}</span>
           </div>
-          <div class="flex space-x-2 pt-1">
+          ${canApprovePetty(p) ? `<div class="flex space-x-2 pt-1">
             <button type="button" onclick="resolvePettyRequisition('${p.id}', 'APPROVED')" class="flex-1 py-1.5 bg-bitGreen text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
               ✓ Approve Fund
             </button>
             <button type="button" onclick="resolvePettyRequisition('${p.id}', 'REJECTED')" class="py-1.5 px-3 bg-gray-200 text-gray-700 font-bold text-xs rounded-xl cursor-pointer">
               ✕ Decline
             </button>
-          </div>
+          </div>` : `<span class="text-[10px] text-gray-400 font-bold block">Waiting for an admin to review</span>`}
         </div>
       `).join('');
+    }
+
+    // Only admins approve petty cash, and never their own request (the database enforces this too)
+    function canApprovePetty(p) {
+      return currentActiveCrew && (currentActiveCrew.role || '').toLowerCase() === 'admin' && p.requested_by !== currentActiveCrew.name;
     }
 
     async function resolvePettyRequisition(id, action) {

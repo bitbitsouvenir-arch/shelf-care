@@ -3596,17 +3596,14 @@ async function refreshGlobalStockCounters() {
         const batches = batchesRes.data || [];
         const moves = movesRes.data || [];
 
-        // Collect all distinct SKUs
-        const allSkus = Array.from(new Set([
-          ...items.map(i => (i.sku || '').trim().toUpperCase()),
-          ...batches.map(b => (b.sku || '').trim().toUpperCase()),
-          ...moves.map(m => (m.sku || '').trim().toUpperCase())
-        ])).filter(Boolean);
-
         let totalWerqPacks = 0;
         let totalShopPacks = 0;
 
-        allSkus.forEach(sku => {
+        // Iterate over valid catalog items only
+        items.forEach(it => {
+          const sku = (it.sku || '').trim().toUpperCase();
+          if (!sku) return;
+
           const legacyPacks = batches
             .filter(b => (b.sku || '').trim().toUpperCase() === sku)
             .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
@@ -3631,8 +3628,9 @@ async function refreshGlobalStockCounters() {
           const werqPacks = Math.max(0, totalIntakes - delivered);
           const shopPacks = Math.max(0, delivered - depleted);
 
-          totalWerqPacks += werqPacks;
-          totalShopPacks += shopPacks;
+          // Only add to total if on-hand packs exist
+          if (werqPacks > 0) totalWerqPacks += werqPacks;
+          if (shopPacks > 0) totalShopPacks += shopPacks;
         });
 
         const werqEl = document.getElementById('werqroom-count');

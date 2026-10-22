@@ -3787,19 +3787,32 @@ async function refreshGlobalStockCounters() {
     function renderFilteredLocationStock() {
       const listEl = document.getElementById('loc-items-list');
       const tallyEl = document.getElementById('loc-browser-tally');
-      const searchVal = (document.getElementById('loc-filter-search')?.value || '').trim().toLowerCase();
+      const rawSearch = (document.getElementById('loc-filter-search')?.value || '').trim().toLowerCase();
 
-      let activeList = cachedLocationItems.filter(item => {
-        const count = (currentLocationFilter === 'WERQROOM') ? item.werqPacks : item.shopPacks;
+      // Normalize string helper: treats '0' (zero) and 'o' (letter O) as interchangeable
+      const norm = (s) => (s || '').trim().toLowerCase().replace(/0/g, 'o');
+      const searchVal = norm(rawSearch);
+
+      // 1. Total location packs across ALL items (independent of search input)
+      let totalLocationPacks = 0;
+      (cachedLocationItems || []).forEach(item => {
+        const packs = (currentLocationFilter === 'WERQROOM') ? (Number(item.werqPacks) || 0) : (Number(item.shopPacks) || 0);
+        totalLocationPacks += packs;
+      });
+      if (tallyEl) tallyEl.textContent = `${totalLocationPacks} Packs`;
+
+      // 2. Filter items for active location and text search
+      const activeList = (cachedLocationItems || []).filter(item => {
+        const count = (currentLocationFilter === 'WERQROOM') ? (Number(item.werqPacks) || 0) : (Number(item.shopPacks) || 0);
         if (count <= 0) return false;
+
         if (searchVal) {
-          return item.sku.toLowerCase().includes(searchVal) || (item.name && item.name.toLowerCase().includes(searchVal));
+          const skuMatch = norm(item.sku).includes(searchVal);
+          const nameMatch = norm(item.name).includes(searchVal);
+          return skuMatch || nameMatch;
         }
         return true;
       });
-
-      const totalPacks = activeList.reduce((sum, it) => sum + ((currentLocationFilter === 'WERQROOM') ? it.werqPacks : it.shopPacks), 0);
-      if (tallyEl) tallyEl.textContent = `${totalPacks} Packs`;
 
       if (activeList.length === 0) {
         listEl.innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">No items currently stored in ${currentLocationFilter.replace('_', ' ')}.</div>`;
@@ -3807,7 +3820,7 @@ async function refreshGlobalStockCounters() {
       }
 
       listEl.innerHTML = activeList.map(item => {
-        const packCount = (currentLocationFilter === 'WERQROOM') ? item.werqPacks : item.shopPacks;
+        const packCount = (currentLocationFilter === 'WERQROOM') ? (Number(item.werqPacks) || 0) : (Number(item.shopPacks) || 0);
         const thumbSrc = item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
 
         return `
@@ -3824,11 +3837,14 @@ async function refreshGlobalStockCounters() {
               <span class="px-2.5 py-1 bg-white border border-bitBorderDark rounded-xl text-bitWalnut font-bold text-xs block">
                 ${packCount} pk${packCount > 1 ? 's' : ''}
               </span>
-              <button type="button" onclick="goToView('view-shelf-help'); document.getElementById('shelf-help-search-input').value = '${item.sku}'; runShelfHelpSearch('${item.sku}');" class="text-[9px] text-gray-400 hover:text-bitWalnut font-bold mt-1 inline-block">
-                View SKU ➔
+              <button type="button" onclick="goToView('view-shelf-help'); document.getElementById('shelf-help-search-input').value = '${item.sku}'; runShelfHelpSearch('${item.sku}');" class="text-[9px] text-gray-400 hover:text-bitWalnut">
+                View SKU →
               </button>
             </div>
           </div>
+        `;
+      }).join('');
+    }
         `;
       }).join('');
     }

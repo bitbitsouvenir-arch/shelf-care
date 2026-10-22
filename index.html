@@ -3613,55 +3613,20 @@ async function refreshGlobalStockCounters() {
         if (whiteEl && whiteBinCount !== null) whiteEl.textContent = whiteBinCount;
         if (badgeEl && whiteBinCount !== null) badgeEl.textContent = `${whiteBinCount} Parcels`;
 
-        // Calculate both locations directly from catalog items
-        const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('sku').range(0, 4999),
-          db.from('intake_batches').select('sku, pack_count').range(0, 9999),
-          db.from('stock_movements').select('sku, action').range(0, 9999)
-        ]);
+        // Direct snapshot query from inventory_levels (reads only 2 location tallies)
+        const { data: levels, error } = await db
+          .from('inventory_levels')
+          .select('location, packs');
 
-        const items = itemsRes.data || [];
-        const batches = batchesRes.data || [];
-        const moves = movesRes.data || [];
+        if (error) throw error;
 
         let totalWerq = 0;
         let totalShop = 0;
 
-        const allSkus = Array.from(new Set([
-      ...items.map(it => (it.sku || '').trim().toUpperCase()),
-      ...moves.map(m => (m.sku || '').trim().toUpperCase()),
-      ...batches.map(b => (b.sku || '').trim().toUpperCase())
-    ])).filter(Boolean);
-
-    allSkus.forEach(itemSku => {
-
-          const legacy = batches
-            .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)
-            .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
-
-          const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === itemSku);
-
-          const delivered = itemMoves.filter(m => {
-            const a = (m.action || '').toUpperCase();
-            return a.includes('DELIVERED') || a.includes('TO_SHOP');
-          }).length;
-
-          const intakes = itemMoves.filter(m => {
-            const a = (m.action || '').toUpperCase();
-            const isDelivery = a.includes('DELIVERED') || a.includes('TO_SHOP');
-            return !isDelivery && (a.includes('INTAKE') || a.includes('NEW SKU') || a === 'NEW_SKU');
-          }).length;
-
-          const depleted = itemMoves.filter(m => {
-            const a = (m.action || '').toUpperCase();
-            return a.includes('DISPLAY') || a.includes('PULL');
-          }).length;
-
-          totalWerq += Math.max(0, legacy + intakes - delivered);
-          totalShop += Math.max(0, delivered - depleted);
+        (levels || []).forEach(row => {
+          if (row.location === 'WERQROOM') totalWerq += (Number(row.packs) || 0);
+          if (row.location === 'SHOP_STORAGE') totalShop += (Number(row.packs) || 0);
         });
-
-        
 
         const werqEl = document.getElementById('werqroom-count');
         const shopEl = document.getElementById('storage-count');
@@ -3749,60 +3714,45 @@ async function refreshGlobalStockCounters() {
       if (listEl) listEl.innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-bold">Scanning location inventory...</div>`;
 
       try {
-        const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('*').order('sku').range(0, 4999),
-          db.from('intake_batches').select('sku, pack_count').range(0, 9999),
-          db.from('stock_movements').select('sku, action').range(0, 9999)
-        ]);
+        // 1. Fetch live snapshot directly from the state table
+        const { data: levels, error: lvlErr } = await db
+          .from('inventory_levels')
+          .select('sku, location, packs, loose_pcs')
+          .gt('packs', 0);
 
-        const items = itemsRes.data || [];
-        const batches = batchesRes.data || [];
-        const moves = movesRes.data || [];
+        if (lvlErr) throw lvlErr;
+
+        // 2. Fetch catalog details (names, photos)
+        const skus = Array.from(new Set((levels || []).map(l => l.sku)));
+        const { data: items } = await db
+          .from('items')
+          .select('sku, name, image_url')
+          .in('sku', skus);
 
         const itemMap = new Map();
-    items.forEach(it => {
-      const s = (it.sku || '').trim().toUpperCase();
-      if (s) itemMap.set(s, it);
-    });
-    moves.forEach(m => {
-      const s = (m.sku || '').trim().toUpperCase();
-      if (s && !itemMap.has(s)) itemMap.set(s, { sku: s, name: s });
-    });
+        (items || []).forEach(it => {
+          if (it.sku) itemMap.set(it.sku.toUpperCase(), it);
+        });
 
-    cachedLocationItems = Array.from(itemMap.values()).map(it => {
-      const itemSku = (it.sku || '').trim().toUpperCase();
-      const legacyPacks = batches
-        .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)
-        .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+        // 3. Map into cached location array
+        const skuGroup = {};
+        (levels || []).forEach(lvl => {
+          const s = lvl.sku.toUpperCase();
+          if (!skuGroup[s]) {
+            const cat = itemMap.get(s) || { sku: s, name: s, image_url: null };
+            skuGroup[s] = {
+              sku: s,
+              name: cat.name,
+              image_url: cat.image_url,
+              werqPacks: 0,
+              shopPacks: 0
+            };
+          }
+          if (lvl.location === 'WERQROOM') skuGroup[s].werqPacks = lvl.packs;
+          if (lvl.location === 'SHOP_STORAGE') skuGroup[s].shopPacks = lvl.packs;
+        });
 
-      const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === itemSku);
-
-      const delivered = itemMoves.filter(m => {
-        const act = (m.action || '').toUpperCase();
-        return act.includes('DELIVERED') || act.includes('TO_SHOP');
-      }).length;
-
-      const unifiedIntakes = itemMoves.filter(m => {
-        const act = (m.action || '').toUpperCase();
-        const isDelivery = act.includes('DELIVERED') || act.includes('TO_SHOP');
-        return !isDelivery && (act.includes('INTAKE') || act.includes('NEW SKU') || act === 'NEW_SKU');
-      }).length;
-
-      const depleted = itemMoves.filter(m => {
-        const act = (m.action || '').toUpperCase();
-        return act.includes('DISPLAY') || act.includes('PULL');
-      }).length;
-
-      const totalIntakes = legacyPacks + unifiedIntakes;
-      const werqPacks = Math.max(0, totalIntakes - delivered);
-      const shopPacks = Math.max(0, delivered - depleted);
-
-      return {
-        ...it,
-        werqPacks,
-        shopPacks
-      };
-    });
+        cachedLocationItems = Object.values(skuGroup);
 
         renderFilteredLocationStock();
       } catch (err) {

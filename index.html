@@ -3615,9 +3615,13 @@ async function refreshGlobalStockCounters() {
         let totalWerq = 0;
         let totalShop = 0;
 
-        items.forEach(it => {
-          const itemSku = (it.sku || '').trim().toUpperCase();
-          if (!itemSku) return;
+        const allSkus = Array.from(new Set([
+      ...items.map(it => (it.sku || '').trim().toUpperCase()),
+      ...moves.map(m => (m.sku || '').trim().toUpperCase()),
+      ...batches.map(b => (b.sku || '').trim().toUpperCase())
+    ])).filter(Boolean);
+
+    allSkus.forEach(itemSku => {
 
           const legacy = batches
             .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)
@@ -3746,7 +3750,17 @@ async function refreshGlobalStockCounters() {
         const batches = batchesRes.data || [];
         const moves = movesRes.data || [];
 
-        cachedLocationItems = items.map(it => {
+        const itemMap = new Map();
+    items.forEach(it => {
+      const s = (it.sku || '').trim().toUpperCase();
+      if (s) itemMap.set(s, it);
+    });
+    moves.forEach(m => {
+      const s = (m.sku || '').trim().toUpperCase();
+      if (s && !itemMap.has(s)) itemMap.set(s, { sku: s, name: s });
+    });
+
+    cachedLocationItems = Array.from(itemMap.values()).map(it => {
       const itemSku = (it.sku || '').trim().toUpperCase();
       const legacyPacks = batches
         .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)

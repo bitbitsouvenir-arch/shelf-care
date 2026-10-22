@@ -1294,33 +1294,51 @@
       </div>
     </section>
 
-    <!-- SUB-TAB 4: WEEKLY STOCK HEALTH & AUDIT CHECK DROPDOWN -->
+    <!-- SUB-TAB 4: STOCK INTELLIGENCE & AUDIT HEALTH -->
     <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
+        <div class="border-b border-gray-100 pb-3 flex items-center justify-between">
           <div>
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase">Stock Intelligence</span>
-            <h2 class="text-lg font-bold text-bitWalnut mt-1">Weekly Stock Health</h2>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Stock Health & Reports</h2>
           </div>
-          <button type="button" onclick="exportStockHealthMarkdown()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
-            📋 Copy Markdown
+          <span class="text-xs text-gray-400 font-bold">Ledger + Audits</span>
+        </div>
+
+        <!-- 2 ACTION BUTTONS -->
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="exportLiveStockCSV()" class="py-3 px-3 bg-bitWalnut hover:bg-black text-white font-bold text-xs rounded-2xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm transition">
+            <span>📥</span>
+            <span>Export Live Stock</span>
+          </button>
+          <button type="button" onclick="openAuditSelectModal()" class="py-3 px-3 bg-bitMarigold hover:bg-amber-400 text-bitWalnut font-bold text-xs rounded-2xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm transition">
+            <span>📊</span>
+            <span>Weekly Report</span>
           </button>
         </div>
 
-        <!-- AUDIT CHECK DROPDOWN WITH CONDUCTED DATE -->
-        <div class="space-y-1">
-          <label class="text-[10px] font-bold text-gray-500 uppercase">Select Audit Check (Date Conducted):</label>
-          <select id="select-audit-history" onchange="onAuditHistorySelect()" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-bitWalnut outline-none cursor-pointer">
-            <option value="LATEST">-- Latest Floor Audit --</option>
-          </select>
+        <!-- PLACEHOLDER STATE (VISIBLE UNTIL AUDIT DATE SELECTED) -->
+        <div id="weekly-health-placeholder" class="text-center py-10 px-4 border border-dashed border-bitBorder rounded-2xl space-y-2 bg-bitCream/40">
+          <span class="text-2xl block">📋</span>
+          <span class="text-xs font-bold text-bitWalnut block">No Audit Selected</span>
+          <p class="text-[11px] text-gray-400">Click <strong>"Weekly Report"</strong> above to pick a completed audit date and generate this report.</p>
         </div>
 
-        <div id="weekly-health-content" class="space-y-4 text-xs pt-1">
+        <!-- HEALTH REPORT CONTAINER (HIDDEN UNTIL AUDIT SELECTED) -->
+        <div id="weekly-health-content" class="space-y-3.5 text-xs pt-1 hidden">
+          <div class="flex items-center justify-between bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
+            <span id="selected-audit-title-badge" class="font-bold text-[10px] text-amber-900 font-mono">Date: -</span>
+            <button type="button" onclick="copyWeeklyHealthReport()" class="px-2.5 py-1 bg-bitWalnut hover:bg-black text-white text-[10px] font-bold rounded-lg cursor-pointer flex items-center gap-1">
+              <span>📋</span>
+              <span>Copy Report</span>
+            </button>
+          </div>
+
           <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
             <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">1. Executive Snapshot</span>
             <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-gray-700">
-              <div>Total Stock: <strong id="rep-health-total-units">1,420 pcs</strong></div>
-              <div>Retail Value: <strong id="rep-health-retail-val">₱142,000</strong></div>
+              <div>Total Stock: <strong id="rep-health-total-units">0 pcs</strong></div>
+              <div>Retail Value: <strong id="rep-health-retail-val">₱0</strong></div>
               <div>Units Sold (7D): <strong id="rep-health-units-sold">320 pcs</strong></div>
               <div>STR: <strong id="rep-health-str">22.5%</strong></div>
             </div>
@@ -1366,6 +1384,23 @@
         </div>
       </div>
     </section>
+
+    <!-- AUDIT DATES PICKER MODAL -->
+    <div id="audit-dates-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+          <div>
+            <span class="text-[10px] font-bold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">History Log</span>
+            <h3 class="font-bold text-base text-bitWalnut mt-0.5">Select Completed Audit</h3>
+          </div>
+          <button type="button" onclick="closeAuditSelectModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+        </div>
+        <p class="text-[11px] text-gray-500">Pick an audit check date to view its Weekly Stock Health report:</p>
+        <div id="audit-dates-list" class="space-y-2 overflow-y-auto flex-1 pr-1 text-xs">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
 
     <!-- 4-TAB BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-40 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
@@ -2800,80 +2835,177 @@ function triggerCatalogPhotoCapture(sku) {
       downloadBlob(csv, `Card_Disputes_${currentReportMonth}.csv`, "text/csv");
     }
 
-    async function loadStockHealthReport() {
+    let currentSelectedAudit = null;
+
+    // --- 1. OVERALL LIVE STOCK CSV EXPORT ---
+    async function exportLiveStockCSV() {
+      if (!db) return alert("Database not ready.");
+
+      try {
+        const [itemsRes, batchesRes, movesRes] = await Promise.all([
+          db.from('items').select('*').order('sku'),
+          db.from('intake_batches').select('sku, pack_count'),
+          db.from('stock_movements').select('sku, action')
+        ]);
+
+        const items = itemsRes.data || [];
+        const batches = batchesRes.data || [];
+        const moves = movesRes.data || [];
+
+        let csv = "SKU,Item Name,Category,Subcategory,Werqroom Packs,Shop Packs,Total Packs,Pcs On Hand\n";
+
+        items.forEach(it => {
+          const legacyPacks = batches.filter(b => b.sku === it.sku).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+          const itemMoves = moves.filter(m => m.sku === it.sku);
+
+          const unifiedIntakes = itemMoves.filter(m => 
+            m.action === 'NEW_SKU_INTAKE' || 
+            m.action === 'RESTOCK_INTAKE' || 
+            m.action === 'INTAKE_RECEIVED' || 
+            m.action === 'NEW_INTAKE'
+          ).length;
+
+          const totalIntakes = legacyPacks + unifiedIntakes;
+
+          const delivered = itemMoves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
+          const depleted = itemMoves.filter(m => 
+            m.action === 'REPLENISHED_TO_DISPLAY' || 
+            m.action === 'PULL_OUT' || 
+            m.action === 'PULLED_TO_WHITE_BIN'
+          ).length;
+
+          const werqPacks = Math.max(0, totalIntakes - delivered);
+          const shopPacks = Math.max(0, delivered - depleted);
+          const totalPacks = werqPacks + shopPacks;
+          const totalPcs = totalPacks * 10;
+
+          csv += `"${it.sku}","${(it.name || '').replace(/"/g, '""')}","${it.category || ''}","${it.subcategory || ''}",${werqPacks},${shopPacks},${totalPacks},${totalPcs}\n`;
+        });
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        downloadBlob(csv, `Bitbit_Live_Stock_${todayStr}.csv`, "text/csv");
+      } catch (err) {
+        alert("Failed to export live stock: " + err.message);
+      }
+    }
+
+    // --- 2. AUDIT DATE SELECTION MODAL ---
+    async function openAuditSelectModal() {
+      const modal = document.getElementById('audit-dates-modal');
+      const listContainer = document.getElementById('audit-dates-list');
+      modal.style.display = 'flex';
+      listContainer.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">Loading completed audits...</div>`;
+
+      if (!db) return;
+
+      try {
+        const { data: audits, error } = await db.from('inventory_audits').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        auditHistoryCache = audits || [];
+
+        if (auditHistoryCache.length === 0) {
+          listContainer.innerHTML = `<div class="text-center py-8 text-xs text-gray-400">No floor audits completed yet.<br><span class="text-[10px] text-gray-400">Run one via Shelf Help ➔ Floor Audit.</span></div>`;
+          return;
+        }
+
+        listContainer.innerHTML = auditHistoryCache.map(a => {
+          const dt = new Date(a.created_at);
+          const dateOnly = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          const units = a.total_scanned_units || 0;
+          const auditor = a.audited_by || 'Staff';
+
+          return `
+            <div onclick="selectAuditForReport('${a.id}')" class="p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl cursor-pointer transition flex items-center justify-between">
+              <div>
+                <span class="font-bold text-bitWalnut block text-xs">${dateOnly}</span>
+                <span class="text-[10px] text-gray-500 font-medium block">${timeStr} • by ${auditor}</span>
+              </div>
+              <span class="px-2 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-xl text-bitWalnut">
+                ${units} pcs
+              </span>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        listContainer.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Error: ${err.message}</div>`;
+      }
+    }
+
+    function closeAuditSelectModal() {
+      document.getElementById('audit-dates-modal').style.display = 'none';
+    }
+
+    // --- 3. REVEAL REPORT UPON AUDIT SELECTION ---
+    async function selectAuditForReport(auditId) {
+      currentSelectedAudit = auditHistoryCache.find(a => a.id === auditId);
+      closeAuditSelectModal();
+
+      if (!currentSelectedAudit) return;
+
+      document.getElementById('weekly-health-placeholder').classList.add('hidden');
+      document.getElementById('weekly-health-content').classList.remove('hidden');
+
+      const dt = new Date(currentSelectedAudit.created_at);
+      const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+      document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+
+      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
+      document.getElementById('rep-health-total-units').textContent = `${totalUnits} pcs`;
+      document.getElementById('rep-health-retail-val').textContent = `₱${(totalUnits * 100).toLocaleString()}`;
+
       if (db) {
         try {
-          const { data: items } = await db.from('items').select('*');
-          if (items) {
-            document.getElementById('rep-health-total-units').textContent = `${items.length * 10} pcs`;
-            document.getElementById('rep-health-retail-val').textContent = `₱${(items.length * 10 * 100).toLocaleString()}`;
-          }
-
           const { data: pullOuts } = await db.from('parcels').select('*').eq('source_type', 'pull_out');
           const pullNote = document.getElementById('rep-health-pullout-note');
-          if (pullOuts && pullOuts.length > 0) {
-            pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin for reintroduction.`;
-          } else {
-            pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
-          }
-
-          // Fetch past audit checks for dropdown
-          const { data: audits } = await db.from('inventory_audits').select('*').order('created_at', { ascending: false });
-          if (audits && audits.length > 0) {
-            auditHistoryCache = audits;
-            const selectEl = document.getElementById('select-audit-history');
-            selectEl.innerHTML = '<option value="LATEST">-- Latest Floor Audit --</option>' +
-              audits.map(a => {
-                const dt = new Date(a.created_at);
-                const dateStr = dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                return `<option value="${a.id}">${dateStr} - ${a.audited_by || 'Staff'} (${a.total_scanned_units || 0} pcs)</option>`;
-              }).join('');
+          if (pullNote) {
+            if (pullOuts && pullOuts.length > 0) {
+              pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin.`;
+            } else {
+              pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
+            }
           }
         } catch (e) {}
       }
     }
 
-    function onAuditHistorySelect() {
-      const selVal = document.getElementById('select-audit-history').value;
-      if (selVal === 'LATEST') {
-        loadStockHealthReport();
-        return;
-      }
-      const chosen = auditHistoryCache.find(a => a.id === selVal);
-      if (chosen) {
-        document.getElementById('rep-health-total-units').textContent = `${chosen.total_scanned_units || 0} pcs`;
-        document.getElementById('rep-health-retail-val').textContent = `₱${((chosen.total_scanned_units || 0) * 100).toLocaleString()}`;
-      }
-    }
+    // --- 4. COPY FORMATTED WEEKLY REPORT ---
+    function copyWeeklyHealthReport() {
+      if (!currentSelectedAudit) return alert("Please select an audit first.");
 
-    function exportStockHealthMarkdown() {
-      const md = `[WEEKLY STOCK HEALTH REPORT - BITBIT]
-Month / Cycle: ${currentReportMonth}
+      const dt = new Date(currentSelectedAudit.created_at);
+      const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+      const monthCycle = dt.toISOString().slice(0, 7);
+      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
+      const retailVal = (totalUnits * 100).toLocaleString();
+
+      const text = `([WEEKLY STOCK HEALTH REPORT - BITBIT]
+Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
 
 1. EXECUTIVE SNAPSHOT
-- Total Stock Units: 1,420 | Total Retail Value: ₱142,000
-- Units Sold (This Week): 320 pcs
-- Sell-Through Rate (STR): 22.5%
-- Overall Weeks of Supply (WoS): 4.4 weeks
+- Total Stock: ${totalUnits} pcs | Retail Value: ₱${retailVal}
+- Units Sold (7D): 320 pcs | STR: 22.5%
 
 2. HARDWARE & ATTACHMENT HEALTH
-- Charm-to-Base Attachment Ratio: 3.8:1 (Target: 3.5:1)
-- Core Bases WoS:
+- Charm-to-Base Attachment Ratio: 3.8 charms / base (Target: 3.5:1)
   * Starter Bracelets: 4.2 weeks [Healthy]
-  * Necklaces/Chains: 2.1 weeks [Warning]
+  * Necklaces / Chains: 2.1 weeks [Warning]
   * Keyrings & Extras: 5.8 weeks [Healthy]
-- Fastener/Findings Supply: Sufficient
+  * Findings (Jump rings/clasps): Sufficient
 
-3. FLOOR PULL-OUTS & REINTRODUCTION
-- Pull-outs routed to White Bin: Recorded live in system queue
+3. FLOOR PULL-OUTS TO WHITE BIN
+- Active items pulled from floor and staged in White Bin
 
-4. TOP 5 VELOCITY SKUs (Fast Movers - Stock-out Risk)
-- BDS-BOS-BIG-SOLID-E: Sold 42 | On Hand 18 | WoS 1.2 wks -> [Action: Reorder ASAP]
+4. TOP 5 VELOCITY SKUs (STOCK-OUT RISK)
+- BDS-BOS-BIG-SOLID-E: 1.2 wks [Reorder ASAP]
 
-5. BOTTOM 5 SLOW-MOVING SKUs (Pull-Out Candidates)
-- CHM-STN-OLD-01: Weeks with 0 Sales: 4 | Units On Hand: 35 -> [Action: Pull to White Bin]`;
+5. BOTTOM 5 SLOW-MOVERS (PULL-OUT CANDIDATES)
+- CHM-STN-OLD-01: 4 wks 0-sales [Move to White Bin]`;
 
-      navigator.clipboard.writeText(md).then(() => alert("✓ Markdown Stock Health Report copied to clipboard!"));
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✓ Weekly Stock Health Report copied with audit date header!");
+      });
     }
 
     function downloadBlob(content, filename, contentType) {
@@ -3320,17 +3452,26 @@ if (badge) {
 async function refreshGlobalStockCounters() {
       if (!db) return;
       try {
-        const { data: movements } = await db
-          .from('stock_movements')
-          .select('action');
+        // Fetch legacy batch pack totals AND all movement ledger events
+        const [batchesRes, movesRes, parcelsRes] = await Promise.all([
+          db.from('intake_batches').select('pack_count'),
+          db.from('stock_movements').select('action'),
+          db.from('parcels').select('*', { count: 'exact', head: true }).eq('status', 'IN_WHITE_BIN')
+        ]);
 
-        const moves = movements || [];
-        const totalIntakeCount = moves.filter(m => 
+        const legacyBatches = batchesRes.data || [];
+        const moves = movesRes.data || [];
+
+        const legacyIntakePacks = legacyBatches.reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+
+        const unifiedIntakePacks = moves.filter(m => 
           m.action === 'NEW_SKU_INTAKE' || 
           m.action === 'RESTOCK_INTAKE' || 
           m.action === 'INTAKE_RECEIVED' || 
           m.action === 'NEW_INTAKE'
         ).length;
+
+        const totalIntakes = legacyIntakePacks + unifiedIntakePacks;
 
         const deliveredCount = moves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
         const depletedFromShop = moves.filter(m => 
@@ -3339,7 +3480,7 @@ async function refreshGlobalStockCounters() {
           m.action === 'PULLED_TO_WHITE_BIN'
         ).length;
 
-        const liveWerqroomPacks = Math.max(0, totalIntakeCount - deliveredCount);
+        const liveWerqroomPacks = Math.max(0, totalIntakes - deliveredCount);
         const liveShopPacks = Math.max(0, deliveredCount - depletedFromShop);
 
         const werqEl = document.getElementById('werqroom-count');
@@ -3347,11 +3488,7 @@ async function refreshGlobalStockCounters() {
         if (werqEl) werqEl.textContent = liveWerqroomPacks;
         if (shopEl) shopEl.textContent = liveShopPacks;
 
-        const { count: whiteBinCount } = await db
-          .from('parcels')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'IN_WHITE_BIN');
-
+        const whiteBinCount = parcelsRes.count;
         const whiteEl = document.getElementById('whitebin-count');
         const badgeEl = document.getElementById('whitebin-badge-count');
         if (whiteEl && whiteBinCount !== null) whiteEl.textContent = whiteBinCount;
@@ -3359,6 +3496,7 @@ async function refreshGlobalStockCounters() {
       } catch (err) {
         console.warn('Error refreshing stock counters:', err.message);
       }
+    }
     }
     // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {

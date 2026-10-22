@@ -10,18 +10,6 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
-    @font-face {
-      font-family: 'ProvidenceSans';
-      src: url('./fonts/Providence%20Sans%20Offc%20W00%20Bold.ttf') format('truetype');
-      font-weight: 700;
-      font-style: normal;
-    }
-    @font-face {
-      font-family: 'GoodTimeGrotesk';
-      src: url('./fonts/MADE%20GoodTime%20Grotesk%20PERSONAL%20USE.otf') format('opentype');
-      font-weight: 400 700;
-      font-style: normal;
-    }
   </style>
 
   <script>
@@ -29,16 +17,20 @@
       theme: {
         extend: {
           fontFamily: {
-            display: ['"ProvidenceSans"', 'sans-serif'],
-            sans: ['"GoodTimeGrotesk"', 'sans-serif'],
+            display: ['-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
           },
           colors: {
-            bitCream: '#FAF7F2',
+            bitCream: '#FBF9DD',
             bitWalnut: '#231B15',
-            bitMarigold: '#F5B731',
-            bitViolet: '#9E64F2',
-            bitPink: '#FF4E8D',
-            bitGreen: '#78B828',
+            bitMarigold: '#F7CC5D',
+            bitViolet: '#AE71DA',
+            bitPink: '#ED6BA2',
+            bitGreen: '#95B83E',
+            bitMarigoldDark: '#D9B351',
+            bitGreenDark: '#83A136',
+            bitVioletDark: '#9963BF',
+            bitPinkDark: '#D05E8E',
             bitBorder: '#E6E0D8',
             bitBorderDark: '#D9D1C7'
           }
@@ -56,7 +48,7 @@
     <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-5 shadow-xl border border-bitBorder">
       <div class="text-center space-y-2">
         <div class="w-12 h-12 mx-auto flex items-center justify-center">
-          <img src="logo.png" onerror="this.onerror=null; this.src='[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80)';" class="w-full h-full object-contain" alt="Bitbit">
+          <img src="logo.png" onerror="this.onerror=null; this.style.visibility='hidden';" class="w-full h-full object-contain" alt="Bitbit">
         </div>
         <div>
           <h2 class="text-xl font-bold tracking-tight text-bitWalnut">Bitbit</h2>
@@ -108,7 +100,7 @@
         ← Hub
       </button>
       <div class="w-8 h-8 flex items-center justify-center shrink-0">
-        <img src="logo.png" onerror="this.onerror=null; this.src='[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&q=80)';" class="w-full h-full object-contain" alt="Bitbit">
+        <img src="logo.png" onerror="this.onerror=null; this.style.visibility='hidden';" class="w-full h-full object-contain" alt="Bitbit">
       </div>
       <div>
         <h1 class="text-sm font-bold tracking-tight text-bitWalnut leading-none">Bitbit</h1>
@@ -136,7 +128,7 @@
     </div>
 
     <div class="space-y-3">
-      <button type="button" onclick="goToView('view-shelf-help')" class="w-full bg-[#F5B731] hover:bg-[#e4a724] text-bitWalnut py-5 px-6 rounded-[28px] border border-[#dfa21c] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-help')" class="w-full bg-bitMarigold hover:bg-bitMarigoldDark text-bitWalnut py-5 px-6 rounded-[28px] border border-bitMarigoldDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-bold tracking-tight leading-tight">Shelf Help</div>
           <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Check Live Stock, Locations & Master SKU</span>
@@ -144,28 +136,28 @@
         <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-[#78B828] hover:bg-[#6ba523] text-white py-5 px-6 rounded-[28px] border border-[#6ba523] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-care')" class="w-full bg-bitGreen hover:bg-bitGreenDark text-bitWalnut py-5 px-6 rounded-[28px] border border-bitGreenDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-bold tracking-tight leading-tight">Shelf Care</div>
-          <span class="text-xs font-medium text-white/90 block mt-1">Intake, QR Builder & Movement Station</span>
+          <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Intake, QR Builder & Movement Station</span>
         </div>
-        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <button type="button" onclick="goToView('view-shelf-service')" class="w-full bg-[#9E64F2] hover:bg-[#8e52e4] text-white py-5 px-6 rounded-[28px] border border-[#8e52e4] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-shelf-service')" class="w-full bg-bitViolet hover:bg-bitVioletDark text-bitWalnut py-5 px-6 rounded-[28px] border border-bitVioletDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-bold tracking-tight leading-tight">Shelf Service</div>
-          <span class="text-xs font-medium text-white/90 block mt-1">Requests Desk, OCR Logger & Petty Cash</span>
+          <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Requests Desk, OCR Logger & Petty Cash</span>
         </div>
-        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
-      <button type="button" onclick="goToView('view-card-logger')" class="w-full bg-[#FF4E8D] hover:bg-[#eb3a7a] text-white py-5 px-6 rounded-[28px] border border-[#eb3a7a] shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
+      <button type="button" onclick="goToView('view-card-logger')" class="w-full bg-bitPink hover:bg-bitPinkDark text-bitWalnut py-5 px-6 rounded-[28px] border border-bitPinkDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
         <div class="text-left">
           <div class="text-lg font-bold tracking-tight leading-tight">Card Transactions</div>
-          <span class="text-xs font-medium text-white/90 block mt-1">Failed/Delayed Swipes & BSP Protection</span>
+          <span class="text-xs font-medium text-bitWalnut/80 block mt-1">Failed/Delayed Swipes & BSP Protection</span>
         </div>
-        <span class="text-2xl text-white group-hover:translate-x-1 transition-transform">→</span>
+        <span class="text-2xl text-bitWalnut group-hover:translate-x-1 transition-transform">→</span>
       </button>
 
       <button type="button" onclick="goToView('view-reports')" class="w-full bg-white hover:bg-bitCream text-bitWalnut py-5 px-6 rounded-[28px] border border-bitBorderDark shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between group">
@@ -188,7 +180,7 @@
           <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase tracking-wide">Stock Checker</span>
           <h2 class="text-lg font-bold text-bitWalnut mt-1">Shelf Help</h2>
         </div>
-        <button type="button" onclick="goToView('view-shelf-care')" class="px-2.5 py-1 bg-bitGreen hover:bg-[#6ba523] text-white font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer">
+        <button type="button" onclick="goToView('view-shelf-care')" class="px-2.5 py-1 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer">
           <span>📦</span>
           <span>Shelf Care ➔</span>
         </button>
@@ -197,7 +189,7 @@
       <div class="w-full mb-3">
         <button type="button" onclick="openNewArrivalsModal()" class="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
           <span>✨</span>
-          <span>New (7 Days)</span>
+          <span>New Items (7 Days)</span>
         </button>
       </div>
 
@@ -400,7 +392,7 @@
               </div>
             </div>
 
-            <button type="button" onclick="proceedInhouseRepurposeToQr()" class="w-full py-3.5 bg-bitGreen hover:bg-emerald-700 text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+            <button type="button" onclick="proceedInhouseRepurposeToQr()" class="w-full py-3.5 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
               Deduct White Bin Stock & Build New SKU →
             </button>
           </div>
@@ -414,7 +406,6 @@
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <h2 id="loc-browser-title" class="text-lg font-bold text-bitWalnut">Werqroom Stock</h2>
-          <span id="loc-browser-tally" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Packs</span>
         </div>
 
         <!-- 3 LOCATION SEGMENT TABS -->
@@ -540,30 +531,34 @@
 
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
           <div>
-            <label class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
+            <label id="lbl-pack-count" class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
             <input type="number" id="sku-pack-count" value="1" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
-          <div>
+          <div id="wrap-pcs-per-pack">
             <label class="block text-[10px] font-bold text-gray-500 mb-1">Pcs / Pack</label>
             <input type="number" id="sku-pcs-per-pack" value="20" min="1" onfocus="this.dataset.manual='true'" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
+            <label id="lbl-partial-pcs" class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
             <input type="number" id="sku-partial-pcs" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
         </div>
 
         <div class="flex items-center justify-between text-xs font-bold pt-1">
           <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" id="chk-print-only" class="w-4 h-4 rounded border-gray-300 text-bitWalnut focus:ring-0">
-            <span class="text-[11px] font-bold text-gray-600">Print Label Only (No stock intake)</span>
+            <input type="checkbox" id="chk-print-only" onchange="onPrintOnlyToggle()" class="w-4 h-4 rounded border-gray-300 text-bitWalnut focus:ring-0">
+            <span class="text-[11px] font-bold text-gray-600">Reprint label only (no stock added)</span>
           </label>
-          <div class="text-right text-gray-600">
+          <div id="wrap-total-pcs" class="text-right text-gray-600">
             Total Pcs: <span id="sku-total-calc" class="font-bold text-sm text-bitWalnut">20</span>
           </div>
         </div>
 
-        <button type="button" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
+        <div id="print-only-note" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium">
+          Reprint mode: you'll get the label code to print again. <strong>No packs are added to stock.</strong>
+        </div>
+
+        <button type="button" id="btn-save-print" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
           Save SKU & Print Labels →
         </button>
       </div>
@@ -612,7 +607,7 @@
           </div>
         </div>
 
-        <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen hover:bg-[#6ba523] text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition disabled:opacity-40" disabled>
+        <button type="button" onclick="commitBatchMovement()" id="btn-commit-batch" class="w-full py-3.5 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition disabled:opacity-40" disabled>
           Commit Batch Stock Movement →
         </button>
 
@@ -624,11 +619,8 @@
               <span id="move-today-summary-tally" class="text-[10px] text-gray-500 font-medium">0 movements today</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="copyTodayMovementSummary()" class="px-2.5 py-1.5 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
-                📋 Copy
-              </button>
-              <button type="button" onclick="downloadTodayMovementReport()" class="px-2.5 py-1.5 bg-bitWalnut hover:bg-black text-white text-[10px] font-bold rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
-                📥 .txt
+              <button type="button" onclick="openDaySummaryModal()" class="px-2.5 py-1.5 bg-bitMarigold hover:bg-bitMarigoldDark border border-bitMarigoldDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
+                🧾 Day Summary
               </button>
             </div>
           </div>
@@ -874,7 +866,7 @@
               <span id="masked-card-toggle-icon" class="w-4 h-4 rounded-full bg-bitMarigold border border-bitBorder flex items-center justify-center text-[10px] font-bold">+</span>
               <span>Add Masked Card Number</span>
             </button>
-            <button type="button" onclick="openBspAdvisoryModal()" class="w-5 h-5 rounded-full bg-white border border-bitBorderDark text-[11px] font-bold text-bitViolet flex items-center justify-center cursor-pointer hover:bg-bitViolet hover:text-white" title="Customer Security Advisory">
+            <button type="button" onclick="openBspAdvisoryModal()" class="w-5 h-5 rounded-full bg-white border border-bitBorderDark text-[11px] font-bold text-bitViolet flex items-center justify-center cursor-pointer hover:bg-bitViolet hover:text-bitWalnut" title="Customer Security Advisory">
               i
             </button>
           </div>
@@ -940,7 +932,8 @@
       <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
         <div>
           <span class="text-[10px] font-bold uppercase text-bitGreen bg-emerald-100 px-2 py-0.5 rounded-full">Floor Awareness</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">✨ New Arrivals (Past 7 Days)</h3>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">🆕 New Items (Past 7 Days)</h3>
+          <span class="text-[10px] text-gray-500 font-medium block">Brand-new SKUs only, with where they are now</span>
         </div>
         <button type="button" onclick="closeNewArrivalsModal()" class="text-gray-400 font-bold p-1 text-base">&times;</button>
       </div>
@@ -1002,7 +995,7 @@
       </div>
       <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
         <div class="flex items-center justify-between mb-1">
-          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag/Peg Barcode</label>
+          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag Barcode</label>
           <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
         </div>
         <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
@@ -1011,7 +1004,7 @@
         <div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>
       </div>
       <div class="pt-2 shrink-0 space-y-2">
-        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl cursor-pointer">
+        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
           Complete Audit & Run Analysis →
         </button>
       </div>
@@ -1052,7 +1045,24 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-700 mb-1">Reason / Notes</label>
-          <input type="text" id="freq-notes" placeholder="e.g. Display peg is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+          <input type="text" id="freq-notes" placeholder="e.g. Display is empty" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-medium outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Photo <span class="text-gray-400 font-medium">(optional)</span></label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="py-2.5 bg-bitCream hover:bg-bitMarigold/30 border border-bitBorderDark rounded-xl text-center text-xs font-bold text-bitWalnut cursor-pointer">
+              <input type="file" accept="image/*" capture="environment" class="hidden" onchange="previewFreqPhoto(this)">
+              📷 Take Photo
+            </label>
+            <label class="py-2.5 bg-bitCream hover:bg-bitMarigold/30 border border-bitBorderDark rounded-xl text-center text-xs font-bold text-bitWalnut cursor-pointer">
+              <input type="file" accept="image/*" class="hidden" onchange="previewFreqPhoto(this)">
+              🖼️ Upload
+            </label>
+          </div>
+          <div id="freq-photo-wrap" class="hidden mt-2 flex items-center gap-2">
+            <img id="freq-photo-preview" class="w-16 h-16 object-cover rounded-xl border border-bitBorder" alt="Request photo">
+            <button type="button" onclick="clearFreqPhoto()" class="text-[11px] font-bold text-gray-500 cursor-pointer">✕ Remove photo</button>
+          </div>
         </div>
         <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl">
           <label class="flex items-start space-x-2.5 cursor-pointer">
@@ -1166,49 +1176,197 @@
         </div>
         <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
-      <div class="grid grid-cols-3 gap-1.5 text-center">
-        <button type="button" onclick="setPrintModeSelection('BATCH')" id="pill-mode-batch" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
-          <span class="text-[11px] font-bold text-bitWalnut block">Batch</span>
-          <span id="badge-batch-qty" class="text-[9px] text-gray-500 font-bold block">10x full</span>
-        </button>
-        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
-          <span class="text-[11px] font-bold text-gray-700 block">Single</span>
-          <span class="text-[9px] text-gray-500 font-bold block">1x label</span>
+      <div class="grid grid-cols-2 gap-1.5 text-center">
+        <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
+          <span class="text-[11px] font-bold text-bitWalnut block">Standard Pack</span>
+          <span id="badge-single-qty" class="text-[9px] text-gray-500 font-bold block">print × 1</span>
         </button>
         <button type="button" onclick="setPrintModeSelection('PARTIAL')" id="pill-mode-partial" class="p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition">
           <span class="text-[11px] font-bold text-amber-700 block">🟡 Partial</span>
-          <span class="text-[9px] text-gray-500 font-bold block">1x yellow</span>
+          <span id="badge-partial-qty" class="text-[9px] text-gray-500 font-bold block">print × 1</span>
         </button>
       </div>
       <div class="bg-gray-100 p-3 rounded-2xl flex flex-col items-center justify-center">
-        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Physical Sheet Preview (50×30mm)</span>
-        <div class="w-64 h-36 bg-white border border-gray-300 rounded-xl shadow-xs p-2 flex flex-col justify-between">
-          <div class="flex items-center space-x-2 border-b border-dashed border-gray-200 pb-1.5">
+        <span class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Label Preview (50×30mm)</span>
+        <div class="w-64 bg-white border border-gray-300 rounded-xl shadow-xs p-2">
+          <div class="flex items-center space-x-2">
             <div id="sub-qr-1" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
             <div class="min-w-0">
               <span id="sub-sku-1" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
+              <span id="sub-tag-1" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Standard Pack</span>
             </div>
-          </div>
-          <div id="sub-label-2-wrap" class="flex items-center space-x-2 pt-1.5">
-            <div id="sub-qr-2" class="w-12 h-12 shrink-0 flex items-center justify-center"></div>
-            <div class="min-w-0">
-              <span id="sub-sku-2" class="text-[10px] font-mono font-bold text-black block truncate">BDS-BOS-BIG-SOLID-E</span>
-              <span id="sub-tag-2" class="text-[8px] text-gray-400 font-bold block leading-none mt-0.5">Bitbit Charm Bag</span>
-            </div>
-          </div>
-          <div id="sub-label-2-placeholder" class="hidden py-4 text-center text-[9px] font-bold text-gray-300">
-            [ Second label slot empty ]
           </div>
         </div>
       </div>
+      <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-center space-y-1">
+        <span class="text-[10px] font-bold text-gray-500 uppercase block">In the Niimbot app, print this code</span>
+        <span id="print-copy-count" class="text-2xl font-bold text-bitWalnut block">× 1</span>
+        <span class="text-[10px] text-gray-500 block">Set the copies to this number in Niimbot</span>
+      </div>
       <button type="button" onclick="copyCurrentSkuToClipboard()" class="w-full py-2.5 bg-bitCream hover:bg-bitMarigold/20 text-bitWalnut font-bold text-xs rounded-xl border border-bitBorderDark flex items-center justify-center space-x-1.5 cursor-pointer">
         <span>📋</span>
-        <span id="btn-copy-label-text">Copy SKU for Niimbot App</span>
+        <span id="btn-copy-label-text">Copy Code for Niimbot App</span>
       </button>
       <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
         ✓ Done Printing & Applied on Bags
       </button>
+    </div>
+  </div>
+
+  <!-- START YOUR DAY (TIME IN / OPEN THE STORE) MODAL -->
+  <div id="start-day-modal" style="display: none;" class="fixed inset-0 bg-bitCream z-[60] flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-6 space-y-4 shadow-xl border border-bitBorder">
+      <div class="text-center space-y-1">
+        <span class="text-2xl block">☀️</span>
+        <h3 class="text-lg font-bold text-bitWalnut">Good day, <span id="sd-name">-</span>!</h3>
+        <p class="text-[11px] text-gray-500 font-medium">You haven't timed in yet today.</p>
+      </div>
+
+      <div id="sd-choice" class="space-y-2">
+        <button type="button" onclick="showOpeningForm()" class="w-full py-3.5 bg-bitMarigold hover:bg-bitMarigoldDark text-bitWalnut rounded-2xl font-bold text-sm cursor-pointer">
+          🏪 Open the Store
+        </button>
+        <button type="button" onclick="submitStartDay(false)" class="w-full py-3 bg-white hover:bg-bitCream border border-bitBorderDark text-bitWalnut rounded-2xl font-bold text-xs cursor-pointer">
+          Time In Only
+        </button>
+      </div>
+
+      <div id="sd-opening-form" class="hidden space-y-3">
+        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
+          <span class="text-[11px] font-bold text-gray-600 block">Count and confirm what was endorsed last night:</span>
+          <div class="flex items-center justify-between gap-2">
+            <label for="sd-starting-cash" class="text-xs font-bold text-bitWalnut">Starting cash</label>
+            <input type="number" inputmode="decimal" step="0.01" min="0" id="sd-starting-cash" placeholder="0.00" class="w-32 p-2 bg-white rounded-lg border border-bitBorderDark text-sm font-bold text-right outline-none focus:border-bitWalnut">
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <label for="sd-fotomatk-fund" class="text-xs font-bold text-bitWalnut">Fotomatk change fund</label>
+            <input type="number" inputmode="decimal" step="0.01" min="0" id="sd-fotomatk-fund" placeholder="0.00" class="w-32 p-2 bg-white rounded-lg border border-bitBorderDark text-sm font-bold text-right outline-none focus:border-bitWalnut">
+          </div>
+        </div>
+        <button type="button" onclick="submitStartDay(true)" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs cursor-pointer">
+          Open Store & Time In →
+        </button>
+        <button type="button" onclick="hideOpeningForm()" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">← Back</button>
+      </div>
+      <div id="sd-error" class="text-center text-xs font-bold text-bitPinkDark min-h-[16px]"></div>
+    </div>
+  </div>
+
+  <!-- LOCK / END SHIFT MODAL -->
+  <div id="lock-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-[32px] p-5 space-y-2.5 shadow-2xl border border-bitBorder">
+      <h3 class="font-bold text-sm text-bitWalnut text-center pb-1">What would you like to do, <span id="lock-name">-</span>?</h3>
+      <button type="button" onclick="lockStation(false)" class="w-full py-3 bg-bitCream hover:bg-bitMarigold/30 border border-bitBorderDark text-bitWalnut rounded-2xl font-bold text-xs cursor-pointer">
+        🔒 Switch User <span class="block text-[10px] text-gray-500 font-medium">Lock the app, stay timed in</span>
+      </button>
+      <button type="button" onclick="lockStation(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs cursor-pointer">
+        👋 End My Shift <span class="block text-[10px] text-white/70 font-medium">Time out and lock</span>
+      </button>
+      <button type="button" onclick="document.getElementById('lock-modal').style.display='none'" class="w-full text-[11px] font-bold text-gray-500 pt-1 cursor-pointer">Cancel</button>
+    </div>
+  </div>
+
+  <!-- DAY SUMMARY (CLOSING REPORT + STOCK MOVEMENT) MODAL -->
+  <div id="day-summary-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/40 px-2 py-0.5 rounded-full">Closing</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Day Summary</h3>
+          <span id="ds-meta" class="text-[10px] text-gray-500 font-bold block">-</span>
+        </div>
+        <button type="button" onclick="closeDaySummaryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+
+      <div class="overflow-y-auto flex-1 space-y-3 pr-1">
+        <div id="ds-opening-ref" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium"></div>
+
+        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block">Part 1 · Closing Report</span>
+
+        <div class="grid grid-cols-1 gap-2">
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <span class="text-[11px] font-bold text-bitWalnut underline block">Actual Sales</span>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-gcash" class="text-[11px] font-bold text-gray-600">GCash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-gcash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-card" class="text-[11px] font-bold text-gray-600">Card</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-card" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-bitBorder">
+              <span>Total</span><span id="ds-act-total">₱0.00</span>
+            </div>
+          </div>
+
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-bitWalnut underline block">Square Sales Report</span>
+              <label class="text-[10px] font-bold text-bitWalnut bg-bitMarigold hover:bg-bitMarigoldDark px-2 py-1 rounded-lg cursor-pointer">
+                <input type="file" accept="image/*" class="hidden" onchange="readSquareScreenshot(this)">
+                📷 Snap Square
+              </label>
+            </div>
+            <span id="ds-sq-status" class="text-[10px] text-gray-500 font-medium block">Snap the Square sales summary to fill these in, then check the numbers.</span>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-sq-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-sq-gcash" class="text-[11px] font-bold text-gray-600">GCash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-gcash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-sq-card" class="text-[11px] font-bold text-gray-600">Card</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-card" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div id="ds-sq-other-row" class="hidden">
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-sq-other" class="text-[11px] font-bold text-gray-600">Other (GCash + Card)</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-other" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            </div>
+            <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-bitBorder">
+              <span>Total</span><span id="ds-sq-total">₱0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="ds-diff" class="p-2.5 rounded-xl text-center text-xs font-bold bg-gray-100 text-gray-600">Enter both reports to compare</div>
+
+        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-cash-collected" class="text-[11px] font-bold text-gray-600">Cash collected</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-cash-collected" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-starting-cash" class="text-[11px] font-bold text-gray-600">Bitbit starting cash (next day)</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-starting-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-fotomatk-fund" class="text-[11px] font-bold text-gray-600">Fotomatk change fund</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-fotomatk-fund" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+          <div>
+            <label for="ds-notes" class="text-[11px] font-bold text-gray-600 block mb-1">Notes</label>
+            <textarea id="ds-notes" rows="4" oninput="updateDaySummary()" placeholder="Ask of the Day:&#10;Customer Mood:&#10;Feedback:&#10;Own observations:" class="w-full p-2 bg-white rounded-lg border border-bitBorderDark text-xs outline-none focus:border-bitWalnut"></textarea>
+          </div>
+        </div>
+
+        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block pt-1">Part 2 · Stock Movement Today</span>
+        <pre id="ds-movement-preview" class="p-3 bg-gray-50 rounded-2xl border border-bitBorder text-[11px] text-gray-700 whitespace-pre-wrap font-sans">Loading...</pre>
+      </div>
+
+      <div class="shrink-0 space-y-1.5">
+        <button type="button" onclick="copyDaySummary(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+          <span id="ds-copy-label">📋 Copy for Telegram & Time Out</span>
+        </button>
+        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Copy only (stay timed in)</button>
+      </div>
     </div>
   </div>
 
@@ -1236,7 +1394,7 @@
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Payroll Cycle</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">Shift Attendance</h2>
           </div>
-          <button type="button" onclick="exportAttendanceCSV()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+          <button type="button" id="btn-export-attendance" onclick="exportAttendanceCSV()" class="hidden px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
             📥 Export CSV
           </button>
         </div>
@@ -1328,10 +1486,6 @@
             <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase">Stock Intelligence</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">Inventory Report & Health</h2>
           </div>
-          <button type="button" onclick="startFloorAuditMode()" class="px-3 py-1.5 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1 cursor-pointer">
-            <span>⚡</span>
-            <span>Start Audit</span>
-          </button>
         </div>
 
         <!-- 2 ACTION BUTTONS -->
@@ -1340,7 +1494,7 @@
             <span>📥</span>
             <span>Export Live Stock</span>
           </button>
-          <button type="button" onclick="openAuditSelectModal()" class="py-3 px-3 bg-bitMarigold hover:bg-amber-400 text-bitWalnut font-bold text-xs rounded-2xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm transition">
+          <button type="button" onclick="openAuditSelectModal()" class="py-3 px-3 bg-bitMarigold hover:bg-bitMarigoldDark text-bitWalnut font-bold text-xs rounded-2xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm transition">
             <span>📊</span>
             <span>Inventory Report</span>
           </button>
@@ -1353,7 +1507,7 @@
             <span class="text-xs font-bold text-bitWalnut block">No Completed Audit Selected</span>
             <p class="text-[11px] text-gray-400 mt-0.5">Click <strong>"Inventory Report"</strong> to pick a past audit, or tap <strong>"Start Audit"</strong> above to run a fresh scan.</p>
           </div>
-          <button type="button" onclick="startFloorAuditMode()" class="px-4 py-2 bg-bitGreen hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm inline-flex items-center gap-1.5 cursor-pointer">
+          <button type="button" onclick="startFloorAuditMode()" class="px-4 py-2 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl shadow-sm inline-flex items-center gap-1.5 cursor-pointer">
             <span>⚡ Start Continuous Audit Scan</span>
           </button>
         </div>
@@ -1433,7 +1587,7 @@
         <!-- DIRECT AUDIT TRIGGER IN MODAL -->
         <div class="p-2.5 bg-bitCream rounded-2xl border border-bitBorderDark flex items-center justify-between shrink-0">
           <div class="text-[11px] font-bold text-bitWalnut">Want to conduct a new count?</div>
-          <button type="button" onclick="closeAuditSelectModal(); startFloorAuditMode();" class="px-2.5 py-1 bg-bitGreen text-white font-bold text-[10px] rounded-lg cursor-pointer">
+          <button type="button" onclick="closeAuditSelectModal(); startFloorAuditMode();" class="px-2.5 py-1 bg-bitGreen text-bitWalnut font-bold text-[10px] rounded-lg cursor-pointer">
             + Start Audit
           </button>
         </div>
@@ -1478,10 +1632,40 @@
       }
     } catch (e) {}
 
+    // Runs a database write and throws if Supabase rejected it.
+    // Supabase does not throw on its own, so without this a failed save looked like a success.
+    async function dbWrite(label, makeQuery) {
+      if (!db) throw new Error('Not connected to the database. Check the internet and reload the page.');
+      const { data, error } = await makeQuery();
+      if (error) throw new Error(`${label}: ${error.message}`);
+      return data;
+    }
+
+    function showSaveError(e) {
+      console.error(e);
+      alert('⚠️ NOT SAVED\n' + (e && e.message ? e.message : e) + '\n\nNothing was recorded. Please try again.');
+    }
+
+    // Pieces in one standard pack, by category (Beads 20, Links 50, everything else 10)
+    function pcsPerPackForCategory(cat) {
+      const c = (cat || '').toUpperCase();
+      if (c === 'BDS') return 20;
+      if (c === 'LNK') return 50;
+      return 10;
+    }
+
+    // Partial labels end in -P<number>, e.g. BDS-BOS-BIG-PINK-P7. Anything else is a standard pack.
+    function parseScannedCode(code) {
+      const raw = (code || '').trim().toUpperCase();
+      const m = raw.match(/^(.*)-P(\d+)$/);
+      if (m) return { sku: m[1], isPartial: true, pcs: parseInt(m[2], 10) };
+      return { sku: raw, isPartial: false, pcs: pcsPerPackForCategory(raw.split('-')[0]) };
+    }
+
     const DEFAULT_CREW = [
       { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e001', name: 'Mems', pin: '6363', role: 'admin' },
       { id: 'ceb28403-407b-47f4-b0eb-b09a70b30002', name: 'Louise', pin: '2514', role: 'admin' },
-      { id: '5b7f0a7c-4c2a-4956-be10-d60642920003', name: 'Scarlet', pin: '1234', role: 'lead' },
+      { id: '5b7f0a7c-4c2a-4956-be10-d60642920003', name: 'Isca', pin: '1234', role: 'lead' },
       { id: 'd1d38f84-e807-4375-8a94-cf2d268b0004', name: 'Alex', pin: '1234', role: 'lead' },
       { id: '9e034f33-d5a2-493a-8303-8c7b89800005', name: 'Deejae', pin: '1234', role: 'payroll' },
       { id: '2138ea2c-304a-4f30-bef0-f683003df006', name: 'Kath', pin: '1234', role: 'crew' },
@@ -1507,7 +1691,7 @@
     let merchantListPhotoData = "";
     let merchantContentPhotoData = "";
 
-    let currentPrintMode = 'BATCH';
+    let currentPrintMode = 'SINGLE';
     let currentMovementMode = "DELIVERED_TO_SHOP";
     let stagedBatchMovements = [];
     let pendingSkuData = null;
@@ -1523,7 +1707,18 @@
     let liveAuditScans = {};
     let auditHistoryCache = [];
 
-    let currentReportMonth = new Date().toISOString().slice(0, 7);
+    // Month key (YYYY-MM) in the phone's local time, so late-night Manila entries land in the right month
+    function localMonthKey(dateLike) {
+      const d = dateLike ? new Date(dateLike) : new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+    function csvCell(v) {
+      return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    }
+
+    let currentReportMonth = localMonthKey();
+    let currentExpensesMonth = currentReportMonth;
+    let currentCardsMonth = currentReportMonth;
     let currentAttendanceHalfFilter = 'FIRST_HALF';
     let currentExpenseReportFilter = 'ALL';
     let rawAttendanceLogs = [];
@@ -1541,6 +1736,8 @@
       if (rExp) rExp.value = currentReportMonth;
       const rCards = document.getElementById('report-cards-month-input');
       if (rCards) rCards.value = currentReportMonth;
+      // Start the attendance toggle on the half of the month we're in, with matching button styles
+      setAttendanceHalfFilter(new Date().getDate() <= 15 ? 'FIRST_HALF' : 'SECOND_HALF');
 
       if (db) {
         try {
@@ -1632,38 +1829,99 @@
         document.getElementById('crew-role-badge').textContent = currentActiveCrew.designation || currentActiveCrew.role;
         document.getElementById('crew-avatar').textContent = currentActiveCrew.name.charAt(0);
 
-        if (db) {
-          try {
-            await db.from('time_logs').insert([{
-              crew_name: currentActiveCrew.name,
-              action: 'clock_in'
-            }]);
-          } catch (e) {}
-        }
-
         document.getElementById('gate-lockscreen').style.display = 'none';
         goToView('view-hub');
+
+        // First login of the day for this person → Start-your-day screen (time in, optionally open the store)
+        if (!(await hasTimedInToday(currentActiveCrew.name))) openStartDayModal();
       } else {
         document.getElementById('gate-pin-error').textContent = "Incorrect PIN, try again";
         setTimeout(clearGatePin, 500);
       }
     }
 
-    async function promptSwitchShift() {
-      if (confirm(`Lock station for ${currentActiveCrew ? currentActiveCrew.name : 'Crew'}?`)) {
-        if (db && currentActiveCrew) {
-          try {
-            await db.from('time_logs').insert([{
-              crew_name: currentActiveCrew.name,
-              action: 'clock_out'
-            }]);
-          } catch (e) {}
-        }
-        currentActiveCrew = null;
-        document.getElementById('gate-crew-select').value = "";
-        document.getElementById('gate-pin-container').classList.add('hidden');
-        document.getElementById('gate-lockscreen').style.display = 'flex';
+    // ================= TIME IN / TIME OUT =================
+    function startOfTodayIso() {
+      const d = new Date(); d.setHours(0, 0, 0, 0);
+      return d.toISOString();
+    }
+
+    async function hasTimedInToday(name) {
+      try {
+        const rows = await dbWrite('Check time in', () => db.from('time_logs')
+          .select('id').eq('crew_name', name).eq('action', 'clock_in')
+          .gte('logged_at', startOfTodayIso()).limit(1));
+        return rows && rows.length > 0;
+      } catch (e) {
+        console.warn(e.message);
+        return true; // if we can't check, don't block the person with the time-in screen
       }
+    }
+
+    function openStartDayModal() {
+      document.getElementById('sd-name').textContent = currentActiveCrew ? currentActiveCrew.name : '';
+      document.getElementById('sd-error').textContent = '';
+      document.getElementById('sd-starting-cash').value = '';
+      document.getElementById('sd-fotomatk-fund').value = '';
+      hideOpeningForm();
+      document.getElementById('start-day-modal').style.display = 'flex';
+    }
+    function showOpeningForm() {
+      document.getElementById('sd-choice').classList.add('hidden');
+      document.getElementById('sd-opening-form').classList.remove('hidden');
+      setTimeout(() => document.getElementById('sd-starting-cash').focus(), 100);
+    }
+    function hideOpeningForm() {
+      document.getElementById('sd-choice').classList.remove('hidden');
+      document.getElementById('sd-opening-form').classList.add('hidden');
+    }
+
+    async function submitStartDay(isOpening) {
+      const errEl = document.getElementById('sd-error');
+      const row = { crew_name: currentActiveCrew.name, action: 'clock_in' };
+      if (isOpening) {
+        const cashRaw = document.getElementById('sd-starting-cash').value;
+        const fundRaw = document.getElementById('sd-fotomatk-fund').value;
+        if (cashRaw === '' || fundRaw === '') {
+          errEl.textContent = 'Enter both amounts (0 is fine).';
+          return;
+        }
+        row.details = { opening: true, starting_cash: parseFloat(cashRaw) || 0, fotomatk_fund: parseFloat(fundRaw) || 0 };
+      }
+      try {
+        await dbWrite('Time in', () => db.from('time_logs').insert([row]));
+      } catch (e) {
+        return showSaveError(e);
+      }
+      document.getElementById('start-day-modal').style.display = 'none';
+      const t = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      alert(isOpening ? `✓ Store opened and timed in at ${t}.` : `✓ Timed in at ${t}.`);
+    }
+
+    async function recordTimeOut() {
+      await dbWrite('Time out', () => db.from('time_logs').insert([{ crew_name: currentActiveCrew.name, action: 'clock_out' }]));
+    }
+
+    function promptSwitchShift() {
+      if (!currentActiveCrew) return;
+      document.getElementById('lock-name').textContent = currentActiveCrew.name;
+      document.getElementById('lock-modal').style.display = 'flex';
+    }
+
+    async function lockStation(endShift) {
+      if (endShift && currentActiveCrew) {
+        try {
+          await recordTimeOut();
+        } catch (e) {
+          return showSaveError(e);
+        }
+        alert(`✓ ${currentActiveCrew.name} timed out at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}. See you!`);
+      }
+      document.getElementById('lock-modal').style.display = 'none';
+      currentActiveCrew = null;
+      document.getElementById('gate-crew-select').value = "";
+      document.getElementById('gate-pin-container').classList.add('hidden');
+      document.getElementById('gate-lockscreen').style.display = 'flex';
     }
 
     // ================= ROUTING =================
@@ -1697,8 +1955,10 @@
     let activeSearchMovements = {};
     let currentPreviewSku = null;
 
-    function openImagePreviewModal(sku, imgUrl) {
-      currentPreviewSku = sku;
+    // viewOnly: hide "Update Photo" (e.g. for request photos, which aren't catalog photos)
+    function openImagePreviewModal(sku, imgUrl, viewOnly = false) {
+      currentPreviewSku = viewOnly ? null : sku;
+      document.getElementById('preview-modal-update-btn').classList.toggle('hidden', viewOnly);
       document.getElementById('preview-modal-sku').textContent = sku;
       const previewImg = document.getElementById('preview-modal-img');
       previewImg.src = imgUrl || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80';
@@ -1718,7 +1978,8 @@
     }
 
     async function runShelfHelpSearch(query) {
-      const q = (query || document.getElementById('shelf-help-search-input').value).trim();
+      // Commas and brackets would break the database search filter, so they're stripped out
+      const q = (query || document.getElementById('shelf-help-search-input').value).trim().replace(/[,()]/g, ' ').trim();
       const resultArea = document.getElementById('shelf-help-result-area');
       if (!q) {
         resultArea.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-medium border border-dashed border-bitBorder rounded-2xl">Search for an SKU or scan a label to verify inventory and movement history.</div>';
@@ -1727,7 +1988,10 @@
 
       resultArea.innerHTML = '<div class="text-center py-6 text-xs text-gray-400 font-bold">Searching inventory...</div>';
 
-      if (!db) return;
+      if (!db) {
+        resultArea.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Not connected to the database. Check the internet and reload.</div>';
+        return;
+      }
 
       try {
         // 1. Search catalog items matching term
@@ -1744,6 +2008,9 @@
       .limit(500);
 
     const [itemsRes, directMovesRes] = await Promise.all([itemsPromise, movesPromise]);
+    if (itemsRes.error || directMovesRes.error) {
+      throw new Error("Couldn't reach the database (" + (itemsRes.error || directMovesRes.error).message + ")");
+    }
 
     const catalogItems = itemsRes.data || [];
     const directMoves = directMovesRes.data || [];
@@ -1914,61 +2181,79 @@ function closeMovementHistoryModal() {
 }
 
 
+    // New items = SKUs whose first "New SKU" intake happened in the last 7 days (restocks of old items are left out;
+    // the catalog's own created date can't be used because the whole catalog was imported at once),
+    // each tagged with where its stock is right now so staff know where to look.
+    const NEW_ITEMS_DAYS = 7;
+    const LOCATION_TAGS = [
+      { loc: 'DISPLAY',      label: '✨ On Display',        cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
+      { loc: 'SHOP_STORAGE', label: '🏪 In Shop Storage',   cls: 'bg-amber-100 text-amber-900 border-amber-300' },
+      { loc: 'WERQROOM',     label: '📦 In Werqroom',       cls: 'bg-sky-100 text-sky-900 border-sky-300' },
+      { loc: 'WHITE_BIN',    label: '⚪ In White Bin',      cls: 'bg-gray-100 text-gray-700 border-gray-300' }
+    ];
+
     async function openNewArrivalsModal() {
       const modal = document.getElementById('new-arrivals-modal');
       const listContainer = document.getElementById('new-arrivals-scroll-list');
       modal.style.display = 'flex';
-      listContainer.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Scanning recent shop deliveries...</div>';
-
-      if (!db) return;
+      listContainer.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Looking for new items...</div>';
 
       try {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        const sevenDaysIso = sevenDaysAgo.toISOString();
+        const since = new Date();
+        since.setDate(since.getDate() - NEW_ITEMS_DAYS);
 
-        const { data: recentMovements } = await db.from('stock_movements')
-          .select('sku, action, pcs_moved, moved_by, created_at')
-          .eq('action', 'DELIVERED_TO_SHOP')
-          .gte('created_at', sevenDaysIso)
-          .order('created_at', { ascending: false });
+        const intakes = await dbWrite('Load new items', () => db.from('stock_movements')
+          .select('sku, created_at')
+          .eq('action', 'NEW_SKU_INTAKE')
+          .gte('created_at', since.toISOString())
+          .order('created_at', { ascending: true }));
 
-        if (!recentMovements || recentMovements.length === 0) {
-          listContainer.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs italic">No shop deliveries recorded in the past 7 days.</div>';
+        // First intake per SKU, newest first
+        const firstSeen = {};
+        (intakes || []).forEach(m => { if (!firstSeen[m.sku]) firstSeen[m.sku] = m.created_at; });
+        const newSkus = Object.keys(firstSeen).sort((a, b) => new Date(firstSeen[b]) - new Date(firstSeen[a]));
+
+        const catalogRows = newSkus.length ? await dbWrite('Load item details', () => db.from('items')
+          .select('sku, name, image_url').in('sku', newSkus)) : [];
+        const bySku = {};
+        (catalogRows || []).forEach(r => { bySku[r.sku] = r; });
+        const newItems = newSkus.map(sku => ({ sku, name: (bySku[sku] || {}).name || sku, image_url: (bySku[sku] || {}).image_url, created_at: firstSeen[sku] }));
+
+        if (newItems.length === 0) {
+          listContainer.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs italic">No new items in the past ${NEW_ITEMS_DAYS} days.</div>`;
           return;
         }
 
-        const uniqueSkus = [...new Set(recentMovements.map(m => m.sku))];
-        const { data: itemDetails } = await db.from('items').select('*').in('sku', uniqueSkus);
-        const itemMap = {};
-        (itemDetails || []).forEach(it => { itemMap[it.sku] = it; });
+        const levels = await dbWrite('Load locations', () => db.from('inventory_levels')
+          .select('sku, location, packs')
+          .in('sku', newItems.map(i => i.sku))
+          .gt('packs', 0));
+        const packsAt = {};
+        (levels || []).forEach(l => { (packsAt[l.sku] = packsAt[l.sku] || {})[l.location] = l.packs; });
 
-        listContainer.innerHTML = uniqueSkus.map(sku => {
-          const it = itemMap[sku] || { sku, name: 'Catalog Item', image_url: null };
-          const deliveries = recentMovements.filter(m => m.sku === sku);
-          const totalDeliveredPacks = deliveries.length;
-          const latest = deliveries[0];
-          const d = new Date(latest.created_at);
-          const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-          const thumbSrc = (it.image_url && typeof it.image_url === 'string' && it.image_url.startsWith('http')) 
-  ? it.image_url 
-  : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+        listContainer.innerHTML = newItems.map(it => {
+          const sku = it.sku;
+          const added = new Date(it.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const thumbSrc = (it.image_url && typeof it.image_url === 'string' && it.image_url.startsWith('http'))
+            ? it.image_url
+            : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+          const here = packsAt[sku] || {};
+          const tags = LOCATION_TAGS.filter(t => here[t.loc] > 0)
+            .map(t => `<span class="inline-block px-1.5 py-0.5 rounded-md border text-[9px] font-bold ${t.cls}">${t.label} · ${here[t.loc]} pk${here[t.loc] > 1 ? 's' : ''}</span>`)
+            .join(' ') || '<span class="inline-block px-1.5 py-0.5 rounded-md border text-[9px] font-bold bg-white text-gray-500 border-gray-200">No stock yet</span>';
 
           return '<div class="p-3 bg-bitCream rounded-2xl border border-bitBorder flex items-center justify-between gap-3">' +
             '<div class="flex items-center space-x-3 min-w-0">' +
               '<img src="' + thumbSrc + '" class="w-12 h-12 rounded-xl object-cover border border-bitBorder bg-white shrink-0" alt="' + sku + '">' +
-              '<div class="min-w-0">' +
-                '<span class="font-mono font-bold text-xs text-bitWalnut block truncate">' + sku + '</span>' +
-                '<span class="text-[11px] text-gray-600 block truncate">' + (it.name || '') + '</span>' +
-                '<span class="text-[10px] text-emerald-700 font-bold">+' + totalDeliveredPacks + ' packs delivered</span>' +
+              '<div class="min-w-0 space-y-1">' +
+                '<span class="font-mono font-bold text-xs text-bitWalnut block truncate">🆕 ' + sku + '</span>' +
+                '<span class="text-[11px] text-gray-600 block truncate">' + (it.name || '') + ' · added ' + added + '</span>' +
+                '<div class="flex flex-wrap gap-1">' + tags + '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="text-right shrink-0">' +
-              '<span class="text-[10px] text-gray-400 block font-mono">' + formattedDate + '</span>' +
-              '<button type="button" onclick="closeNewArrivalsModal(); document.getElementById(\'shelf-help-search-input\').value = \'' + sku + '\'; runShelfHelpSearch(\'' + sku + '\');" class="mt-1 px-2.5 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg">' +
-                'Check Stock' +
-              '</button>' +
-            '</div>' +
+            '<button type="button" onclick="closeNewArrivalsModal(); document.getElementById(\'shelf-help-search-input\').value = \'' + sku + '\'; runShelfHelpSearch(\'' + sku + '\');" class="shrink-0 px-2.5 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg">' +
+              'Check Stock' +
+            '</button>' +
           '</div>';
         }).join("");
 
@@ -2153,9 +2438,15 @@ function triggerCatalogPhotoCapture(sku) {
         const publicUrl = urlData.publicUrl;
 
         // 3. Save URL directly to items table in Supabase
-        await db.from('items')
+        const updated = await dbWrite('Link photo to SKU', () => db.from('items')
           .update({ image_url: publicUrl })
-          .eq('sku', sku);
+          .eq('sku', sku)
+          .select('sku'));
+        if (!updated || updated.length === 0) {
+          alert(`⚠️ Photo uploaded, but ${sku} is not in the catalog yet, so it could not be linked. Create it in QR Builder first.`);
+          if (thumbEl) thumbEl.style.opacity = '1';
+          return;
+        }
 
         // 4. Update UI instantly across all views
         if (thumbEl) {
@@ -2207,16 +2498,9 @@ function triggerCatalogPhotoCapture(sku) {
     });
 
     function tallyAuditCode(code) {
-      const isPartial = code.toUpperCase().includes('-P');
-      let cleanSku = code;
-      let count = 10;
-
-      if (isPartial) {
-        const parts = code.split(/-P/i);
-        cleanSku = parts[0];
-        const parsedPcs = parseInt(parts[1]);
-        count = !isNaN(parsedPcs) ? parsedPcs : 5;
-      }
+      const parsed = parseScannedCode(code);
+      const cleanSku = parsed.sku;
+      const count = parsed.pcs;
 
       if (!liveAuditScans[cleanSku]) {
         liveAuditScans[cleanSku] = 0;
@@ -2242,15 +2526,15 @@ function triggerCatalogPhotoCapture(sku) {
         return;
       }
 
-      if (db) {
-        try {
-          await db.from('inventory_audits').insert([{
-            audited_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
-            total_scanned_units: totalScanned,
-            discrepancies_count: Object.keys(liveAuditScans).length,
-            audit_summary: liveAuditScans
-          }]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save audit', () => db.from('inventory_audits').insert([{
+          audited_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+          total_scanned_units: totalScanned,
+          discrepancies_count: Object.keys(liveAuditScans).length,
+          audit_summary: liveAuditScans
+        }]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       alert(`✓ Floor Audit Complete!\nLogged ${totalScanned} physical pieces into the Stock Health Engine.`);
@@ -2273,8 +2557,50 @@ function triggerCatalogPhotoCapture(sku) {
   const notesInput = document.getElementById('freq-notes');
   if (notesInput) notesInput.value = '';
 
+  clearFreqPhoto();
   updateFreqUrgencyBadge();
 }
+
+    // ---- Optional request photo: shrunk on the phone before upload so it's quick on mobile data ----
+    let freqPhotoFile = null;
+
+    function previewFreqPhoto(input) {
+      if (!input.files || !input.files[0]) return;
+      freqPhotoFile = input.files[0];
+      document.getElementById('freq-photo-preview').src = URL.createObjectURL(freqPhotoFile);
+      document.getElementById('freq-photo-wrap').classList.remove('hidden');
+      input.value = '';
+    }
+
+    function clearFreqPhoto() {
+      freqPhotoFile = null;
+      const wrap = document.getElementById('freq-photo-wrap');
+      if (wrap) wrap.classList.add('hidden');
+    }
+
+    function shrinkImage(file, maxSide = 1280, quality = 0.8) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(b => resolve(b || file), 'image/jpeg', quality);
+        };
+        img.onerror = () => resolve(file); // if it can't be read as an image, upload as-is
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    async function uploadRequestPhoto(file) {
+      const blob = await shrinkImage(file);
+      const path = `requests/${Date.now()}_${Math.random().toString(36).slice(2, 7)}.jpg`;
+      const { error } = await db.storage.from('item-photos').upload(path, blob, { contentType: 'image/jpeg' });
+      if (error) throw new Error('Photo upload: ' + error.message);
+      return db.storage.from('item-photos').getPublicUrl(path).data.publicUrl;
+    }
 
     function closeFloorRequestModal() {
       document.getElementById('floor-request-modal').style.display = 'none';
@@ -2319,19 +2645,21 @@ function triggerCatalogPhotoCapture(sku) {
 
       const urgencyTag = qty === 0 ? 'NEEDED_ASAP' : (qty <= 20 ? 'NEEDED_IN_1_WEEK' : 'NEEDED_IN_2_WEEKS');
 
-      if (db) {
-        try {
-          await db.from('requests').insert([{
-            request_type: currentFreqType,
-            item_sku_or_code: name,
-            item_name: name,
-            qty_requested: qty,
-            urgency: urgencyTag,
-            reason: notes || (qty === 0 ? "Current Count: 0 (Verified Not Found)" : `Current Count: ${qty} pcs`),
-            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
-            status: 'PENDING'
-          }]);
-        } catch (e) {}
+      try {
+        const photoUrl = freqPhotoFile ? await uploadRequestPhoto(freqPhotoFile) : null;
+        await dbWrite('Save request', () => db.from('requests').insert([{
+          request_type: currentFreqType,
+          item_sku_or_code: name,
+          item_name: name,
+          qty_requested: qty,
+          urgency: urgencyTag,
+          reason: notes || (qty === 0 ? "Current Count: 0 (Verified Not Found)" : `Current Count: ${qty} pcs`),
+          requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+          status: 'PENDING',
+          photo_url: photoUrl
+        }]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       alert(`✓ Request for [${name}] filed under urgency: ${urgencyTag.replace(/_/g, ' ')}!`);
@@ -2411,7 +2739,7 @@ function triggerCatalogPhotoCapture(sku) {
             <div class="flex items-center justify-between text-[11px] text-gray-600 font-medium">
               <span>Current Count: <strong>${r.qty_requested || 0} pcs</strong> • By ${r.requested_by || 'Staff'}</span>
               <div class="flex space-x-1.5 shrink-0">
-                <button type="button" onclick="resolveFloorRequest('${r.id}', 'APPROVED')" class="px-2.5 py-1 bg-bitGreen text-white font-bold text-[10px] rounded-lg hover:bg-emerald-700 cursor-pointer">
+                <button type="button" onclick="resolveFloorRequest('${r.id}', 'APPROVED')" class="px-2.5 py-1 bg-bitGreen text-bitWalnut font-bold text-[10px] rounded-lg hover:bg-bitGreenDark cursor-pointer">
                   ✓ Accept
                 </button>
                 <button type="button" onclick="resolveFloorRequest('${r.id}', 'REJECTED')" class="px-2 py-1 bg-gray-200 text-gray-700 font-bold text-[10px] rounded-lg hover:bg-red-100 hover:text-red-700 cursor-pointer">
@@ -2420,6 +2748,7 @@ function triggerCatalogPhotoCapture(sku) {
               </div>
             </div>
             ${r.reason ? `<span class="text-[10px] text-gray-400 italic block">"${r.reason}"</span>` : ''}
+            ${r.photo_url ? `<img src="${r.photo_url}" onclick="openImagePreviewModal('${(r.item_name || 'Request').replace(/'/g, '')}', '${r.photo_url}', true)" class="w-20 h-20 object-cover rounded-xl border border-bitBorder cursor-pointer" alt="Request photo">` : ''}
           </div>
         `;
       }).join('');
@@ -2431,13 +2760,13 @@ function triggerCatalogPhotoCapture(sku) {
         note = prompt("Enter brief reason for rejecting request:") || "Budget limit / Not needed";
       }
 
-      if (db) {
-        try {
-          await db.from('requests').update({
-            status: action,
-            rejection_reason: note || null
-          }).eq('id', id);
-        } catch (e) {}
+      try {
+        await dbWrite('Save request', () => db.from('requests').update({
+          status: action,
+          rejection_reason: note || null
+        }).eq('id', id));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       rawPendingRequests = rawPendingRequests.filter(r => r.id !== id);
@@ -2483,22 +2812,23 @@ function triggerCatalogPhotoCapture(sku) {
         return;
       }
 
-      if (db) {
-        try {
-          await db.from('requests').insert([{
-            request_type: 'SUPPLY_CONSUMABLE',
-            item_sku_or_code: name,
-            item_name: name,
-            qty_requested: qty,
-            payment_source: 'petty_cash',
-            delivery_fee: dfee,
-            merchant_name: merchant,
-            receipt_no: receiptNo,
-            reason: `Purchased under ${cat} (₱${amt.toFixed(2)} + ₱${dfee.toFixed(2)} fee)`,
-            status: 'PURCHASED',
-            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-          }]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save expense', () => db.from('requests').insert([{
+          request_type: 'SUPPLY_CONSUMABLE',
+          item_sku_or_code: name,
+          item_name: name,
+          qty_requested: qty,
+          payment_source: 'petty_cash',
+          total_amount: amt,
+          delivery_fee: dfee,
+          merchant_name: merchant,
+          receipt_no: receiptNo,
+          reason: `Purchased under ${cat} (₱${amt.toFixed(2)} + ₱${dfee.toFixed(2)} fee)`,
+          status: 'PURCHASED',
+          requested_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        }]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       alert(`✓ Recorded purchase of [${name}] under ${cat} for ₱${(amt + dfee).toFixed(2)}!`);
@@ -2521,16 +2851,16 @@ function triggerCatalogPhotoCapture(sku) {
         return;
       }
 
-      if (db) {
-        try {
-          await db.from('petty_cash_requests').insert([{
-            amount_requested: amt,
-            cash_on_hand_declared: declared,
-            purpose: purpose,
-            requested_by: currentActiveCrew ? currentActiveCrew.name : 'Team Lead',
-            status: 'PENDING'
-          }]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save petty cash', () => db.from('petty_cash_requests').insert([{
+          amount_requested: amt,
+          cash_on_hand_declared: declared,
+          purpose: purpose,
+          requested_by: currentActiveCrew ? currentActiveCrew.name : 'Team Lead',
+          status: 'PENDING'
+        }]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       alert(`✓ Petty Cash Requisition for ₱${amt.toFixed(2)} submitted to Admin!`);
@@ -2566,7 +2896,7 @@ function triggerCatalogPhotoCapture(sku) {
             <span class="block text-gray-500 italic">"${p.purpose}" • by ${p.requested_by}</span>
           </div>
           <div class="flex space-x-2 pt-1">
-            <button type="button" onclick="resolvePettyRequisition('${p.id}', 'APPROVED')" class="flex-1 py-1.5 bg-bitGreen text-white font-bold text-xs rounded-xl cursor-pointer">
+            <button type="button" onclick="resolvePettyRequisition('${p.id}', 'APPROVED')" class="flex-1 py-1.5 bg-bitGreen text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
               ✓ Approve Fund
             </button>
             <button type="button" onclick="resolvePettyRequisition('${p.id}', 'REJECTED')" class="py-1.5 px-3 bg-gray-200 text-gray-700 font-bold text-xs rounded-xl cursor-pointer">
@@ -2578,13 +2908,13 @@ function triggerCatalogPhotoCapture(sku) {
     }
 
     async function resolvePettyRequisition(id, action) {
-      if (db) {
-        try {
-          await db.from('petty_cash_requests').update({
-            status: action,
-            reviewed_by: currentActiveCrew ? currentActiveCrew.name : 'Admin'
-          }).eq('id', id);
-        } catch (e) {}
+      try {
+        await dbWrite('Save petty cash', () => db.from('petty_cash_requests').update({
+          status: action,
+          reviewed_by: currentActiveCrew ? currentActiveCrew.name : 'Admin'
+        }).eq('id', id));
+      } catch (e) {
+        return showSaveError(e);
       }
       alert(`Fund Requisition marked ${action}!`);
       loadPettyCashReconcileDesk();
@@ -2659,10 +2989,10 @@ function triggerCatalogPhotoCapture(sku) {
         logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
       };
 
-      if (db) {
-        try {
-          await db.from('card_transactions').insert([payload]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save card issue', () => db.from('card_transactions').insert([payload]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       alert(`✓ Card issue record logged for ${name} (₱${amount.toFixed(2)})!`);
@@ -2733,7 +3063,10 @@ function triggerCatalogPhotoCapture(sku) {
       if (subTab === 'cards') loadCardDisputesReport();
       if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
       if (subTab === 'expenses') loadExpensesReport();
-      if (subTab === 'attendance') loadAttendanceReport();
+      if (subTab === 'attendance') {
+        document.getElementById('btn-export-attendance').classList.toggle('hidden', !canDownloadAttendance());
+        loadAttendanceReport();
+      }
     }
 
     function onReportMonthChange() {
@@ -2791,7 +3124,7 @@ function triggerCatalogPhotoCapture(sku) {
       const [selYear, selMonth] = currentReportMonth.split('-').map(Number);
 
       const filtered = rawAttendanceLogs.filter(l => {
-        const d = new Date(l.created_at);
+        const d = new Date(l.logged_at || l.created_at);
         if (d.getFullYear() !== selYear || (d.getMonth() + 1) !== selMonth) return false;
         const day = d.getDate();
         if (currentAttendanceHalfFilter === 'FIRST_HALF') return day <= 15;
@@ -2808,7 +3141,7 @@ function triggerCatalogPhotoCapture(sku) {
       const dailyMap = {};
       filtered.forEach(log => {
         const staff = log.crew_name || log.user_name || 'Staff';
-        const dt = new Date(log.created_at);
+        const dt = new Date(log.logged_at || log.created_at);
         const dateKey = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const key = `${staff}__${dateKey}`;
 
@@ -2862,7 +3195,14 @@ function triggerCatalogPhotoCapture(sku) {
       }).join('');
     }
 
+    // Only admin and payroll may download attendance
+    function canDownloadAttendance() {
+      const role = (currentActiveCrew && currentActiveCrew.role || '').toLowerCase();
+      return role === 'admin' || role === 'payroll';
+    }
+
     function exportAttendanceCSV() {
+      if (!canDownloadAttendance()) return alert("Only Admin and Payroll can download attendance.");
       if (calculatedShifts.length === 0) return alert("No logs in this cycle to export.");
 
       let csv = "Staff,Date,Clock In,Clock Out,Elapsed Hours\n";
@@ -2888,6 +3228,26 @@ function triggerCatalogPhotoCapture(sku) {
       renderExpensesReport();
     }
 
+    function onExpensesMonthChange() {
+      const el = document.getElementById('report-expenses-month-input');
+      if (el && el.value) currentExpensesMonth = el.value;
+      renderExpensesReport();
+    }
+
+    function onCardsMonthChange() {
+      const el = document.getElementById('report-cards-month-input');
+      if (el && el.value) currentCardsMonth = el.value;
+      renderCardDisputesReport();
+    }
+
+    function expensesForSelectedMonth() {
+      return rawReportExpenses.filter(e => localMonthKey(e.created_at) === currentExpensesMonth);
+    }
+
+    function cardsForSelectedMonth() {
+      return rawReportCards.filter(c => localMonthKey(c.created_at) === currentCardsMonth);
+    }
+
     async function loadExpensesReport() {
       if (db) {
         try {
@@ -2901,23 +3261,20 @@ function triggerCatalogPhotoCapture(sku) {
     function renderExpensesReport() {
       const container = document.getElementById('expenses-report-list');
       
-      let filtered = rawReportExpenses.filter(e => {
-        const itemMonth = new Date(e.created_at).toISOString().slice(0, 7);
-        return itemMonth === currentReportMonth;
-      });
+      let filtered = expensesForSelectedMonth();
 
       if (currentExpenseReportFilter === 'WITH_OR') filtered = filtered.filter(e => !!e.receipt_no);
       if (currentExpenseReportFilter === 'NO_OR') filtered = filtered.filter(e => !e.receipt_no);
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No expenses for ${currentReportMonth}.</div>`;
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No expenses for ${currentExpensesMonth}.</div>`;
         return;
       }
 
       container.innerHTML = filtered.map(e => `
         <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
           <div>
-            <span class="font-bold text-bitWalnut block">${e.item_name} • ₱${parseFloat(e.delivery_fee ? (e.delivery_fee + 100) : 100).toFixed(2)}</span>
+            <span class="font-bold text-bitWalnut block">${e.item_name} • ${e.total_amount != null ? '₱' + (Number(e.total_amount) + Number(e.delivery_fee || 0)).toFixed(2) : 'amount not recorded'}</span>
             <span class="text-[10px] text-gray-500 font-medium block">${e.merchant_name || 'Store'} • OR: ${e.receipt_no || 'None'}</span>
           </div>
           <span class="text-[10px] text-gray-400 font-bold">${new Date(e.created_at).toLocaleDateString()}</span>
@@ -2926,12 +3283,14 @@ function triggerCatalogPhotoCapture(sku) {
     }
 
     function exportExpensesCSV() {
-      if (rawReportExpenses.length === 0) return alert("No expenses to export.");
-      let csv = "Item,Merchant,Invoice No,Delivery Fee,Date\n";
-      rawReportExpenses.forEach(e => {
-        csv += `"${e.item_name}","${e.merchant_name || ''}","${e.receipt_no || ''}","${e.delivery_fee || 0}","${e.created_at}"\n`;
+      const rows = expensesForSelectedMonth();
+      if (rows.length === 0) return alert(`No expenses in ${currentExpensesMonth} to export.`);
+      let csv = "Date,Item,Qty,Amount,Delivery Fee,Total,Merchant,Invoice / OR No,Logged By\n";
+      rows.forEach(e => {
+        const amt = Number(e.total_amount || 0), fee = Number(e.delivery_fee || 0);
+        csv += [new Date(e.created_at).toLocaleDateString(), e.item_name, e.qty_requested, amt.toFixed(2), fee.toFixed(2), (amt + fee).toFixed(2), e.merchant_name, e.receipt_no, e.requested_by].map(csvCell).join(',') + "\n";
       });
-      downloadBlob(csv, `Expenses_${currentReportMonth}_BIR_2307.csv`, "text/csv");
+      downloadBlob(csv, `Bitbit_Expenses_${currentExpensesMonth}.csv`, "text/csv");
     }
 
     async function loadCardDisputesReport() {
@@ -2943,13 +3302,15 @@ function triggerCatalogPhotoCapture(sku) {
         } catch (e) {}
       }
 
-      let filtered = rawReportCards.filter(c => {
-        const cardMonth = new Date(c.created_at).toISOString().slice(0, 7);
-        return cardMonth === currentReportMonth;
-      });
+      renderCardDisputesReport();
+    }
+
+    function renderCardDisputesReport() {
+      const container = document.getElementById('cards-report-list');
+      const filtered = cardsForSelectedMonth();
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No card disputes for ${currentReportMonth}.</div>`;
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No card disputes for ${currentCardsMonth}.</div>`;
         return;
       }
 
@@ -2970,12 +3331,13 @@ function triggerCatalogPhotoCapture(sku) {
     }
 
     function exportCardLedgerCSV() {
-      if (rawReportCards.length === 0) return alert("No card records to export.");
-      let csv = "Customer Name,Contact Info,Amount,Status,Masked Card,Reason,Date\n";
-      rawReportCards.forEach(c => {
-        csv += `"${c.customer_name}","${c.contact_info}","${c.amount}","${c.status}","${c.masked_card || ''}","${c.issue_reason || ''}","${c.created_at}"\n`;
+      const rows = cardsForSelectedMonth();
+      if (rows.length === 0) return alert(`No card records in ${currentCardsMonth} to export.`);
+      let csv = "Date,Customer Name,Contact Info,Amount,Status,Masked Card,Reason,Logged By\n";
+      rows.forEach(c => {
+        csv += [new Date(c.created_at).toLocaleString(), c.customer_name, c.contact_info, c.amount, c.status, c.masked_card, c.issue_reason, c.logged_by].map(csvCell).join(',') + "\n";
       });
-      downloadBlob(csv, `Card_Disputes_${currentReportMonth}.csv`, "text/csv");
+      downloadBlob(csv, `Bitbit_Card_Issues_${currentCardsMonth}.csv`, "text/csv");
     }
 
     let currentSelectedAudit = null;
@@ -3052,7 +3414,7 @@ function triggerCatalogPhotoCapture(sku) {
           listContainer.innerHTML = `
             <div class="text-center py-8 text-xs text-gray-400 space-y-2">
               <p>No floor audits completed yet.</p>
-              <button type="button" onclick="closeAuditSelectModal(); startFloorAuditMode();" class="px-3 py-1.5 bg-bitGreen text-white font-bold text-xs rounded-xl cursor-pointer">
+              <button type="button" onclick="closeAuditSelectModal(); startFloorAuditMode();" class="px-3 py-1.5 bg-bitGreen text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
                 ⚡ Start First Audit
               </button>
             </div>`;
@@ -3061,13 +3423,13 @@ function triggerCatalogPhotoCapture(sku) {
 
         // Sort defensively using whatever timestamp/date column exists, or fallback to 0
         auditHistoryCache.sort((a, b) => {
-          const timeA = new Date(a.created_at || a.audited_at || a.date || a.timestamp || 0).getTime();
-          const timeB = new Date(b.created_at || b.audited_at || b.date || b.timestamp || 0).getTime();
+          const timeA = new Date(a.audit_date || a.created_at || a.audited_at || a.date || a.timestamp || 0).getTime();
+          const timeB = new Date(b.audit_date || b.created_at || b.audited_at || b.date || b.timestamp || 0).getTime();
           return timeB - timeA;
         });
 
         listContainer.innerHTML = auditHistoryCache.map(a => {
-          const rawDate = a.created_at || a.audited_at || a.date || a.timestamp;
+          const rawDate = a.audit_date || a.created_at || a.audited_at || a.date || a.timestamp;
           const dt = rawDate ? new Date(rawDate) : new Date();
           const dateOnly = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -3105,7 +3467,7 @@ function triggerCatalogPhotoCapture(sku) {
       document.getElementById('weekly-health-placeholder').classList.add('hidden');
       document.getElementById('weekly-health-content').classList.remove('hidden');
 
-      const dt = new Date(currentSelectedAudit.created_at);
+      const dt = new Date(currentSelectedAudit.audit_date || currentSelectedAudit.created_at);
       const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
       document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
 
@@ -3132,7 +3494,7 @@ function triggerCatalogPhotoCapture(sku) {
     function copyWeeklyHealthReport() {
       if (!currentSelectedAudit) return alert("Please select an audit first.");
 
-      const dt = new Date(currentSelectedAudit.created_at);
+      const dt = new Date(currentSelectedAudit.audit_date || currentSelectedAudit.created_at);
       const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
       const monthCycle = dt.toISOString().slice(0, 7);
       const totalUnits = currentSelectedAudit.total_scanned_units || 0;
@@ -3259,30 +3621,27 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         return;
       }
 
-      if (db) {
-        try {
-          await db.from('stock_movements').insert([{
-            sku: sourceSku,
-            action: 'REPURPOSED_FROM_WHITE_BIN',
-            bag_type: 'STANDARD',
-            pcs_moved: qty * 10,
-            source_location: 'WHITE_BIN',
-            dest_location: 'DISASSEMBLED_PRODUCTION',
-            pull_out_reason: reason,
-            moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-          }]);
-
-          await db.from('parcels').update({ status: 'REPURPOSED' }).eq('waybill', sourceSku);
-        } catch (e) {}
+      const parsedSource = parseScannedCode(sourceSku);
+      try {
+        await dbWrite('Save repurpose', () => db.from('stock_movements').insert([{
+          sku: parsedSource.sku,
+          action: 'REPURPOSED_FROM_WHITE_BIN',
+          bag_type: parsedSource.isPartial ? 'PARTIAL' : 'STANDARD',
+          pcs_moved: parsedSource.isPartial ? parsedSource.pcs : qty * parsedSource.pcs,
+          source_location: 'WHITE_BIN',
+          dest_location: 'DISASSEMBLED_PRODUCTION',
+          pull_out_reason: reason,
+          moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        }]));
+        await dbWrite('Update parcel', () => db.from('parcels').update({ status: 'REPURPOSED' }).eq('waybill', sourceSku));
+      } catch (e) {
+        return showSaveError(e);
       }
 
-      const whiteEl = document.getElementById('whitebin-count');
-      const currentBin = parseInt(whiteEl.textContent) || 0;
-      whiteEl.textContent = Math.max(0, currentBin - qty);
-      document.getElementById('whitebin-badge-count').textContent = `${Math.max(0, currentBin - qty)} Parcels`;
+      await loadWhiteBinParcels();
 
       document.getElementById('repurposed-source-badge').classList.remove('hidden');
-      document.getElementById('repurposed-source-text').textContent = `♻️ Repurposed from: ${sourceSku}`;
+      document.getElementById('repurposed-source-text').textContent = `♻️ Repurposed from: ${parsedSource.sku}`;
 
       activeIntakeWaybill = `REPURPOSE-${Date.now().toString().slice(-6)}`;
       document.getElementById('qr-waybill-tag').textContent = `Repurposed Intake`;
@@ -3324,10 +3683,10 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
       };
 
-      if (db) {
-        try {
-          await db.from('parcels').insert([parcel]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save parcel', () => db.from('parcels').insert([parcel]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       whiteBinParcels.unshift(parcel);
@@ -3338,7 +3697,6 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
       document.getElementById('lbl-content').textContent = "Attach Content Photo";
       packagePhotoData = ""; contentPhotoData = "";
       document.getElementById('whitebin-count').textContent = whiteBinParcels.length;
-      document.getElementById('whitebin-badge-count').textContent = `${whiteBinParcels.length} Parcels`;
       alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
     }
 
@@ -3358,10 +3716,10 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
       };
 
-      if (db) {
-        try {
-          await db.from('parcels').insert([parcel]);
-        } catch (e) {}
+      try {
+        await dbWrite('Save parcel', () => db.from('parcels').insert([parcel]));
+      } catch (e) {
+        return showSaveError(e);
       }
 
       activeIntakeWaybill = syntheticWaybill;
@@ -3426,6 +3784,17 @@ if (badge) {
       } catch (e) {}
     }
 
+    // Reprint mode: same SKU, just print the label again. Counts become "how many labels", nothing goes into stock.
+    function onPrintOnlyToggle() {
+      const on = document.getElementById('chk-print-only').checked;
+      document.getElementById('lbl-pack-count').textContent = on ? 'Labels to Print' : 'Pack Count';
+      document.getElementById('lbl-partial-pcs').textContent = on ? 'Partial Label Pcs' : 'Partial Pcs';
+      document.getElementById('wrap-pcs-per-pack').classList.toggle('invisible', on);
+      document.getElementById('wrap-total-pcs').classList.toggle('invisible', on);
+      document.getElementById('print-only-note').classList.toggle('hidden', !on);
+      document.getElementById('btn-save-print').textContent = on ? 'Reprint Label →' : 'Save SKU & Print Labels →';
+    }
+
     function calculateTotalPcs() {
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
       const per = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
@@ -3457,6 +3826,10 @@ if (badge) {
       const badgeInput = document.getElementById('sku-preview-badge');
       const badgeVal = badgeInput ? (badgeInput.value || badgeInput.textContent || '').trim().toUpperCase() : '';
       const sku = (badgeVal && !badgeVal.includes('______')) ? badgeVal : generateFourPartSku();
+      if (/-P\d+$/.test(sku)) {
+        alert('A SKU cannot end in "-P" + a number (e.g. -P7). That ending is reserved for partial-pack labels. Please change the identifier.');
+        return;
+      }
 
       const cat = document.getElementById('sku-cat-input').value.trim();
       const sub = document.getElementById('sku-subcat-input').value.trim();
@@ -3482,12 +3855,12 @@ if (badge) {
         image_url: currentSkuMasterPhoto || null
       };
 
-      document.getElementById('badge-batch-qty').textContent = `${packs}x full`;
+      document.getElementById('badge-single-qty').textContent = `print × ${Math.max(packs, 1)}`;
       const pillPartial = document.getElementById('pill-mode-partial');
       if (partial > 0) pillPartial.classList.remove('opacity-40', 'pointer-events-none');
       else pillPartial.classList.add('opacity-40', 'pointer-events-none');
 
-      setPrintModeSelection('BATCH');
+      setPrintModeSelection(packs > 0 || partial === 0 ? 'SINGLE' : 'PARTIAL');
       document.getElementById('print-station-modal').style.display = 'flex';
     }
 
@@ -3495,127 +3868,116 @@ if (badge) {
 
     function setPrintModeSelection(mode) {
       currentPrintMode = mode;
-      ['batch', 'single', 'partial'].forEach(m => {
+      ['single', 'partial'].forEach(m => {
         const pill = document.getElementById(`pill-mode-${m}`);
-        pill.className = (m === mode.toLowerCase())
+        const disabled = pill.classList.contains('opacity-40');
+        pill.className = ((m === mode.toLowerCase())
           ? "p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition"
-          : "p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition";
+          : "p-2 bg-white border border-bitBorderDark rounded-xl cursor-pointer block transition")
+          + (disabled ? ' opacity-40 pointer-events-none' : '');
       });
       updatePrintCardDisplay();
     }
 
+    // The exact code that goes on the label: SKU for a standard pack, SKU-P<pcs> for a partial pack
+    function currentPrintCode() {
+      if (!pendingSkuData) return '';
+      return currentPrintMode === 'PARTIAL'
+        ? `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`
+        : pendingSkuData.sku;
+    }
+
     function updatePrintCardDisplay() {
       if (!pendingSkuData) return;
-      const subLabel2Wrap = document.getElementById('sub-label-2-wrap');
-      const subLabel2Placeholder = document.getElementById('sub-label-2-placeholder');
       const subTag1 = document.getElementById('sub-tag-1');
-      let printSku = pendingSkuData.sku;
+      const printSku = currentPrintCode();
+      let copies = 1;
 
       if (currentPrintMode === 'PARTIAL') {
-        printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
-        subTag1.textContent = `🟡 Partial Pack (${pendingSkuData.partial_pcs} loose pcs)`;
-        subLabel2Wrap.classList.add('hidden');
-        subLabel2Placeholder.classList.remove('hidden');
-      } else if (currentPrintMode === 'SINGLE') {
-        subTag1.textContent = 'Standard Pack (10 pcs)';
-        subLabel2Wrap.classList.add('hidden');
-        subLabel2Placeholder.classList.remove('hidden');
+        subTag1.textContent = `🟡 Partial Pack (${pendingSkuData.partial_pcs} pcs)`;
       } else {
-        subTag1.textContent = 'Standard Pack (10 pcs)';
-        subLabel2Wrap.classList.remove('hidden');
-        subLabel2Placeholder.classList.add('hidden');
+        subTag1.textContent = `Standard Pack (${pendingSkuData.pcs_per_pack} pcs)`;
+        copies = Math.max(pendingSkuData.pack_count, 1);
       }
 
       document.getElementById('sub-sku-1').textContent = printSku;
-      document.getElementById('sub-sku-2').textContent = printSku;
+      document.getElementById('print-copy-count').textContent = `× ${copies}`;
       renderQrCode('sub-qr-1', printSku, 48);
-      if (currentPrintMode === 'BATCH') renderQrCode('sub-qr-2', printSku, 48);
     }
 
     function copyCurrentSkuToClipboard() {
       if (!pendingSkuData) return;
-      let printSku = pendingSkuData.sku;
-      if (currentPrintMode === 'PARTIAL') printSku = `${pendingSkuData.sku}-P${pendingSkuData.partial_pcs}`;
+      const printSku = currentPrintCode();
       navigator.clipboard.writeText(printSku).then(() => {
         const btnText = document.getElementById('btn-copy-label-text');
         btnText.textContent = "✓ Copied! Paste in Niimbot";
-        setTimeout(() => btnText.textContent = "Copy SKU for Niimbot App", 2000);
+        setTimeout(() => btnText.textContent = "Copy Code for Niimbot App", 2000);
       });
     }
 
+    let isCommittingLabel = false;
     async function finalizeLabelPrintAndCommit() {
-      if (!pendingSkuData) return;
-      if (db) {
-        try {
-          // 1. Check if SKU already exists in master catalog
-          const { data: existingItem } = await db
-            .from('items')
-            .select('sku')
-            .eq('sku', pendingSkuData.sku)
-            .maybeSingle();
+      if (!pendingSkuData || isCommittingLabel) return;
+      isCommittingLabel = true;
+      try {
+        // 1. Is this SKU already in the catalog?
+        const existing = await dbWrite('Check catalog', () => db
+          .from('items')
+          .select('sku, image_url')
+          .eq('sku', pendingSkuData.sku)
+          .maybeSingle());
+        const isNewSku = !existing;
+        pendingSkuData.wasNew = isNewSku;
 
-          const isNewSku = !existingItem;
-
-          // 2. Always upsert master item catalog entry safely
-        try {
-          const itemPayload = {
+        // 2. New SKU: add it to the catalog. Existing SKU: only update the photo if a new one was attached,
+        //    so a restock never wipes an existing photo or name.
+        if (isNewSku) {
+          await dbWrite('Add SKU to catalog', () => db.from('items').insert([{
             sku: pendingSkuData.sku,
             name: pendingSkuData.name || pendingSkuData.sku,
             type: pendingSkuData.type || 'BIG',
             category: pendingSkuData.category || null,
             subcategory: pendingSkuData.subcategory || null,
+            identifier: pendingSkuData.identifier || null,
             image_url: pendingSkuData.image_url || null
-          };
-
-          const { error: upsertErr } = await db.from('items').upsert(itemPayload, { onConflict: 'sku' });
-          if (upsertErr) {
-            console.warn('Items catalog upsert warning:', upsertErr.message);
-          }
-        } catch (itemErr) {
-          console.warn('Items catalog upsert bypassed:', itemErr);
+          }]));
+        } else if (pendingSkuData.image_url && pendingSkuData.image_url !== existing.image_url) {
+          await dbWrite('Update SKU photo', () => db.from('items')
+            .update({ image_url: pendingSkuData.image_url })
+            .eq('sku', pendingSkuData.sku));
         }
 
-          // 3. Log directly to stock_movements (Unified Stage 2: Intake)
-          if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {
-            const resolvedWaybill = activeIntakeWaybill || 'DIRECT';
-            const actionType = isNewSku ? 'NEW_SKU_INTAKE' : 'RESTOCK_INTAKE';
+        // 3. Record the intake into Werqroom: one movement per pack, plus one for a partial pack
+        if (!pendingSkuData.is_print_only && (pendingSkuData.pack_count > 0 || pendingSkuData.partial_pcs > 0)) {
+          const resolvedWaybill = activeIntakeWaybill || 'DIRECT';
+          const actionType = isNewSku ? 'NEW_SKU_INTAKE' : 'RESTOCK_INTAKE';
+          // Only a pulled-out bag coming back (White Bin entries stored as "<code>#<id>") leaves White Bin stock.
+          // New parcels, merchant drops and in-house crafts are fresh stock entering Werqroom.
+          const source = resolvedWaybill.includes('#') ? 'WHITE_BIN' : 'DIRECT_INTAKE';
+          const mover = currentActiveCrew ? currentActiveCrew.name : 'Staff';
 
-            // Create 1 movement entry per pack for consistent batch tracking
-            const movementRows = [];
-            for (let i = 0; i < pendingSkuData.pack_count; i++) {
-              movementRows.push({
-                sku: pendingSkuData.sku,
-                action: actionType,
-                bag_type: 'STANDARD',
-                pcs_moved: pendingSkuData.pcs_per_pack || 10,
-                source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WHITE_BIN',
-                dest_location: 'WERQROOM',
-                moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-              });
-            }
-
-            // Log partial pack if present
-            if (pendingSkuData.partial_pcs > 0) {
-              movementRows.push({
-                sku: pendingSkuData.sku,
-                action: actionType,
-                bag_type: 'PARTIAL',
-                pcs_moved: pendingSkuData.partial_pcs,
-                source_location: (resolvedWaybill === 'DIRECT') ? 'DIRECT_INTAKE' : 'WHITE_BIN',
-                dest_location: 'WERQROOM',
-                moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-              });
-            }
-
-            const { error: moveErr } = await db.from('stock_movements').insert(movementRows);
-            if (moveErr) throw moveErr;
+          const movementRows = [];
+          for (let i = 0; i < pendingSkuData.pack_count; i++) {
+            movementRows.push({
+              sku: pendingSkuData.sku, action: actionType, bag_type: 'STANDARD',
+              pcs_moved: pendingSkuData.pcs_per_pack || pcsPerPackForCategory(pendingSkuData.category),
+              source_location: source, dest_location: 'WERQROOM', moved_by: mover
+            });
           }
-        } catch (e) {
-          console.error('SKU / Intake Error:', e);
-          alert('Database Error: ' + (e.message || JSON.stringify(e)));
-          return;
+          if (pendingSkuData.partial_pcs > 0) {
+            movementRows.push({
+              sku: pendingSkuData.sku, action: actionType, bag_type: 'PARTIAL',
+              pcs_moved: pendingSkuData.partial_pcs,
+              source_location: source, dest_location: 'WERQROOM', moved_by: mover
+            });
+          }
+          await dbWrite('Record intake', () => db.from('stock_movements').insert(movementRows));
         }
+      } catch (e) {
+        isCommittingLabel = false;
+        return showSaveError(e);
       }
+      isCommittingLabel = false;
 
       activeIntakeWaybill = "DIRECT";
       refreshGlobalStockCounters();
@@ -3623,8 +3985,10 @@ if (badge) {
       if (tag) tag.textContent = "Direct Intake";
 
       alert(pendingSkuData.is_print_only 
-        ? `✓ SKU [${pendingSkuData.sku}] created! (Print-Only / No stock added).` 
-        : `✓ Logged ${pendingSkuData.pack_count} pack(s) of [${pendingSkuData.sku}] directly into Werqroom stock!`);
+        ? (pendingSkuData.wasNew
+            ? `✓ [${pendingSkuData.sku}] added to the catalog and its label is ready. No stock was added.`
+            : `✓ Label reprinted for [${pendingSkuData.sku}]. No stock was added.`)
+        : `✓ Logged ${pendingSkuData.pack_count} pack(s) of [${pendingSkuData.sku}] into Werqroom stock!`);
       closePrintStation();
     }
 async function refreshGlobalStockCounters() {
@@ -3846,7 +4210,6 @@ async function refreshGlobalStockCounters() {
               <div class="min-w-0">
                 <span class="font-mono font-bold text-bitWalnut block truncate">${item.sku}</span>
                 <span class="text-[10px] text-gray-500 font-medium block truncate">${item.name || 'Catalog Item'}</span>
-                <span class="text-[10px] text-bitWalnut font-bold block mt-0.5">${packCount * 10} loose pcs</span>
               </div>
             </div>
             <!-- CLEAN SINGLE BADGE (NO DUPLICATE PILL) -->
@@ -3900,7 +4263,7 @@ async function refreshGlobalStockCounters() {
               </div>
               <div class="min-w-0">
                 <div class="flex items-center space-x-1.5 flex-wrap">
-                  <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${p.waybill}</span>
+                  <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${p.waybill.split('#')[0]}</span>
                   ${isPullOut ? '<span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-bold">PULL-OUT</span>' : ''}
                 </div>
                 <span class="text-[10px] text-gray-500 font-bold block">${p.logged_by || 'Staff'}</span>
@@ -3944,16 +4307,16 @@ async function refreshGlobalStockCounters() {
         return;
       }
 
-      if (scannedCode.toLowerCase() === activeVerifyingParcel.waybill.toLowerCase()) {
+      // Pull-out entries are stored as "<bag code>#<id>", so compare against the part before "#".
+      const expectedCode = activeVerifyingParcel.waybill.split('#')[0];
+      if (scannedCode.toLowerCase() === expectedCode.toLowerCase()) {
         const waybillMatched = activeVerifyingParcel.waybill;
         activeIntakeWaybill = waybillMatched;
 
-        if (db) {
-          try {
-            await db.from('parcels').update({ status: 'PROCESSING' }).eq('waybill', waybillMatched);
-          } catch (e) {
-            console.warn('Parcels update error:', e);
-          }
+        try {
+          await dbWrite('Open parcel', () => db.from('parcels').update({ status: 'PROCESSING' }).eq('waybill', waybillMatched));
+        } catch (e) {
+          return showSaveError(e);
         }
 
         whiteBinParcels = whiteBinParcels.filter(p => p.waybill !== waybillMatched);
@@ -3993,11 +4356,11 @@ async function refreshGlobalStockCounters() {
         if (scanLabel) scanLabel.textContent = "Scan Werqroom Bag QR ➔ Shop";
       } else if (mode === 'REPLENISHED_TO_DISPLAY') {
         if (btnReplenish) btnReplenish.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        if (scanLabel) scanLabel.textContent = "Scan Shop Storage Bag ➔ Display Pegs";
+        if (scanLabel) scanLabel.textContent = "Scan Shop Storage Bag ➔ Display";
       } else if (mode === 'PULL_OUT' || mode === 'PULLED_TO_WHITE_BIN') {
         currentMovementMode = 'PULL_OUT';
         if (btnPullout) btnPullout.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitPink bg-pink-50 text-bitPink cursor-pointer";
-        if (scanLabel) scanLabel.textContent = "Scan Floor / Shop Bag ➔ White Bin";
+        if (scanLabel) scanLabel.textContent = "Scan Display Bag ➔ White Bin";
       }
       setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 100);
     }
@@ -4015,22 +4378,19 @@ async function refreshGlobalStockCounters() {
     });
 
     async function handleScannedMovement(scannedCode) {
-      const isPartial = scannedCode.toUpperCase().includes('-P');
-      let pcs = 10;
-      let cleanSku = scannedCode;
-      if (isPartial) {
-        const parts = scannedCode.split(/-P/i);
-        cleanSku = parts[0];
-        const parsedPcs = parseInt(parts[1]);
-        pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
-      }
+      const parsed = parseScannedCode(scannedCode);
+      const isPartial = parsed.isPartial;
+      const pcs = parsed.pcs;
+      const cleanSku = parsed.sku;
 
       const defaultThumb = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
       let itemThumbnail = defaultThumb;
       let itemName = cleanSku;
+      let notInCatalog = false;
       if (db) {
         try {
           const { data } = await db.from('items').select('name, image_url').eq('sku', cleanSku).maybeSingle();
+          notInCatalog = !data;
           if (data) {
             if (data.name) itemName = data.name;
             if (data.image_url && typeof data.image_url === 'string' && data.image_url.startsWith('http')) {
@@ -4042,8 +4402,8 @@ async function refreshGlobalStockCounters() {
 
       stagedBatchMovements.push({
         id: Date.now() + Math.random(), rawCode: scannedCode, sku: cleanSku, name: itemName,
-        thumbnail: itemThumbnail, isPartial: isPartial, standardPcs: isPartial ? pcs : 10,
-        actualPcs: pcs, isMismatch: false
+        thumbnail: itemThumbnail, isPartial: isPartial, standardPcs: pcs,
+        actualPcs: pcs, isMismatch: false, notInCatalog: notInCatalog
       });
       renderBatchQueue();
     }
@@ -4075,6 +4435,7 @@ async function refreshGlobalStockCounters() {
             <img src="${item.thumbnail}" class="w-10 h-10 object-cover rounded-xl border border-gray-200 shrink-0" alt="Item">
             <div class="min-w-0">
               <span class="text-xs font-mono font-bold text-bitWalnut block truncate">${item.rawCode}</span>
+              ${item.notInCatalog ? '<span class="text-[9px] font-bold text-red-700 block">⚠️ SKU not in catalog — check the label</span>' : ''}
               ${item.isMismatch ? '<span class="text-[9px] font-bold text-amber-700 block">⚠️ Mismatch count logged</span>' : ''}
             </div>
           </div>
@@ -4103,35 +4464,38 @@ async function refreshGlobalStockCounters() {
       let destLoc = 'SHOP_STORAGE';
       if (currentMovementMode === 'REPLENISHED_TO_DISPLAY') {
         srcLoc = 'SHOP_STORAGE';
-        destLoc = 'DISPLAY_PEG';
+        destLoc = 'DISPLAY';
       } else if (currentMovementMode === 'PULL_OUT' || currentMovementMode === 'PULLED_TO_WHITE_BIN') {
-        srcLoc = 'SHOP_FLOOR';
+        srcLoc = 'DISPLAY';
         destLoc = 'WHITE_BIN';
       }
 
-      if (db) {
-        try {
-          const payload = stagedBatchMovements.map(m => ({
-            sku: m.sku, action: currentMovementMode, bag_type: m.isPartial ? 'PARTIAL' : 'STANDARD',
-            pcs_moved: m.actualPcs, source_location: srcLoc, dest_location: destLoc,
-            moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-          }));
-          await db.from('stock_movements').insert(payload);
+      const btn = document.getElementById('btn-commit-batch');
+      if (btn) btn.disabled = true;
+      try {
+        const payload = stagedBatchMovements.map(m => ({
+          sku: m.sku, action: currentMovementMode, bag_type: m.isPartial ? 'PARTIAL' : 'STANDARD',
+          pcs_moved: m.actualPcs, source_location: srcLoc, dest_location: destLoc,
+          moved_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        }));
+        await dbWrite('Save movement', () => db.from('stock_movements').insert(payload));
 
-          if (currentMovementMode === 'PULL_OUT' || currentMovementMode === 'PULLED_TO_WHITE_BIN') {
-            for (const item of stagedBatchMovements) {
-              await db.from('parcels').insert([{
-                waybill: item.rawCode,
-                source_type: 'pull_out',
-                image_url: item.thumbnail,
-                status: 'IN_WHITE_BIN',
-                logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-              }]);
-            }
-          }
-        } catch (e) {
-          console.error("Batch movement insert error:", e);
+        if (currentMovementMode === 'PULL_OUT' || currentMovementMode === 'PULLED_TO_WHITE_BIN') {
+          // Each pulled bag gets its own White Bin entry. The "#..." suffix keeps entries unique
+          // when the same SKU is pulled more than once; scanning the bag still matches on the part before "#".
+          const stamp = Date.now().toString(36);
+          const parcelRows = stagedBatchMovements.map((item, i) => ({
+            waybill: `${item.rawCode}#${stamp}${i}`,
+            source_type: 'pull_out',
+            image_url: item.thumbnail,
+            status: 'IN_WHITE_BIN',
+            logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+          }));
+          await dbWrite('Add pull-outs to White Bin', () => db.from('parcels').insert(parcelRows));
         }
+      } catch (e) {
+        if (btn) btn.disabled = false;
+        return showSaveError(e);
       }
 
       const conf = getMovementBadgeConfig(currentMovementMode);
@@ -4165,7 +4529,7 @@ async function refreshGlobalStockCounters() {
 
         if (tallyEl) {
           const totalUnits = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
-          tallyEl.textContent = `${todayMovementsCache.length} log(s) • ${totalUnits} pcs total today`;
+          tallyEl.textContent = `${todayMovementsCache.length} pack movement(s) today`;
         }
 
         if (todayMovementsCache.length === 0) {
@@ -4196,114 +4560,260 @@ async function refreshGlobalStockCounters() {
       }
     }
 
-    // Executive concise summary for Telegram copying
-    function generateEodSummaryText() {
-      const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+    // ================= DAY SUMMARY (closing report + movement summary for Telegram) =================
+    const MOVE_GROUPS = [
+      { key: 'new',       label: '✨ New SKUs',               match: a => a === 'NEW_SKU_INTAKE' },
+      { key: 'restock',   label: '📦 Restocked (existing SKU)', match: a => ['RESTOCK_INTAKE', 'INTAKE_RECEIVED', 'NEW_INTAKE'].includes(a) },
+      { key: 'delivered', label: '🚚 Delivered to Shop',      match: a => a === 'DELIVERED_TO_SHOP' },
+      { key: 'display',   label: '✨ Moved to Display',       match: a => a === 'REPLENISHED_TO_DISPLAY' },
+      { key: 'pullout',   label: '🔻 Pulled out to White Bin', match: a => ['PULL_OUT', 'PULLED_TO_WHITE_BIN'].includes(a) },
+      { key: 'repurpose', label: '♻️ Repurposed',             match: a => a === 'REPURPOSED_FROM_WHITE_BIN' }
+    ];
 
-      const newSkus = todayMovementsCache.filter(m => m.action === 'NEW_SKU_INTAKE');
-      const restocks = todayMovementsCache.filter(m => m.action === 'RESTOCK_INTAKE' || m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE');
-      const delivered = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
-      const displayed = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
-      const pullouts = todayMovementsCache.filter(m => m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN');
-
-      const sumPcs = (arr) => arr.reduce((acc, curr) => acc + (curr.pcs_moved || 10), 0);
-
-      let text = `=====================================\n`;
-      text += `📦 BITBIT EOD STOCK MOVEMENT REPORT\n`;
-      text += `Date: ${dateStr}\n`;
-      text += `Total Movements: ${todayMovementsCache.length} logs | ${totalPcs} pcs\n`;
-      text += `=====================================\n\n`;
-
-      text += `1. 📥 White Bin Dropped: ${whiteBinParcels.length} parcel(s)\n`;
-      text += `2. ✨ New SKU Intake: ${newSkus.length} log(s) (${sumPcs(newSkus)} pcs)\n`;
-      text += `   📦 Restock (Existing SKU): ${restocks.length} log(s) (${sumPcs(restocks)} pcs)\n`;
-      text += `3. 🚚 Delivered to Shop: ${delivered.length} log(s) (${sumPcs(delivered)} pcs)\n`;
-      text += `4. ✨ Displayed on Pegs: ${displayed.length} log(s) (${sumPcs(displayed)} pcs)\n`;
-      text += `5. 🔻 Pull-Out to White Bin: ${pullouts.length} log(s) (${sumPcs(pullouts)} pcs)\n\n`;
-      text += `Generated at: ${new Date().toLocaleTimeString()}\n`;
-
-      return text.trim();
+    // "5 packs" or "5 packs (incl. 1 partial)" — each movement row is one bag
+    function packsLabel(rows) {
+      const partials = rows.filter(r => r.bag_type === 'PARTIAL').length;
+      const n = rows.length;
+      return `${n} pack${n === 1 ? '' : 's'}` + (partials ? ` (incl. ${partials} partial)` : '');
     }
 
-    // Detailed itemized log for .txt file downloads
-    function generateDetailedReportText() {
-      const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      const totalPcs = todayMovementsCache.reduce((sum, m) => sum + (m.pcs_moved || 0), 0);
+    let todayParcelsReceived = 0;
 
-      let text = `=====================================\n`;
-      text += `📦 BITBIT DETAILED MOVEMENT LOG\n`;
-      text += `Date: ${dateStr}\n`;
-      text += `Total Movements: ${todayMovementsCache.length} logs | ${totalPcs} total pcs\n`;
-      text += `=====================================\n\n`;
-
-      const newSkus = todayMovementsCache.filter(m => m.action === 'NEW_SKU_INTAKE');
-      const restocks = todayMovementsCache.filter(m => m.action === 'RESTOCK_INTAKE' || m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE');
-      const delivered = todayMovementsCache.filter(m => m.action === 'DELIVERED_TO_SHOP');
-      const displayed = todayMovementsCache.filter(m => m.action === 'REPLENISHED_TO_DISPLAY');
-      const pullouts = todayMovementsCache.filter(m => m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN');
-
-      if (newSkus.length > 0) {
-        text += `✨ 1. NEW SKU INTAKE (${newSkus.length} logs):\n`;
-        newSkus.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-        text += `\n`;
-      }
-
-      if (restocks.length > 0) {
-        text += `📦 2. NEW STOCK / RESTOCK (${restocks.length} logs):\n`;
-        restocks.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-        text += `\n`;
-      }
-
-      if (delivered.length > 0) {
-        text += `🚚 3. DELIVERED TO SHOP (${delivered.length} logs):\n`;
-        delivered.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-        text += `\n`;
-      }
-
-      if (displayed.length > 0) {
-        text += `✨ 4. DISPLAYED ON PEGS (${displayed.length} logs):\n`;
-        displayed.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-        text += `\n`;
-      }
-
-      if (pullouts.length > 0) {
-        text += `🔻 5. PULL-OUT TO WHITE BIN (${pullouts.length} logs):\n`;
-        pullouts.forEach(m => text += `  • ${m.sku} (${m.pcs_moved || 10} pcs) - by ${m.moved_by || 'Staff'}\n`);
-        text += `\n`;
-      }
-
-      text += `Generated at: ${new Date().toLocaleTimeString()}\n`;
-      return text.trim();
-    }
-
-    function copyTodayMovementSummary() {
-      if (!todayMovementsCache || todayMovementsCache.length === 0) {
-        alert("No movements recorded yet today to report.");
-        return;
-      }
-      const text = generateEodSummaryText();
-      navigator.clipboard.writeText(text).then(() => {
-        alert("✓ Clean EOD Summary copied! Ready to paste into Telegram.");
+    function generateMovementSummaryText() {
+      let text = `📦 STOCK MOVEMENT TODAY\n`;
+      text += `Parcels received: ${todayParcelsReceived}\n`;
+      MOVE_GROUPS.forEach(g => {
+        const rows = todayMovementsCache.filter(m => g.match(m.action));
+        if (rows.length || g.key !== 'repurpose') text += `${g.label}: ${packsLabel(rows)}\n`;
       });
+      return text.trim();
     }
 
-    function downloadTodayMovementReport() {
-      if (!todayMovementsCache || todayMovementsCache.length === 0) {
-        alert("No movements recorded yet today to download.");
+    const peso = n => '₱' + (Number(n) || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const dsVal = id => parseFloat(document.getElementById(id)?.value) || 0;
+    const DS_FIELDS = ['ds-act-cash', 'ds-act-gcash', 'ds-act-card', 'ds-sq-cash', 'ds-sq-gcash', 'ds-sq-card', 'ds-sq-other', 'ds-cash-collected', 'ds-starting-cash', 'ds-fotomatk-fund', 'ds-notes'];
+    const dsDraftKey = () => 'bitbit-day-summary-' + new Date().toISOString().slice(0, 10);
+
+    function daySummaryNumbers() {
+      const act = { cash: dsVal('ds-act-cash'), gcash: dsVal('ds-act-gcash'), card: dsVal('ds-act-card') };
+      const sq = { cash: dsVal('ds-sq-cash'), gcash: dsVal('ds-sq-gcash'), card: dsVal('ds-sq-card'), other: dsVal('ds-sq-other') };
+      act.total = act.cash + act.gcash + act.card;
+      sq.total = sq.cash + sq.gcash + sq.card + sq.other;
+      return { act, sq, diff: Math.round((act.total - sq.total) * 100) / 100 };
+    }
+
+    function diffLine(diff) {
+      if (diff > 0) return `Cash Over: ${peso(diff)}`;
+      if (diff < 0) return `Sales Shortage: ${peso(-diff)}`;
+      return 'Balanced: actual matches Square';
+    }
+
+    function updateDaySummary() {
+      const { act, sq, diff } = daySummaryNumbers();
+      document.getElementById('ds-act-total').textContent = peso(act.total);
+      document.getElementById('ds-sq-total').textContent = peso(sq.total);
+
+      const diffEl = document.getElementById('ds-diff');
+      if (act.total === 0 && sq.total === 0) {
+        diffEl.className = 'p-2.5 rounded-xl text-center text-xs font-bold bg-gray-100 text-gray-600';
+        diffEl.textContent = 'Enter both reports to compare';
+      } else {
+        diffEl.className = 'p-2.5 rounded-xl text-center text-xs font-bold ' +
+          (diff > 0 ? 'bg-amber-100 text-amber-900' : diff < 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800');
+        diffEl.textContent = diffLine(diff);
+      }
+
+      // Show the "Other" row whenever it has a value (Square lumps GCash + Card as "Other" unless expanded)
+      document.getElementById('ds-sq-other-row').classList.toggle('hidden', !document.getElementById('ds-sq-other').value);
+
+      // Keep a draft on this phone so a reload doesn't wipe what was typed
+      try {
+        const draft = {};
+        DS_FIELDS.forEach(id => { draft[id] = document.getElementById(id).value; });
+        localStorage.setItem(dsDraftKey(), JSON.stringify(draft));
+      } catch (e) {}
+    }
+
+    async function openDaySummaryModal() {
+      document.getElementById('day-summary-modal').style.display = 'flex';
+      const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      document.getElementById('ds-meta').textContent = `${dateStr} · ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}`;
+
+      try {
+        const draft = JSON.parse(localStorage.getItem(dsDraftKey()) || 'null');
+        if (draft) DS_FIELDS.forEach(id => { if (draft[id] != null) document.getElementById(id).value = draft[id]; });
+      } catch (e) {}
+      updateDaySummary();
+
+      loadTodayOpeningRef();
+
+      const preview = document.getElementById('ds-movement-preview');
+      preview.textContent = 'Loading...';
+      try {
+        await loadTodayMovements();
+        const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+        const { count, error } = await db.from('parcels')
+          .select('id', { count: 'exact', head: true })
+          .neq('source_type', 'pull_out')
+          .gte('created_at', todayStart.toISOString());
+        if (error) throw error;
+        todayParcelsReceived = count || 0;
+        preview.textContent = generateMovementSummaryText();
+      } catch (e) {
+        preview.textContent = "Couldn't load today's movements: " + (e.message || e);
+      }
+    }
+
+    function closeDaySummaryModal() {
+      document.getElementById('day-summary-modal').style.display = 'none';
+    }
+
+    function generateDaySummaryText() {
+      const { act, sq, diff } = daySummaryNumbers();
+      const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const notes = document.getElementById('ds-notes').value.trim();
+
+      let t = `🧾 BITBIT DAY SUMMARY\n${dateStr} · Closed by: ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}\n\n`;
+      t += `ACTUAL SALES\nCash: ${peso(act.cash)}\nGCash: ${peso(act.gcash)}\nCard: ${peso(act.card)}\nTotal: ${peso(act.total)}\n\n`;
+      t += `SQUARE SALES REPORT\nCash: ${peso(sq.cash)}\nGCash: ${peso(sq.gcash)}\nCard: ${peso(sq.card)}\n`;
+      if (sq.other) t += `Other (GCash + Card): ${peso(sq.other)}\n`;
+      t += `Total: ${peso(sq.total)}\n\n`;
+      t += `${diffLine(diff)}\n\n`;
+      t += `Cash collected: ${peso(dsVal('ds-cash-collected'))}\n`;
+      t += `Bitbit starting cash (next day): ${peso(dsVal('ds-starting-cash'))}\n`;
+      t += `Fotomatk change fund: ${peso(dsVal('ds-fotomatk-fund'))}\n`;
+      if (notes) t += `Notes: ${notes}\n`;
+      t += `\n${generateMovementSummaryText()}`;
+      return t;
+    }
+
+    async function loadTodayOpeningRef() {
+      const box = document.getElementById('ds-opening-ref');
+      box.classList.add('hidden');
+      try {
+        const rows = await dbWrite('Load opening', () => db.from('time_logs')
+          .select('crew_name, logged_at, details').eq('action', 'clock_in')
+          .gte('logged_at', startOfTodayIso()).not('details', 'is', null)
+          .order('logged_at', { ascending: true }).limit(1));
+        const o = rows && rows[0];
+        if (o && o.details && o.details.opening) {
+          const t = new Date(o.logged_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          box.innerHTML = `☀️ Opened by <strong>${o.crew_name}</strong> at ${t} · Starting cash <strong>${peso(o.details.starting_cash)}</strong> · Fotomatk fund <strong>${peso(o.details.fotomatk_fund)}</strong>`;
+          box.classList.remove('hidden');
+        }
+      } catch (e) { console.warn(e.message); }
+    }
+
+    // ---- Square screenshot → numbers (OCR). Labels and amounts sit far apart on Square's wide layout,
+    //      so words are paired by row position instead of reading line by line.
+// Pairs Square report labels with the amount on the same row, using OCR word positions.
+// words: [{ text, x0, y0, x1, y1 }]
+function parseSquareWords(words) {
+  const clean = w => ({ ...w, t: String(w.text || '').trim(), y: (w.y0 + w.y1) / 2, h: Math.max(1, w.y1 - w.y0) });
+  const all = words.map(clean).filter(w => w.t);
+  const amountRe = /^[P₱#F]?\s*([0-9][0-9,]*\.[0-9]{2})$/;
+  const amounts = all.filter(w => amountRe.test(w.t)).map(w => ({ ...w, value: parseFloat(w.t.match(amountRe)[1].replace(/,/g, '')) }));
+
+  function amountOnRowOf(labelWord) {
+    const tol = Math.max(labelWord.h, 12) * 0.9;
+    const sameRow = amounts.filter(a => Math.abs(a.y - labelWord.y) <= tol && a.x0 > labelWord.x0);
+    if (!sameRow.length) return null;
+    return sameRow.sort((a, b) => b.x0 - a.x0)[0].value; // right-most amount on that row
+  }
+  function find(...needles) {
+    for (const n of needles) {
+      const parts = n.split(' ');
+      for (let i = 0; i < all.length; i++) {
+        if (all[i].t.toLowerCase().replace(/[^a-z]/g, '') !== parts[0]) continue;
+        // multi-word labels: the next words on the same row must match too
+        let ok = true;
+        for (let k = 1; k < parts.length; k++) {
+          const nxt = all.find(w => w !== all[i] && Math.abs(w.y - all[i].y) <= all[i].h && w.x0 > all[i].x0 && w.t.toLowerCase().replace(/[^a-z]/g, '') === parts[k]);
+          if (!nxt) { ok = false; break; }
+        }
+        if (!ok) continue;
+        const v = amountOnRowOf(all[i]);
+        if (v != null) return v;
+      }
+    }
+    return null;
+  }
+
+  return {
+    cash: find('cash'),
+    gcash: find('gcash'),
+    card: find('card', 'credit', 'debit'),
+    other: find('other'),
+    total: find('net total', 'total payments')
+  };
+}
+
+    async function readSquareScreenshot(input) {
+      if (!input.files || !input.files[0]) return;
+      const status = document.getElementById('ds-sq-status');
+      status.className = 'text-[10px] text-gray-500 font-medium block';
+      status.textContent = '⏳ Reading the Square report...';
+      let worker = null;
+      try {
+        worker = await Tesseract.createWorker('eng');
+        await worker.setParameters({ tessedit_pageseg_mode: '11' }); // sparse text: finds labels far from their amounts
+        const { data } = await worker.recognize(input.files[0]);
+        const words = (data.words || []).map(w => ({ text: w.text, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }));
+        const r = parseSquareWords(words);
+
+        const setIf = (id, v) => { document.getElementById(id).value = v != null ? v.toFixed(2) : ''; };
+        setIf('ds-sq-cash', r.cash);
+        setIf('ds-sq-gcash', r.gcash);
+        setIf('ds-sq-card', r.card);
+        // Use "Other" only when GCash/Card weren't listed separately
+        setIf('ds-sq-other', (r.gcash == null && r.card == null) ? r.other : null);
+        updateDaySummary();
+
+        const found = (r.cash || 0) + (r.gcash || 0) + (r.card || 0) + ((r.gcash == null && r.card == null) ? (r.other || 0) : 0);
+        if (r.cash == null && r.other == null && r.gcash == null && r.card == null) {
+          status.className = 'text-[10px] text-bitPinkDark font-bold block';
+          status.textContent = "⚠️ Couldn't read the amounts. Please type them in, or try a clearer screenshot.";
+        } else if (r.total != null && Math.abs(found - r.total) > 0.009) {
+          status.className = 'text-[10px] text-bitPinkDark font-bold block';
+          status.textContent = `⚠️ Read numbers add up to ${peso(found)} but Square's total says ${peso(r.total)}. Please check them.`;
+        } else {
+          status.className = 'text-[10px] text-emerald-700 font-bold block';
+          status.textContent = '✓ Filled from screenshot' + (r.total != null ? ` (matches Square total ${peso(r.total)})` : '') + '. Please double-check.';
+        }
+      } catch (e) {
+        status.className = 'text-[10px] text-bitPinkDark font-bold block';
+        status.textContent = "⚠️ Couldn't read the screenshot (" + (e.message || e) + '). Please type the numbers in.';
+      } finally {
+        if (worker) worker.terminate();
+        input.value = '';
+      }
+    }
+
+    async function copyDaySummary(alsoTimeOut) {
+      const text = generateDaySummaryText();
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        alert(text); // clipboard blocked: show the text so it can be copied by hand
+      }
+      if (!alsoTimeOut) {
+        const lbl = document.getElementById('ds-copy-label');
+        lbl.textContent = '✓ Copied! Paste it in Telegram';
+        setTimeout(() => { lbl.textContent = '📋 Copy for Telegram & Time Out'; }, 2500);
         return;
       }
-      const text = generateDetailedReportText();
-      const dateStr = new Date().toISOString().slice(0, 10);
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Bitbit_EOD_Movement_${dateStr}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
+      if (!currentActiveCrew) return;
+      try {
+        await recordTimeOut();
+      } catch (e) {
+        return showSaveError(e);
+      }
+      try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
+      closeDaySummaryModal();
+      alert(`✓ Day Summary copied — paste it in Telegram.\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
+      lockStation(false);
     }
-    
+
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
       document.getElementById('camera-scanner-modal').style.display = 'flex';
       html5QrScanner = new Html5Qrcode("scanner-reader-view");

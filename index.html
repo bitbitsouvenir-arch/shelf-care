@@ -2676,7 +2676,8 @@ function triggerCatalogPhotoCapture(sku) {
         return;
       }
 
-      ['attendance', 'expenses', 'audit'].forEach(t => {
+      const tabs = ['attendance', 'expenses', 'audit'];
+      tabs.forEach(t => {
         const pane = document.getElementById(`rep-subtab-${t}`);
         if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);

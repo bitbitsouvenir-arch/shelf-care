@@ -3151,7 +3151,11 @@ if (badge) {
     }
 
     function openPrintStationModal() {
-      const sku = generateFourPartSku();
+      // 1. Prioritize pasted SKU from preview badge if filled, else generate from dropdowns
+      const badgeInput = document.getElementById('sku-preview-badge');
+      const badgeVal = badgeInput ? (badgeInput.value || badgeInput.textContent || '').trim().toUpperCase() : '';
+      const sku = (badgeVal && !badgeVal.includes('______')) ? badgeVal : generateFourPartSku();
+
       const cat = document.getElementById('sku-cat-input').value.trim();
       const sub = document.getElementById('sku-subcat-input').value.trim();
       const typ = document.getElementById('sku-type-input').value.trim().slice(0, 3).toUpperCase();
@@ -3162,9 +3166,18 @@ if (badge) {
       const isPrintOnly = document.getElementById('chk-print-only').checked;
 
       pendingSkuData = {
-        sku: sku, name: `${sub} ${typ} ${ident}`, category: cat, subcategory: sub, type: typ, identifier: ident,
-        pack_count: packs, pcs_per_pack: perPack, partial_pcs: partial, total_pcs: calculateTotalPcs(),
-        is_print_only: isPrintOnly, image_url: currentSkuMasterPhoto || null
+        sku: sku, 
+        name: (pendingSkuData && pendingSkuData.sku === sku && pendingSkuData.name) ? pendingSkuData.name : `${sub} ${typ} ${ident}`, 
+        category: cat, 
+        subcategory: sub, 
+        type: typ, 
+        identifier: ident,
+        pack_count: packs, 
+        pcs_per_pack: perPack, 
+        partial_pcs: partial, 
+        total_pcs: calculateTotalPcs(),
+        is_print_only: isPrintOnly, 
+        image_url: currentSkuMasterPhoto || null
       };
 
       document.getElementById('badge-batch-qty').textContent = `${packs}x full`;

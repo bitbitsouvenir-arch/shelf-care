@@ -3745,29 +3745,38 @@ async function refreshGlobalStockCounters() {
         const moves = movesRes.data || [];
 
         cachedLocationItems = items.map(it => {
-          const legacyPacks = batches.filter(b => b.sku === it.sku).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
-          const itemMoves = moves.filter(m => m.sku === it.sku);
+      const itemSku = (it.sku || '').trim().toUpperCase();
+      const legacyPacks = batches
+        .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)
+        .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
 
-          const unifiedIntakes = itemMoves.filter(m => 
-            m.action === 'NEW_SKU_INTAKE' || m.action === 'RESTOCK_INTAKE' || 
-            m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE'
-          ).length;
+      const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === itemSku);
 
-          const totalIntakes = legacyPacks + unifiedIntakes;
-          const delivered = itemMoves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-          const depleted = itemMoves.filter(m => 
-            m.action === 'REPLENISHED_TO_DISPLAY' || m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN'
-          ).length;
+      const unifiedIntakes = itemMoves.filter(m => {
+        const act = (m.action || '').toUpperCase();
+        return act.includes('INTAKE') || act.includes('NEW SKU') || act === 'NEW_SKU';
+      }).length;
 
-          const werqPacks = Math.max(0, totalIntakes - delivered);
-          const shopPacks = Math.max(0, delivered - depleted);
+      const delivered = itemMoves.filter(m => {
+        const act = (m.action || '').toUpperCase();
+        return act.includes('DELIVERED') || act.includes('SHOP');
+      }).length;
 
-          return {
-            ...it,
-            werqPacks,
-            shopPacks
-          };
-        });
+      const depleted = itemMoves.filter(m => {
+        const act = (m.action || '').toUpperCase();
+        return act.includes('DISPLAY') || act.includes('PULL');
+      }).length;
+
+      const totalIntakes = legacyPacks + unifiedIntakes;
+      const werqPacks = Math.max(0, totalIntakes - delivered);
+      const shopPacks = Math.max(0, delivered - depleted);
+
+      return {
+        ...it,
+        werqPacks,
+        shopPacks
+      };
+    });
 
         renderFilteredLocationStock();
       } catch (err) {

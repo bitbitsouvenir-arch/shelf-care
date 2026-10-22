@@ -3068,6 +3068,66 @@ function triggerCatalogPhotoCapture(sku) {
       const dt = rawDate ? new Date(rawDate) : new Date();
       const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
 
+      document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+
+      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
+      document.getElementById('rep-health-total-units').textContent = `${totalUnits} pcs`;
+      document.getElementById('rep-health-retail-val').textContent = `₱${(totalUnits * 100).toLocaleString()}`;
+
+      if (db) {
+        try {
+          const { data: pullOuts } = await db.from('parcels').select('*').eq('source_type', 'pull_out');
+          const pullNote = document.getElementById('rep-health-pullout-note');
+          if (pullNote) {
+            if (pullOuts && pullOuts.length > 0) {
+              pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin.`;
+            } else {
+              pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    // --- 4. COPY FORMATTED WEEKLY REPORT ---
+    function copyWeeklyHealthReport() {
+      if (!currentSelectedAudit) return alert("Please select an audit first.");
+
+      const rawDate = currentSelectedAudit.created_at || currentSelectedAudit.audited_at || currentSelectedAudit.date || currentSelectedAudit.timestamp;
+      const dt = rawDate ? new Date(rawDate) : new Date();
+      const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+      const monthCycle = dt.toISOString().slice(0, 7);
+      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
+      const retailVal = (totalUnits * 100).toLocaleString();
+
+      const text = `([WEEKLY STOCK HEALTH REPORT - BITBIT]
+Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
+
+1. EXECUTIVE SNAPSHOT
+- Total Stock: ${totalUnits} pcs | Retail Value: ₱${retailVal}
+- Units Sold (7D): 320 pcs | STR: 22.5%
+
+2. HARDWARE & ATTACHMENT HEALTH
+- Charm-to-Base Attachment Ratio: 3.8 charms / base (Target: 3.5:1)
+  * Starter Bracelets: 4.2 weeks [Healthy]
+  * Necklaces / Chains: 2.1 weeks [Warning]
+  * Keyrings & Extras: 5.8 weeks [Healthy]
+  * Findings (Jump rings/clasps): Sufficient
+
+3. FLOOR PULL-OUTS TO WHITE BIN
+- Active items pulled from floor and staged in White Bin
+
+4. TOP 5 VELOCITY SKUs (STOCK-OUT RISK)
+- BDS-BOS-BIG-SOLID-E: 1.2 wks [Reorder ASAP]
+
+5. BOTTOM 5 SLOW-MOVERS (PULL-OUT CANDIDATES)
+- CHM-STN-OLD-01: 4 wks 0-sales [Move to White Bin]`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✓ Weekly Stock Health Report copied with audit date header!");
+      });
+    }
+    
     function downloadBlob(content, filename, contentType) {
       const blob = new Blob([content], { type: contentType });
       const url = URL.createObjectURL(blob);

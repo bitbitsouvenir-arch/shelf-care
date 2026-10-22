@@ -2671,37 +2671,6 @@ function triggerCatalogPhotoCapture(sku) {
 
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
-      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
-        const pane = document.getElementById(`rep-subtab-${t}`);
-        if (pane) pane.classList.add('hidden');
-        const btn = document.getElementById(`nav-rep-${t}`);
-        if (btn) {
-          btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
-          const ind = btn.querySelector('.nav-rep-ind');
-          if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1";
-        }
-      });
-
-      const activePane = document.getElementById(`rep-subtab-${subTab}`);
-      if (activePane) activePane.classList.remove('hidden');
-      const activeBtn = document.getElementById(`nav-rep-${subTab}`);
-      if (activeBtn) {
-        activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
-        const ind = activeBtn.querySelector('.nav-rep-ind');
-        if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
-      }
-
-      if (subTab === 'cards') loadCardDisputesReport();
-      if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
-      if (subTab === 'expenses') loadExpensesReport();
-      if (subTab === 'attendance') loadAttendanceReport();
-    }
-```[cite: 18]
-
-Replace that exact function with:
-
-```javascript
-    function switchReportsSubTab(subTab) {
       if (subTab === 'cards') {
         goToView('view-card-logger');
         return;

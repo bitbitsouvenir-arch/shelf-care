@@ -1240,7 +1240,7 @@
   <!-- ========================================================================= -->
   <main id="view-reports" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-4">
     <!-- SUB-TAB 1: ATTENDANCE (WITH FIRST & SECOND HALF TOGGLES) -->
-    <section id="rep-subtab-attendance" class="rep-pane space-y-3">
+    <section id="rep-subtab-attendance" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
@@ -1307,7 +1307,7 @@
     </section>
 
     <!-- SUB-TAB 3: CARD POS (WITH SELECT MONTH) -->
-    <section id="rep-subtab-cards" class="rep-pane hidden space-y-3">
+    <section id="rep-subtab-cards" class="rep-pane space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
@@ -1440,21 +1440,21 @@
 
     <!-- 4-TAB BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-40 px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
-      <button type="button" onclick="switchReportsSubTab('attendance')" id="nav-rep-attendance" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
+      <button type="button" onclick="switchReportsSubTab('cards')" id="nav-rep-cards" class="flex flex-col items-center flex-1 text-bitWalnut cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
-        <span>Attendance</span>
+        <span>Cards Log</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Weekly Stocks</span>
       </button>
       <button type="button" onclick="switchReportsSubTab('expenses')" id="nav-rep-expenses" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
         <span>Expenses</span>
       </button>
-      <button type="button" onclick="switchReportsSubTab('cards')" id="nav-rep-cards" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+      <button type="button" onclick="switchReportsSubTab('attendance')" id="nav-rep-attendance" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
-        <span>Card POS</span>
-      </button>
-      <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
-        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
-        <span>Stock Health</span>
+        <span>Attendance</span>
       </button>
     </nav>
   </main>
@@ -1679,7 +1679,7 @@
         } else if (viewId === 'view-shelf-help') {
           setTimeout(() => document.getElementById('shelf-help-search-input')?.focus(), 150);
         } else if (viewId === 'view-reports') {
-          switchReportsSubTab('attendance');
+          switchReportsSubTab('cards');
         }
       }
     }
@@ -2672,21 +2672,30 @@ function triggerCatalogPhotoCapture(sku) {
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
       ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
-        document.getElementById(`rep-subtab-${t}`).classList.add('hidden');
+        const pane = document.getElementById(`rep-subtab-${t}`);
+        if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);
-        btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
-        btn.querySelector('.nav-rep-ind').className = "nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1";
+        if (btn) {
+          btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
+          const ind = btn.querySelector('.nav-rep-ind');
+          if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1";
+        }
       });
 
-      document.getElementById(`rep-subtab-${subTab}`).classList.remove('hidden');
+      const activePane = document.getElementById(`rep-subtab-${subTab}`);
+      if (activePane) activePane.classList.remove('hidden');
       const activeBtn = document.getElementById(`nav-rep-${subTab}`);
-      activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
-      activeBtn.querySelector('.nav-rep-ind').className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
+      if (activeBtn) {
+        activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
+        const ind = activeBtn.querySelector('.nav-rep-ind');
+        if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
+      }
 
-      if (subTab === 'attendance') loadAttendanceReport();
-      if (subTab === 'expenses') loadExpensesReport();
       if (subTab === 'cards') loadCardDisputesReport();
-if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }    }
+      if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
+      if (subTab === 'expenses') loadExpensesReport();
+      if (subTab === 'attendance') loadAttendanceReport();
+    }
 
     function onReportMonthChange() {
       const el = document.getElementById('report-month-input');
@@ -2694,79 +2703,139 @@ if (subTab === 'audit') { /* placeholder stays visible until audit is selected *
       loadAttendanceReport();
     }
 
-    function onExpensesMonthChange() {
-      const el = document.getElementById('report-expenses-month-input');
-      if (el) currentReportMonth = el.value;
-      loadExpensesReport();
-    }
-
-    function onCardsMonthChange() {
-      const el = document.getElementById('report-cards-month-input');
-      if (el) currentReportMonth = el.value;
-      loadCardDisputesReport();
-    }
-
     function setAttendanceHalfFilter(half) {
       currentAttendanceHalfFilter = half;
-      ['1st', '2nd', 'all'].forEach(k => {
-        const btn = document.getElementById(`btn-half-${k}`);
-        btn.className = "p-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
-      });
+      const b1 = document.getElementById('btn-half-1st');
+      const b2 = document.getElementById('btn-half-2nd');
 
-      const activeKey = half === 'FIRST_HALF' ? '1st' : (half === 'SECOND_HALF' ? '2nd' : 'all');
-      document.getElementById(`btn-half-${activeKey}`).className = "p-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+      if (b1) {
+        b1.className = (half === 'FIRST_HALF')
+          ? "py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer"
+          : "py-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
+      }
+      if (b2) {
+        b2.className = (half === 'SECOND_HALF')
+          ? "py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer"
+          : "py-2 rounded-xl border border-bitBorderDark bg-white text-gray-600 cursor-pointer";
+      }
 
       renderAttendanceReport();
     }
 
     async function loadAttendanceReport() {
+      const container = document.getElementById('attendance-report-list');
+      if (container) container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">Scanning attendance logs...</div>`;
+
       if (db) {
         try {
-          const { data } = await db.from('time_logs').select('*').order('created_at', { ascending: false });
+          // Fetch logs safely without unindexed order clause that caused the 400 Bad Request
+          const { data, error } = await db.from('time_logs').select('*');
+          if (error) throw error;
           if (data) rawAttendanceLogs = data;
-        } catch (e) {}
+        } catch (e) {
+          console.warn('Attendance query fallback:', e.message);
+          try {
+            const { data } = await db.from('time_logs').select('*');
+            if (data) rawAttendanceLogs = data;
+          } catch (err) {}
+        }
       }
       renderAttendanceReport();
     }
 
+    let calculatedShifts = [];
+
     function renderAttendanceReport() {
       const container = document.getElementById('attendance-report-list');
-      
-      let filtered = rawAttendanceLogs.filter(l => {
-        const logMonth = new Date(l.created_at).toISOString().slice(0, 7);
-        return logMonth === currentReportMonth;
+      if (!container) return;
+
+      const [selYear, selMonth] = currentReportMonth.split('-').map(Number);
+
+      const filtered = rawAttendanceLogs.filter(l => {
+        const d = new Date(l.created_at);
+        if (d.getFullYear() !== selYear || (d.getMonth() + 1) !== selMonth) return false;
+        const day = d.getDate();
+        if (currentAttendanceHalfFilter === 'FIRST_HALF') return day <= 15;
+        if (currentAttendanceHalfFilter === 'SECOND_HALF') return day > 15;
+        return true;
       });
 
-      if (currentAttendanceHalfFilter === 'FIRST_HALF') {
-        filtered = filtered.filter(l => new Date(l.created_at).getDate() <= 15);
-      } else if (currentAttendanceHalfFilter === 'SECOND_HALF') {
-        filtered = filtered.filter(l => new Date(l.created_at).getDate() > 15);
-      }
-
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No attendance logs for this cycle.</div>`;
+        container.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold border border-dashed border-bitBorder rounded-2xl">No attendance logs for this cycle.</div>`;
+        calculatedShifts = [];
         return;
       }
 
-      container.innerHTML = filtered.map(l => `
-        <div class="bg-bitCream p-2.5 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs">
-          <div>
-            <span class="font-bold text-bitWalnut block">${l.crew_name}</span>
-            <span class="text-[10px] text-gray-500 font-medium block">${new Date(l.created_at).toLocaleString()}</span>
+      const dailyMap = {};
+      filtered.forEach(log => {
+        const staff = log.crew_name || log.user_name || 'Staff';
+        const dt = new Date(log.created_at);
+        const dateKey = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const key = `${staff}__${dateKey}`;
+
+        if (!dailyMap[key]) {
+          dailyMap[key] = {
+            staff,
+            dateKey,
+            firstPunch: dt,
+            lastPunch: dt,
+            totalPunches: 1
+          };
+        } else {
+          dailyMap[key].totalPunches += 1;
+          if (dt < dailyMap[key].firstPunch) dailyMap[key].firstPunch = dt;
+          if (dt > dailyMap[key].lastPunch) dailyMap[key].lastPunch = dt;
+        }
+      });
+
+      calculatedShifts = Object.values(dailyMap).sort((a, b) => b.lastPunch - a.lastPunch);
+
+      container.innerHTML = calculatedShifts.map(s => {
+        const inTime = s.firstPunch.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const outTime = s.totalPunches > 1 
+          ? s.lastPunch.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) 
+          : '—';
+
+        let durationBadge = '';
+        if (s.totalPunches > 1) {
+          const diffMs = s.lastPunch - s.firstPunch;
+          const hrs = (diffMs / (1000 * 60 * 60)).toFixed(1);
+          durationBadge = `<span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-200 rounded-md text-[10px] font-bold">${hrs} hrs</span>`;
+        } else {
+          durationBadge = `<span class="px-2 py-0.5 bg-gray-100 text-gray-500 rounded-md text-[10px] font-bold">1 Punch</span>`;
+        }
+
+        return `
+          <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between text-xs">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-bitWalnut">${s.staff}</span>
+                <span class="text-[10px] text-gray-400 font-bold">${s.dateKey}</span>
+              </div>
+              <div class="mt-1 flex items-center space-x-3 text-[11px] font-bold">
+                <span class="text-emerald-700">IN: ${inTime}</span>
+                <span class="${s.totalPunches > 1 ? 'text-rose-700' : 'text-gray-400'}">OUT: ${outTime}</span>
+              </div>
+            </div>
+            <div>${durationBadge}</div>
           </div>
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${l.action === 'clock_in' ? 'bg-bitGreen/20 text-bitGreen' : 'bg-gray-200 text-gray-700'}">
-            ${l.action.toUpperCase()}
-          </span>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function exportAttendanceCSV() {
-      if (rawAttendanceLogs.length === 0) return alert("No logs to export.");
-      let csv = "ID,Crew Name,Action,Timestamp\n";
-      rawAttendanceLogs.forEach(l => {
-        csv += `"${l.id}","${l.crew_name}","${l.action}","${l.created_at}"\n`;
+      if (calculatedShifts.length === 0) return alert("No logs in this cycle to export.");
+
+      let csv = "Staff,Date,Clock In,Clock Out,Elapsed Hours\n";
+      calculatedShifts.forEach(s => {
+        const inTime = s.firstPunch.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const outTime = s.totalPunches > 1 ? s.lastPunch.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : "N/A";
+        const diffMs = s.lastPunch - s.firstPunch;
+        const hrs = s.totalPunches > 1 ? (diffMs / (1000 * 60 * 60)).toFixed(2) : "0.00";
+
+        csv += `"${s.staff}","${s.dateKey}","${inTime}","${outTime}","${hrs}"\n`;
       });
+
       downloadBlob(csv, `Attendance_${currentReportMonth}_${currentAttendanceHalfFilter}.csv`, "text/csv");
     }
 

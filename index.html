@@ -231,27 +231,39 @@
   <!-- BLOCK 4: SHELF CARE (COUNTERS, DROP-OFF, WHITE BIN)                       -->
   <!-- ========================================================================= -->
   <main id="view-shelf-care" class="view-screen hidden flex-1 max-w-md w-full mx-auto p-4 pb-36 space-y-4">
-    <!-- TOP COUNTERS -->
-    <div class="grid grid-cols-3 gap-2">
-      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
-        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
-        <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-bold text-bitWalnut" id="werqroom-count">0</span>
-          <span class="text-[10px] text-gray-400 font-bold">packs</span>
-        </div>
+    <!-- TOP COUNTERS WITH DIRECT LOCATION ROUTING & REFRESH -->
+    <div class="space-y-1.5">
+      <div class="flex items-center justify-between px-1">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tap card to view location inventory</span>
+        <button type="button" onclick="appSoftRefresh()" id="btn-soft-refresh" class="text-[11px] font-bold text-bitWalnut bg-white hover:bg-bitCream border border-bitBorder px-2 py-0.5 rounded-lg flex items-center gap-1 cursor-pointer shadow-xs transition active:scale-95">
+          <span id="refresh-spin-icon" class="inline-block transition-transform duration-500">🔄</span>
+          <span>Sync Live</span>
+        </button>
       </div>
-      <div class="bg-white p-3 rounded-2xl border border-bitBorder shadow-xs">
-        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop Storage</span>
-        <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-bold text-bitWalnut" id="storage-count">0</span>
-          <span class="text-[10px] text-gray-400 font-bold">packs</span>
+
+      <div class="grid grid-cols-3 gap-2">
+        <div onclick="openLocationStockView('WERQROOM')" class="bg-white hover:bg-bitCream/50 cursor-pointer transition p-3 rounded-2xl border border-bitBorder shadow-xs">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Werqroom</span>
+          <div class="mt-0.5 flex items-baseline space-x-1">
+            <span class="text-xl font-bold text-bitWalnut" id="werqroom-count">0</span>
+            <span class="text-[10px] text-gray-400 font-bold">packs</span>
+          </div>
         </div>
-      </div>
-      <div class="bg-white p-3 rounded-2xl border border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
-        <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">White Bin</span>
-        <div class="mt-0.5 flex items-baseline space-x-1">
-          <span class="text-xl font-bold text-bitWalnut" id="whitebin-count">0</span>
-          <span class="text-[10px] text-gray-400 font-bold">parcels</span>
+
+        <div onclick="openLocationStockView('SHOP_STORAGE')" class="bg-white hover:bg-bitCream/50 cursor-pointer transition p-3 rounded-2xl border border-bitBorder shadow-xs">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop Storage</span>
+          <div class="mt-0.5 flex items-baseline space-x-1">
+            <span class="text-xl font-bold text-bitWalnut" id="storage-count">0</span>
+            <span class="text-[10px] text-gray-400 font-bold">packs</span>
+          </div>
+        </div>
+
+        <div onclick="openLocationStockView('WHITE_BIN')" class="bg-white hover:bg-bitCream/50 cursor-pointer transition p-3 rounded-2xl border border-bitBorder border-l-4 border-l-bitMarigold shadow-xs">
+          <span class="text-[10px] font-bold text-bitMarigold uppercase tracking-wider">White Bin</span>
+          <div class="mt-0.5 flex items-baseline space-x-1">
+            <span class="text-xl font-bold text-bitWalnut" id="whitebin-count">0</span>
+            <span class="text-[10px] text-gray-400 font-bold">parcels</span>
+          </div>
         </div>
       </div>
     </div>
@@ -405,17 +417,44 @@
       </div>
     </section>
 
-    <!-- TAB 2: RECEIVED (WHITE BIN SORTING QUEUE) -->
+    <!-- TAB 2: LIVE LOCATION STOCKS BROWSER -->
     <section id="tab-received" class="tab-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase">Sorting Queue</span>
-            <h2 class="text-lg font-bold text-bitWalnut mt-1">White Bin Items</h2>
+            <span id="loc-browser-badge" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 uppercase">Location Inventory</span>
+            <h2 id="loc-browser-title" class="text-lg font-bold text-bitWalnut mt-1">Shop Storage</h2>
           </div>
-          <span id="whitebin-badge-count" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Parcels</span>
+          <span id="loc-browser-tally" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Packs</span>
         </div>
-        <div id="whitebin-list" class="space-y-2"></div>
+
+        <!-- 3 LOCATION SEGMENT TABS -->
+        <div class="grid grid-cols-3 gap-1.5 text-center font-bold text-xs">
+          <button type="button" onclick="switchLocationStockFilter('WERQROOM')" id="btn-loc-werq" class="py-2 rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer">
+            Werqroom
+          </button>
+          <button type="button" onclick="switchLocationStockFilter('SHOP_STORAGE')" id="btn-loc-shop" class="py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer">
+            Shop Storage
+          </button>
+          <button type="button" onclick="switchLocationStockFilter('WHITE_BIN')" id="btn-loc-white" class="py-2 rounded-xl border border-bitBorderDark bg-white text-amber-700 cursor-pointer">
+            White Bin
+          </button>
+        </div>
+
+        <!-- SEARCH BAR FOR LOCATION ITEMS -->
+        <div id="loc-search-box" class="bg-bitCream p-2 rounded-xl border border-bitBorderDark">
+          <input type="text" id="loc-filter-search" oninput="renderFilteredLocationStock()" placeholder="Filter items in this location..." class="w-full bg-transparent font-mono font-bold text-xs text-bitWalnut outline-none">
+        </div>
+
+        <!-- SCROLLABLE LIST OF ITEMS IN THIS SPECIFIC LOCATION -->
+        <div id="loc-items-list" class="space-y-2 max-h-96 overflow-y-auto pr-1">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- WHITE BIN ITEMS CONTAINER (SHOWN ONLY WHEN WHITE BIN SELECTED) -->
+        <div id="whitebin-container-wrapper" class="hidden space-y-2">
+          <div id="whitebin-list" class="space-y-2"></div>
+        </div>
       </div>
     </section>
 
@@ -622,7 +661,7 @@
       </button>
       <button type="button" onclick="switchShelfTab('tab-received')" id="nav-tab-received" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
-        <span>Received</span>
+        <span>Stocks</span>
       </button>
       <button type="button" onclick="switchShelfTab('tab-qrbuilder')" id="nav-tab-qrbuilder" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
@@ -3049,8 +3088,7 @@ Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
         }
       });
 
-      if (tabId === 'tab-received') loadWhiteBinParcels();
-      if (tabId === 'tab-qrbuilder') {
+if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter || 'SHOP_STORAGE');      if (tabId === 'tab-qrbuilder') {
         if (!activeIntakeWaybill) {
           activeIntakeWaybill = "DIRECT";
           const tag = document.getElementById('qr-waybill-tag');
@@ -3496,7 +3534,176 @@ async function refreshGlobalStockCounters() {
         console.warn('Error refreshing stock counters:', err.message);
       }
     }
-  
+  // ================= IN-APP SOFT REFRESH (NO CMD+R NEEDED) =================
+    async function appSoftRefresh() {
+      const icon = document.getElementById('refresh-spin-icon');
+      if (icon) icon.classList.add('rotate-180');
+
+      try {
+        await Promise.all([
+          refreshGlobalStockCounters(),
+          loadLocationStockData(),
+          loadWhiteBinParcels(),
+          (typeof loadTodayMovements === 'function' ? loadTodayMovements() : Promise.resolve())
+        ]);
+      } catch (e) {
+        console.warn('Soft refresh warning:', e);
+      }
+
+      if (icon) {
+        setTimeout(() => icon.classList.remove('rotate-180'), 350);
+      }
+    }
+
+    // ================= 3-LOCATION LIVE STOCKS BROWSER =================
+    let currentLocationFilter = 'SHOP_STORAGE';
+    let cachedLocationItems = [];
+
+    function openLocationStockView(location) {
+      switchShelfTab('tab-received');
+      switchLocationStockFilter(location);
+    }
+
+    function switchLocationStockFilter(loc) {
+      currentLocationFilter = loc;
+
+      const btnW = document.getElementById('btn-loc-werq');
+      const btnS = document.getElementById('btn-loc-shop');
+      const btnB = document.getElementById('btn-loc-white');
+
+      [btnW, btnS, btnB].forEach(b => {
+        if (b) b.className = "py-2 rounded-xl border border-bitBorderDark bg-white text-gray-500 cursor-pointer";
+      });
+
+      const titleEl = document.getElementById('loc-browser-title');
+      const badgeEl = document.getElementById('loc-browser-badge');
+      const searchBox = document.getElementById('loc-search-box');
+      const itemsList = document.getElementById('loc-items-list');
+      const whiteBinWrap = document.getElementById('whitebin-container-wrapper');
+
+      if (loc === 'WERQROOM') {
+        if (btnW) btnW.className = "py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        if (titleEl) titleEl.textContent = "Werqroom Stock";
+        if (badgeEl) badgeEl.textContent = "Reserve / Studio";
+        if (searchBox) searchBox.classList.remove('hidden');
+        if (itemsList) itemsList.classList.remove('hidden');
+        if (whiteBinWrap) whiteBinWrap.classList.add('hidden');
+      } else if (loc === 'SHOP_STORAGE') {
+        if (btnS) btnS.className = "py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
+        if (titleEl) titleEl.textContent = "Shop Storage";
+        if (badgeEl) badgeEl.textContent = "Backroom Floor Stock";
+        if (searchBox) searchBox.classList.remove('hidden');
+        if (itemsList) itemsList.classList.remove('hidden');
+        if (whiteBinWrap) whiteBinWrap.classList.add('hidden');
+      } else if (loc === 'WHITE_BIN') {
+        if (btnB) btnB.className = "py-2 rounded-xl border-2 border-bitWalnut bg-bitCream text-amber-900 cursor-pointer";
+        if (titleEl) titleEl.textContent = "White Bin Parcels";
+        if (badgeEl) badgeEl.textContent = "Unpack & Sorting Queue";
+        if (searchBox) searchBox.classList.add('hidden');
+        if (itemsList) itemsList.classList.add('hidden');
+        if (whiteBinWrap) whiteBinWrap.classList.remove('hidden');
+        loadWhiteBinParcels();
+        return;
+      }
+
+      loadLocationStockData();
+    }
+
+    async function loadLocationStockData() {
+      if (!db) return;
+      const listEl = document.getElementById('loc-items-list');
+      if (listEl) listEl.innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-bold">Scanning location inventory...</div>`;
+
+      try {
+        const [itemsRes, batchesRes, movesRes] = await Promise.all([
+          db.from('items').select('*').order('sku'),
+          db.from('intake_batches').select('sku, pack_count'),
+          db.from('stock_movements').select('sku, action')
+        ]);
+
+        const items = itemsRes.data || [];
+        const batches = batchesRes.data || [];
+        const moves = movesRes.data || [];
+
+        cachedLocationItems = items.map(it => {
+          const legacyPacks = batches.filter(b => b.sku === it.sku).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
+          const itemMoves = moves.filter(m => m.sku === it.sku);
+
+          const unifiedIntakes = itemMoves.filter(m => 
+            m.action === 'NEW_SKU_INTAKE' || m.action === 'RESTOCK_INTAKE' || 
+            m.action === 'INTAKE_RECEIVED' || m.action === 'NEW_INTAKE'
+          ).length;
+
+          const totalIntakes = legacyPacks + unifiedIntakes;
+          const delivered = itemMoves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
+          const depleted = itemMoves.filter(m => 
+            m.action === 'REPLENISHED_TO_DISPLAY' || m.action === 'PULL_OUT' || m.action === 'PULLED_TO_WHITE_BIN'
+          ).length;
+
+          const werqPacks = Math.max(0, totalIntakes - delivered);
+          const shopPacks = Math.max(0, delivered - depleted);
+
+          return {
+            ...it,
+            werqPacks,
+            shopPacks
+          };
+        });
+
+        renderFilteredLocationStock();
+      } catch (err) {
+        if (listEl) listEl.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Error loading stock: ${err.message}</div>`;
+      }
+    }
+
+    function renderFilteredLocationStock() {
+      const listEl = document.getElementById('loc-items-list');
+      const tallyEl = document.getElementById('loc-browser-tally');
+      const searchVal = (document.getElementById('loc-filter-search')?.value || '').trim().toLowerCase();
+
+      let activeList = cachedLocationItems.filter(item => {
+        const count = (currentLocationFilter === 'WERQROOM') ? item.werqPacks : item.shopPacks;
+        if (count <= 0) return false;
+        if (searchVal) {
+          return item.sku.toLowerCase().includes(searchVal) || (item.name && item.name.toLowerCase().includes(searchVal));
+        }
+        return true;
+      });
+
+      const totalPacks = activeList.reduce((sum, it) => sum + ((currentLocationFilter === 'WERQROOM') ? it.werqPacks : it.shopPacks), 0);
+      if (tallyEl) tallyEl.textContent = `${totalPacks} Packs`;
+
+      if (activeList.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-bold border border-dashed border-bitBorder rounded-2xl">No items currently stored in ${currentLocationFilter.replace('_', ' ')}.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = activeList.map(item => {
+        const packCount = (currentLocationFilter === 'WERQROOM') ? item.werqPacks : item.shopPacks;
+        const thumbSrc = item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+
+        return `
+          <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center space-x-2.5 min-w-0">
+              <img src="${thumbSrc}" class="w-12 h-12 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="${item.sku}">
+              <div class="min-w-0">
+                <span class="font-mono font-bold text-bitWalnut block truncate">${item.sku}</span>
+                <span class="text-[10px] text-gray-500 font-medium block truncate">${item.name || 'Catalog Item'}</span>
+                <span class="text-[10px] text-bitWalnut font-bold block mt-0.5">${packCount * 10} loose pcs</span>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="px-2.5 py-1 bg-white border border-bitBorderDark rounded-xl text-bitWalnut font-bold text-xs block">
+                ${packCount} pk${packCount > 1 ? 's' : ''}
+              </span>
+              <button type="button" onclick="goToView('view-shelf-help'); document.getElementById('shelf-help-search-input').value = '${item.sku}'; runShelfHelpSearch('${item.sku}');" class="text-[9px] text-gray-400 hover:text-bitWalnut font-bold mt-1 inline-block">
+                View SKU ➔
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
     // WHITE BIN SCAN VERIFICATION (RECEIVING PARCELS & PULL-OUTS)
     async function loadWhiteBinParcels() {
       if (db) {

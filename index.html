@@ -414,7 +414,6 @@
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <h2 id="loc-browser-title" class="text-lg font-bold text-bitWalnut">Werqroom Stock</h2>
-          </div>
           <span id="loc-browser-tally" class="px-2.5 py-1 bg-bitCream border border-bitBorderDark text-xs font-bold rounded-full">0 Packs</span>
         </div>
 
@@ -3642,14 +3641,15 @@ async function refreshGlobalStockCounters() {
 
           const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === itemSku);
 
-          const intakes = itemMoves.filter(m => {
-            const a = (m.action || '').toUpperCase();
-            return a.includes('INTAKE') || a.includes('NEW SKU') || a === 'NEW_SKU';
-          }).length;
-
           const delivered = itemMoves.filter(m => {
             const a = (m.action || '').toUpperCase();
-            return a.includes('DELIVERED') || a.includes('SHOP');
+            return a.includes('DELIVERED') || a.includes('TO_SHOP');
+          }).length;
+
+          const intakes = itemMoves.filter(m => {
+            const a = (m.action || '').toUpperCase();
+            const isDelivery = a.includes('DELIVERED') || a.includes('TO_SHOP');
+            return !isDelivery && (a.includes('INTAKE') || a.includes('NEW SKU') || a === 'NEW_SKU');
           }).length;
 
           const depleted = itemMoves.filter(m => {

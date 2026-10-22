@@ -1816,7 +1816,9 @@
         itemsWithStock.sort((a, b) => b.totalPacks - a.totalPacks);
 
         resultArea.innerHTML = itemsWithStock.map(item => {
-          const thumbSrc = item.image_url ? item.image_url : defaultThumb;
+          const thumbSrc = (item.image_url && typeof item.image_url === 'string' && item.image_url.startsWith('http')) 
+  ? item.image_url 
+  : defaultThumb;
           const stockBadgeClass = item.totalPacks > 0 ? "bg-bitGreen/20 text-bitGreen" : "bg-red-100 text-red-800";
           const stockBadgeText = item.totalPacks > 0 ? (item.totalPacks + " Full Packs in Inventory") : "0 Packs (Out of Stock)";
 
@@ -1948,7 +1950,9 @@ function closeMovementHistoryModal() {
           const latest = deliveries[0];
           const d = new Date(latest.created_at);
           const formattedDate = d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-          const thumbSrc = it.image_url || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+          const thumbSrc = (it.image_url && typeof it.image_url === 'string' && it.image_url.startsWith('http')) 
+  ? it.image_url 
+  : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
 
           return '<div class="p-3 bg-bitCream rounded-2xl border border-bitBorder flex items-center justify-between gap-3">' +
             '<div class="flex items-center space-x-3 min-w-0">' +
@@ -3825,7 +3829,9 @@ async function refreshGlobalStockCounters() {
 
       listEl.innerHTML = activeList.map(item => {
         const packCount = (currentLocationFilter === 'WERQROOM') ? (Number(item.werqPacks) || 0) : (Number(item.shopPacks) || 0);
-        const thumbSrc = item.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+        const thumbSrc = (item.image_url && typeof item.image_url === 'string' && item.image_url.startsWith('http')) 
+  ? item.image_url 
+  : 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
 
         return `
           <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-3 text-xs">
@@ -4019,14 +4025,17 @@ async function refreshGlobalStockCounters() {
         pcs = !isNaN(parsedPcs) ? parsedPcs : 5;
       }
 
-      let itemThumbnail = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+      const defaultThumb = 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80';
+      let itemThumbnail = defaultThumb;
       let itemName = cleanSku;
       if (db) {
         try {
           const { data } = await db.from('items').select('name, image_url').eq('sku', cleanSku).maybeSingle();
           if (data) {
             if (data.name) itemName = data.name;
-            if (data.image_url) itemThumbnail = data.image_url;
+            if (data.image_url && typeof data.image_url === 'string' && data.image_url.startsWith('http')) {
+              itemThumbnail = data.image_url;
+            }
           }
         } catch (e) {}
       }

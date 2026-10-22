@@ -3615,17 +3615,15 @@ async function refreshGlobalStockCounters() {
         let totalWerq = 0;
         let totalShop = 0;
 
-        const norm = (s) => (s || '').trim().toUpperCase().replace(/0/g, 'O');
-
         items.forEach(it => {
-          const itemSku = norm(it.sku);
+          const itemSku = (it.sku || '').trim().toUpperCase();
           if (!itemSku) return;
 
           const legacy = batches
-            .filter(b => norm(b.sku) === itemSku)
+            .filter(b => (b.sku || '').trim().toUpperCase() === itemSku)
             .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
 
-          const itemMoves = moves.filter(m => norm(m.sku) === itemSku);
+          const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === itemSku);
 
           const intakes = itemMoves.filter(m => {
             const a = (m.action || '').toUpperCase();
@@ -3645,6 +3643,8 @@ async function refreshGlobalStockCounters() {
           totalWerq += Math.max(0, legacy + intakes - delivered);
           totalShop += Math.max(0, delivered - depleted);
         });
+
+        
 
         const werqEl = document.getElementById('werqroom-count');
         const shopEl = document.getElementById('storage-count');

@@ -2153,10 +2153,18 @@ function triggerCatalogPhotoCapture(sku) {
           .update({ image_url: publicUrl })
           .eq('sku', sku);
 
-        // 4. Update UI instantly
+        // 4. Update UI instantly across all views
         if (thumbEl) {
           thumbEl.src = publicUrl;
           thumbEl.style.opacity = '1';
+        }
+        const locThumb = document.getElementById(`loc-thumb-${sku}`);
+        if (locThumb) {
+          locThumb.src = publicUrl;
+        }
+        const previewModalImg = document.getElementById('preview-modal-img');
+        if (previewModalImg && currentPreviewSku === sku) {
+          previewModalImg.src = publicUrl;
         }
         
         // Update local memory cache if present
@@ -3535,10 +3543,12 @@ if (badge) {
         try {
           const itemPayload = {
             sku: pendingSkuData.sku,
-            name: pendingSkuData.name || pendingSkuData.sku
+            name: pendingSkuData.name || pendingSkuData.sku,
+            type: pendingSkuData.type || 'BIG',
+            category: pendingSkuData.category || null,
+            subcategory: pendingSkuData.subcategory || null,
+            image_url: pendingSkuData.image_url || null
           };
-          if (pendingSkuData.category) itemPayload.category = pendingSkuData.category;
-          if (pendingSkuData.image_url) itemPayload.image_url = pendingSkuData.image_url;
 
           const { error: upsertErr } = await db.from('items').upsert(itemPayload, { onConflict: 'sku' });
           if (upsertErr) {
@@ -3807,20 +3817,24 @@ async function refreshGlobalStockCounters() {
         return `
           <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark flex items-center justify-between gap-3 text-xs">
             <div class="flex items-center space-x-2.5 min-w-0">
-              <img src="${thumbSrc}" class="w-12 h-12 object-cover rounded-xl border border-bitBorder bg-white shrink-0" alt="${item.sku}">
+              <!-- CLICKABLE THUMBNAIL WITH ENLARGE + DIRECT UPDATE CAMERA OVERLAY -->
+              <div class="relative shrink-0 group cursor-pointer" onclick="openImagePreviewModal('${item.sku}', '${thumbSrc}')" title="Tap to enlarge or update photo">
+                <img id="loc-thumb-${item.sku}" src="${thumbSrc}" class="w-12 h-12 object-cover rounded-xl border border-bitBorder bg-white shadow-xs" alt="${item.sku}">
+                <div class="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[11px] text-white font-bold">
+                  📷
+                </div>
+              </div>
               <div class="min-w-0">
                 <span class="font-mono font-bold text-bitWalnut block truncate">${item.sku}</span>
                 <span class="text-[10px] text-gray-500 font-medium block truncate">${item.name || 'Catalog Item'}</span>
                 <span class="text-[10px] text-bitWalnut font-bold block mt-0.5">${packCount * 10} loose pcs</span>
               </div>
             </div>
+            <!-- CLEAN SINGLE BADGE (NO DUPLICATE PILL) -->
             <div class="text-right shrink-0">
-              <span class="px-2.5 py-1 bg-white border border-bitBorderDark rounded-xl text-bitWalnut font-bold text-xs block">
+              <span class="px-2.5 py-1 bg-white border border-bitBorderDark rounded-xl text-bitWalnut font-bold text-xs block shadow-2xs">
                 ${packCount} pk${packCount > 1 ? 's' : ''}
               </span>
-              <button type="button" onclick="goToView('view-shelf-help'); document.getElementById('shelf-help-search-input').value = '${item.sku}'; runShelfHelpSearch('${item.sku}');" class="text-[9px] text-gray-400 hover:text-bitWalnut">
-                View SKU →
-              </button>
             </div>
           </div>
         `;

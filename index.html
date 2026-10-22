@@ -2696,6 +2696,40 @@ function triggerCatalogPhotoCapture(sku) {
       if (subTab === 'expenses') loadExpensesReport();
       if (subTab === 'attendance') loadAttendanceReport();
     }
+```[cite: 18]
+
+Replace that exact function with:
+
+```javascript
+    function switchReportsSubTab(subTab) {
+      if (subTab === 'cards') {
+        goToView('view-card-logger');
+        return;
+      }
+
+      ['attendance', 'expenses', 'audit'].forEach(t => {
+        const pane = document.getElementById(`rep-subtab-${t}`);
+        if (pane) pane.classList.add('hidden');
+        const btn = document.getElementById(`nav-rep-${t}`);
+        if (btn) {
+          btn.className = "flex flex-col items-center flex-1 text-gray-400 cursor-pointer";
+          const ind = btn.querySelector('.nav-rep-ind');
+          if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1";
+        }
+      });
+
+      const activePane = document.getElementById(`rep-subtab-${subTab}`);
+      if (activePane) activePane.classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-rep-${subTab}`);
+      if (activeBtn) {
+        activeBtn.className = "flex flex-col items-center flex-1 text-bitWalnut cursor-pointer";
+        const ind = activeBtn.querySelector('.nav-rep-ind');
+        if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
+      }
+
+      if (subTab === 'expenses') loadExpensesReport();
+      if (subTab === 'attendance') loadAttendanceReport();
+    }
 
     function onReportMonthChange() {
       const el = document.getElementById('report-month-input');
@@ -3003,7 +3037,8 @@ function triggerCatalogPhotoCapture(sku) {
       if (!db) return;
 
       try {
-        const { data: audits, error } = await db.from('inventory_audits').select('*').order('created_at', { ascending: false });
+        // Query without created_at order clause to avoid the missing column error
+        const { data: audits, error } = await db.from('inventory_audits').select('*');
         if (error) throw error;
 
         auditHistoryCache = audits || [];
@@ -3013,8 +3048,16 @@ function triggerCatalogPhotoCapture(sku) {
           return;
         }
 
+        // Sort defensively using whatever date column exists, or fallback to 0
+        auditHistoryCache.sort((a, b) => {
+          const timeA = new Date(a.created_at || a.audited_at || a.date || a.timestamp || 0).getTime();
+          const timeB = new Date(b.created_at || b.audited_at || b.date || b.timestamp || 0).getTime();
+          return timeB - timeA;
+        });
+
         listContainer.innerHTML = auditHistoryCache.map(a => {
-          const dt = new Date(a.created_at);
+          const rawDate = a.created_at || a.audited_at || a.date || a.timestamp;
+          const dt = rawDate ? new Date(rawDate) : new Date();
           const dateOnly = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
           const units = a.total_scanned_units || 0;
@@ -3051,66 +3094,9 @@ function triggerCatalogPhotoCapture(sku) {
       document.getElementById('weekly-health-placeholder').classList.add('hidden');
       document.getElementById('weekly-health-content').classList.remove('hidden');
 
-      const dt = new Date(currentSelectedAudit.created_at);
+      const rawDate = currentSelectedAudit.created_at || currentSelectedAudit.audited_at || currentSelectedAudit.date || currentSelectedAudit.timestamp;
+      const dt = rawDate ? new Date(rawDate) : new Date();
       const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-      document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
-
-      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
-      document.getElementById('rep-health-total-units').textContent = `${totalUnits} pcs`;
-      document.getElementById('rep-health-retail-val').textContent = `₱${(totalUnits * 100).toLocaleString()}`;
-
-      if (db) {
-        try {
-          const { data: pullOuts } = await db.from('parcels').select('*').eq('source_type', 'pull_out');
-          const pullNote = document.getElementById('rep-health-pullout-note');
-          if (pullNote) {
-            if (pullOuts && pullOuts.length > 0) {
-              pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin.`;
-            } else {
-              pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
-            }
-          }
-        } catch (e) {}
-      }
-    }
-
-    // --- 4. COPY FORMATTED WEEKLY REPORT ---
-    function copyWeeklyHealthReport() {
-      if (!currentSelectedAudit) return alert("Please select an audit first.");
-
-      const dt = new Date(currentSelectedAudit.created_at);
-      const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-      const monthCycle = dt.toISOString().slice(0, 7);
-      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
-      const retailVal = (totalUnits * 100).toLocaleString();
-
-      const text = `([WEEKLY STOCK HEALTH REPORT - BITBIT]
-Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
-
-1. EXECUTIVE SNAPSHOT
-- Total Stock: ${totalUnits} pcs | Retail Value: ₱${retailVal}
-- Units Sold (7D): 320 pcs | STR: 22.5%
-
-2. HARDWARE & ATTACHMENT HEALTH
-- Charm-to-Base Attachment Ratio: 3.8 charms / base (Target: 3.5:1)
-  * Starter Bracelets: 4.2 weeks [Healthy]
-  * Necklaces / Chains: 2.1 weeks [Warning]
-  * Keyrings & Extras: 5.8 weeks [Healthy]
-  * Findings (Jump rings/clasps): Sufficient
-
-3. FLOOR PULL-OUTS TO WHITE BIN
-- Active items pulled from floor and staged in White Bin
-
-4. TOP 5 VELOCITY SKUs (STOCK-OUT RISK)
-- BDS-BOS-BIG-SOLID-E: 1.2 wks [Reorder ASAP]
-
-5. BOTTOM 5 SLOW-MOVERS (PULL-OUT CANDIDATES)
-- CHM-STN-OLD-01: 4 wks 0-sales [Move to White Bin]`;
-
-      navigator.clipboard.writeText(text).then(() => {
-        alert("✓ Weekly Stock Health Report copied with audit date header!");
-      });
-    }
 
     function downloadBlob(content, filename, contentType) {
       const blob = new Blob([content], { type: contentType });

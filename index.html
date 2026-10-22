@@ -3603,9 +3603,9 @@ async function refreshGlobalStockCounters() {
 
         // Calculate both locations directly from catalog items
         const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('sku').limit(5000),
-          db.from('intake_batches').select('sku, pack_count').limit(10000),
-          db.from('stock_movements').select('sku, action').limit(10000)
+          db.from('items').select('sku').range(0, 4999),
+          db.from('intake_batches').select('sku, pack_count').range(0, 9999),
+          db.from('stock_movements').select('sku, action').range(0, 9999)
         ]);
 
         const items = itemsRes.data || [];
@@ -3737,9 +3737,9 @@ async function refreshGlobalStockCounters() {
 
       try {
         const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('*').order('sku').limit(5000),
-          db.from('intake_batches').select('sku, pack_count').limit(10000),
-          db.from('stock_movements').select('sku, action').limit(10000)
+          db.from('items').select('*').order('sku').range(0, 4999),
+          db.from('intake_batches').select('sku, pack_count').range(0, 9999),
+          db.from('stock_movements').select('sku, action').range(0, 9999)
         ]);
 
         const items = itemsRes.data || [];

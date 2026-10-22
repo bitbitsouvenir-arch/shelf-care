@@ -3519,16 +3519,22 @@ if (badge) {
 
           const isNewSku = !existingItem;
 
-          // 2. Always upsert master item catalog entry
-          await db.from('items').upsert([{
+          // 2. Always upsert master item catalog entry safely
+        try {
+          const itemPayload = {
             sku: pendingSkuData.sku,
-            identifier: pendingSkuData.sku,
-            name: pendingSkuData.name,
-            category: pendingSkuData.category,
-            subcategory: pendingSkuData.subcategory,
-            type: pendingSkuData.type || 'ITEM',
-            image_url: pendingSkuData.image_url
-          }]);
+            name: pendingSkuData.name || pendingSkuData.sku
+          };
+          if (pendingSkuData.category) itemPayload.category = pendingSkuData.category;
+          if (pendingSkuData.image_url) itemPayload.image_url = pendingSkuData.image_url;
+
+          const { error: upsertErr } = await db.from('items').upsert(itemPayload, { onConflict: 'sku' });
+          if (upsertErr) {
+            console.warn('Items catalog upsert warning:', upsertErr.message);
+          }
+        } catch (itemErr) {
+          console.warn('Items catalog upsert bypassed:', itemErr);
+        }
 
           // 3. Log directly to stock_movements (Unified Stage 2: Intake)
           if (!pendingSkuData.is_print_only && pendingSkuData.pack_count > 0) {

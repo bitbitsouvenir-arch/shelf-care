@@ -3588,35 +3588,55 @@ async function refreshGlobalStockCounters() {
         const [itemsRes, batchesRes, movesRes, parcelsRes] = await Promise.all([
           db.from('items').select('sku'),
           db.from('intake_batches').select('sku, pack_count'),
-          db.from('stock_movements').select('sku, action'),
+          db.from('stock_movements').select('sku, action, pack_count'),
           db.from('parcels').select('*', { count: 'exact', head: true }).eq('status', 'IN_WHITE_BIN')
         ]);
 
-        const items = itemsRes.data || [];
         const batches = batchesRes.data || [];
         const moves = movesRes.data || [];
+
+        // Collect all unique SKUs across items, batches, and movements
+        const allSkus = new Set([
+          ...(itemsRes.data || []).map(i => (i.sku || '').trim().toUpperCase()),
+          ...batches.map(b => (b.sku || '').trim().toUpperCase()),
+          ...moves.map(m => (m.sku || '').trim().toUpperCase())
+        ]);
+        allSkus.delete('');
 
         let totalWerqPacks = 0;
         let totalShopPacks = 0;
 
-        items.forEach(it => {
-          const legacyPacks = batches.filter(b => b.sku === it.sku).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
-          const itemMoves = moves.filter(m => m.sku === it.sku);
+        allSkus.forEach(sku => {
+          const legacyPacks = batches
+            .filter(b => (b.sku || '').trim().toUpperCase() === sku)
+            .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
 
-          const unifiedIntakes = itemMoves.filter(m => 
-            m.action === 'NEW_SKU_INTAKE' || 
-            m.action === 'RESTOCK_INTAKE' || 
-            m.action === 'INTAKE_RECEIVED' || 
-            m.action === 'NEW_INTAKE'
-          ).length;
+          const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === sku);
+
+          const unifiedIntakes = itemMoves
+            .filter(m => 
+              m.action === 'NEW_SKU_INTAKE' || 
+              m.action === 'RESTOCK_INTAKE' || 
+              m.action === 'INTAKE_RECEIVED' || 
+              m.action === 'NEW_INTAKE' ||
+              m.action === 'New SKU'
+            )
+            .reduce((sum, m) => sum + (Number(m.pack_count) || 1), 0);
 
           const totalIntakes = legacyPacks + unifiedIntakes;
-          const delivered = itemMoves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-          const depleted = itemMoves.filter(m => 
-            m.action === 'REPLENISHED_TO_DISPLAY' || 
-            m.action === 'PULL_OUT' || 
-            m.action === 'PULLED_TO_WHITE_BIN'
-          ).length;
+
+          const delivered = itemMoves
+            .filter(m => m.action === 'DELIVERED_TO_SHOP' || m.action === 'Delivered to Shop')
+            .reduce((sum, m) => sum + (Number(m.pack_count) || 1), 0);
+
+          const depleted = itemMoves
+            .filter(m => 
+              m.action === 'REPLENISHED_TO_DISPLAY' || 
+              m.action === 'PULL_OUT' || 
+              m.action === 'PULLED_TO_WHITE_BIN' ||
+              m.action === 'Displayed'
+            )
+            .reduce((sum, m) => sum + (Number(m.pack_count) || 1), 0);
 
           const werqPacks = Math.max(0, totalIntakes - delivered);
           const shopPacks = Math.max(0, delivered - depleted);
@@ -3639,6 +3659,7 @@ async function refreshGlobalStockCounters() {
         console.warn('Error refreshing stock counters:', err.message);
       }
     }
+    
   // ================= IN-APP SOFT REFRESH (NO CMD+R NEEDED) =================
     async function appSoftRefresh() {
       const icon = document.getElementById('refresh-spin-icon');

@@ -3603,9 +3603,9 @@ async function refreshGlobalStockCounters() {
 
         // Calculate both locations directly from catalog items
         const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('sku'),
-          db.from('intake_batches').select('sku, pack_count'),
-          db.from('stock_movements').select('sku, action')
+          db.from('items').select('sku').limit(5000),
+          db.from('intake_batches').select('sku, pack_count').limit(10000),
+          db.from('stock_movements').select('sku, action').limit(10000)
         ]);
 
         const items = itemsRes.data || [];
@@ -3615,15 +3615,17 @@ async function refreshGlobalStockCounters() {
         let totalWerq = 0;
         let totalShop = 0;
 
+        const norm = (s) => (s || '').trim().toUpperCase().replace(/0/g, 'O');
+
         items.forEach(it => {
-          const sku = (it.sku || '').trim().toUpperCase();
-          if (!sku) return;
+          const itemSku = norm(it.sku);
+          if (!itemSku) return;
 
           const legacy = batches
-            .filter(b => (b.sku || '').trim().toUpperCase() === sku)
+            .filter(b => norm(b.sku) === itemSku)
             .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
 
-          const itemMoves = moves.filter(m => (m.sku || '').trim().toUpperCase() === sku);
+          const itemMoves = moves.filter(m => norm(m.sku) === itemSku);
 
           const intakes = itemMoves.filter(m => {
             const a = (m.action || '').toUpperCase();
@@ -3735,9 +3737,9 @@ async function refreshGlobalStockCounters() {
 
       try {
         const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('*').order('sku'),
-          db.from('intake_batches').select('sku, pack_count'),
-          db.from('stock_movements').select('sku, action')
+          db.from('items').select('*').order('sku').limit(5000),
+          db.from('intake_batches').select('sku, pack_count').limit(10000),
+          db.from('stock_movements').select('sku, action').limit(10000)
         ]);
 
         const items = itemsRes.data || [];

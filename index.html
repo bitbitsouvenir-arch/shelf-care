@@ -312,6 +312,7 @@
         </div>
 
         <div id="fields-merchant" class="space-y-3 hidden">
+          <p class="text-[11px] text-gray-600 bg-bitCream border border-bitBorderDark rounded-xl p-2.5">For merchant goods sold on consignment. They're tracked in the POS, not in our stock: log the drop-off here, then add the items in the POS.</p>
           <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">Merchant / Store Name *</label>
             <input type="text" id="merchant-name-input" placeholder="e.g. Binondo Findings Hub, Supplier A" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
@@ -340,7 +341,7 @@
           </div>
 
           <button type="button" onclick="logMerchantDrop()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-            Proceed to QR Builder →
+            Save & Proceed to POS →
           </button>
         </div>
 
@@ -450,6 +451,7 @@
             <span id="qr-waybill-tag" class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/20 px-2 py-0.5 rounded-full">Direct Intake</span>
             <h2 class="text-lg font-bold text-bitWalnut mt-1">QR Builder</h2>
           </div>
+          <button type="button" id="btn-done-parcel" onclick="finishParcelIntake()" class="hidden shrink-0 px-2.5 py-1.5 bg-bitCream border border-bitBorderDark text-bitWalnut font-bold text-[10px] rounded-xl cursor-pointer">✓ Done with this parcel</button>
         </div>
         <!-- REPURPOSED SOURCE LINK BADGE -->
         <div id="repurposed-source-badge" class="hidden p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 flex items-center justify-between">
@@ -1477,6 +1479,28 @@
       </div>
     </section>
 
+    <!-- SUB-TAB: PARCELS LOG -->
+    <section id="rep-subtab-parcels" class="rep-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="border-b border-gray-100 pb-3">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-900 uppercase">Drop-offs</span>
+          <h2 class="text-lg font-bold text-bitWalnut mt-1">Parcels Log</h2>
+          <p class="text-[11px] text-gray-500 mt-0.5">Every drop-off with its photos, and the SKUs saved from it.</p>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
+          <input type="month" id="report-parcels-month-input" onchange="loadParcelsReport()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
+        </div>
+        <div class="grid grid-cols-4 gap-1 text-[10px] font-bold">
+          <button type="button" onclick="filterParcelsReport('ALL')" id="pill-parcel-ALL" class="py-1.5 rounded-lg border cursor-pointer">All</button>
+          <button type="button" onclick="filterParcelsReport('courier')" id="pill-parcel-courier" class="py-1.5 rounded-lg border cursor-pointer">Courier</button>
+          <button type="button" onclick="filterParcelsReport('merchant')" id="pill-parcel-merchant" class="py-1.5 rounded-lg border cursor-pointer">Merchant</button>
+          <button type="button" onclick="filterParcelsReport('pull_out')" id="pill-parcel-pull_out" class="py-1.5 rounded-lg border cursor-pointer">Pull-outs</button>
+        </div>
+        <div id="parcels-report-list" class="space-y-2"></div>
+      </div>
+    </section>
+
     <!-- SUB-TAB 4: STOCK INTELLIGENCE & AUDIT HEALTH -->
     <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
@@ -1552,6 +1576,10 @@
       <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
         <span>Inventory Report</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('parcels')" id="nav-rep-parcels" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Parcels</span>
       </button>
       <button type="button" onclick="switchReportsSubTab('expenses')" id="nav-rep-expenses" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
@@ -3083,7 +3111,7 @@ function triggerCatalogPhotoCapture(sku) {
 
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
-      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
+      ['attendance', 'expenses', 'cards', 'audit', 'parcels'].forEach(t => {
         const pane = document.getElementById(`rep-subtab-${t}`);
         if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);
@@ -3106,6 +3134,7 @@ function triggerCatalogPhotoCapture(sku) {
       if (subTab === 'cards') loadCardDisputesReport();
       if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
       if (subTab === 'expenses') loadExpensesReport();
+      if (subTab === 'parcels') loadParcelsReport();
       if (subTab === 'attendance') {
         document.getElementById('btn-export-attendance').classList.toggle('hidden', !canDownloadAttendance());
         loadAttendanceReport();
@@ -3381,6 +3410,78 @@ function triggerCatalogPhotoCapture(sku) {
         csv += [new Date(c.created_at).toLocaleString(), c.customer_name, c.contact_info, c.amount, c.status, c.masked_card, c.issue_reason, c.logged_by].map(csvCell).join(',') + "\n";
       });
       downloadBlob(csv, `Bitbit_Card_Issues_${currentCardsMonth}.csv`, "text/csv");
+    }
+
+    // --- PARCELS LOG ---
+    let parcelsReportRows = [], parcelsReportSkus = {}, parcelsReportFilter = 'ALL';
+    const PARCEL_TYPE = { courier: '📦 Courier', merchant: '🏷️ Merchant', pull_out: '🔻 Pull-out' };
+    const PARCEL_STATUS = { IN_WHITE_BIN: 'In White Bin', PROCESSING: 'Opened', MERCHANT_POS: 'Sent to POS', REPURPOSED: 'Repurposed' };
+    const PHOTO_LABEL = { content: 'Contents', outer: 'Outer box', list: 'Item list' };
+
+    async function loadParcelsReport() {
+      const input = document.getElementById('report-parcels-month-input');
+      if (!input.value) input.value = localMonthKey();
+      const [y, m] = input.value.split('-').map(Number);
+      const start = new Date(y, m - 1, 1), end = new Date(y, m, 1);
+      const list = document.getElementById('parcels-report-list');
+      list.innerHTML = '<div class="text-xs text-gray-400 text-center py-6 font-bold">Loading parcels...</div>';
+      try {
+        parcelsReportRows = await dbWrite('Load parcels', () => db.from('parcels')
+          .select('id, waybill, source_type, merchant_name, image_url, photos, status, logged_by, created_at')
+          .gte('created_at', start.toISOString()).lt('created_at', end.toISOString())
+          .order('created_at', { ascending: false }).limit(500)) || [];
+        parcelsReportSkus = {};
+        const refs = parcelsReportRows.map(p => p.waybill);
+        for (let i = 0; i < refs.length; i += 100) {
+          const mv = await dbWrite('Load intake', () => db.from('stock_movements').select('sku, parcel_ref').in('parcel_ref', refs.slice(i, i + 100)));
+          mv.forEach(r => { const t = (parcelsReportSkus[r.parcel_ref] = parcelsReportSkus[r.parcel_ref] || {}); t[r.sku] = (t[r.sku] || 0) + 1; });
+        }
+      } catch (e) {
+        list.innerHTML = `<div class="text-xs text-red-500 text-center py-4">${e.message}</div>`;
+        return;
+      }
+      filterParcelsReport(parcelsReportFilter);
+    }
+
+    function filterParcelsReport(f) {
+      parcelsReportFilter = f;
+      ['ALL', 'courier', 'merchant', 'pull_out'].forEach(k => {
+        const b = document.getElementById('pill-parcel-' + k);
+        if (b) b.className = 'py-1.5 rounded-lg border cursor-pointer ' + (k === f ? 'bg-bitWalnut text-white border-bitWalnut' : 'bg-bitCream text-bitWalnut border-bitBorderDark');
+      });
+      const rows = parcelsReportRows.filter(p => f === 'ALL' || p.source_type === f);
+      const list = document.getElementById('parcels-report-list');
+      if (!rows.length) { list.innerHTML = '<div class="text-xs text-gray-400 text-center py-6 font-bold border border-dashed border-bitBorder rounded-2xl">No parcels this month.</div>'; return; }
+      const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      list.innerHTML = rows.map(p => {
+        const dt = new Date(p.created_at);
+        const code = p.waybill.split('#')[0];
+        const title = p.merchant_name ? esc(p.merchant_name) : `<span class="font-mono">${esc(code)}</span>`;
+        const photos = (Array.isArray(p.photos) && p.photos.length) ? p.photos : (p.image_url ? [{ kind: 'content', url: p.image_url }] : []);
+        const thumbs = photos.filter(ph => ph.url && !ph.url.startsWith('data:')).map(ph =>
+          `<div class="text-center cursor-pointer" onclick="openImagePreviewModal('${esc(code).replace(/&#39;/g, '')} · ${PHOTO_LABEL[ph.kind] || 'Photo'}', '${ph.url}', true)">
+             <img src="${ph.url}" loading="lazy" class="w-16 h-16 object-cover rounded-xl border border-bitBorder bg-white" alt="${PHOTO_LABEL[ph.kind] || 'Photo'}">
+             <span class="text-[9px] text-gray-500 block">${PHOTO_LABEL[ph.kind] || 'Photo'}</span>
+           </div>`).join('');
+        const skus = parcelsReportSkus[p.waybill] || {};
+        const skuList = Object.entries(skus).map(([sku, n]) => `<span class="inline-block font-mono text-[10px] bg-white border border-bitBorder rounded-md px-1.5 py-0.5 mr-1 mb-1">${esc(sku)} × ${n}</span>`).join('');
+        const after = p.source_type === 'merchant' ? '<span class="text-[10px] text-gray-500">Items tracked in the POS</span>'
+          : (skuList || `<span class="text-[10px] text-gray-400">${p.status === 'IN_WHITE_BIN' ? 'Not opened yet' : 'No SKUs linked'}</span>`);
+        return `<div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <span class="text-xs font-bold text-bitWalnut block truncate">${title}</span>
+                <span class="text-[10px] text-gray-500 block">${dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} · ${esc(p.logged_by || 'Staff')}</span>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-[10px] font-bold block">${PARCEL_TYPE[p.source_type] || esc(p.source_type)}</span>
+                <span class="text-[10px] text-gray-500 block">${PARCEL_STATUS[p.status] || esc(p.status)}</span>
+              </div>
+            </div>
+            ${thumbs ? `<div class="flex gap-2">${thumbs}</div>` : ''}
+            <div>${after}</div>
+          </div>`;
+      }).join('');
     }
 
     // --- 1. OVERALL LIVE STOCK CSV EXPORT ---
@@ -3665,6 +3766,7 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
           const tag = document.getElementById('qr-waybill-tag');
           if (tag) tag.textContent = "Direct Intake";
         }
+        updateDoneParcelBtn();
       }
       if (tabId === 'tab-move') {
         setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
@@ -3696,6 +3798,7 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
       const notes = document.getElementById('inhouse-prod-notes').value.trim() || 'New In-House Craft';
       activeIntakeWaybill = `CRAFT-${Date.now().toString().slice(-6)}`;
       document.getElementById('qr-waybill-tag').textContent = `In-House: ${notes}`;
+      updateDoneParcelBtn();
       clearRepurposedLink();
       switchShelfTab('tab-qrbuilder');
     }
@@ -3734,6 +3837,7 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
 
       activeIntakeWaybill = `REPURPOSE-${Date.now().toString().slice(-6)}`;
       document.getElementById('qr-waybill-tag').textContent = `Repurposed Intake`;
+      updateDoneParcelBtn();
 
       alert(`✓ Deducted ${qty} pack(s) of [${sourceSku}] from White Bin!\nOpening QR Builder to generate new finished SKU.`);
       switchShelfTab('tab-qrbuilder');
@@ -3751,10 +3855,11 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
           document.getElementById(imgId).src = e.target.result;
           document.getElementById(wrapId).classList.remove('hidden');
           document.getElementById(labelId).textContent = "✓ Photo Attached";
-          if (imgId === 'img-package-preview') packagePhotoData = e.target.result;
-          if (imgId === 'img-content-preview') contentPhotoData = e.target.result;
-          if (imgId === 'img-merch-list') merchantListPhotoData = e.target.result;
-          if (imgId === 'img-merch-content') merchantContentPhotoData = e.target.result;
+          const f = input.files[0];
+          if (imgId === 'img-package-preview') packagePhotoData = f;
+          if (imgId === 'img-content-preview') contentPhotoData = f;
+          if (imgId === 'img-merch-list') merchantListPhotoData = f;
+          if (imgId === 'img-merch-content') merchantContentPhotoData = f;
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -3767,16 +3872,21 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         return;
       }
 
-      const parcel = {
-        waybill: barcode, source_type: 'courier', image_url: contentPhotoData,
-        status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-      };
-
+      const btn = document.querySelector('[onclick="logCourierDropStrict()"]');
+      if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent; btn.textContent = 'Uploading photos...'; }
+      let parcel;
       try {
+        const photos = await uploadParcelPhotos(barcode, [['content', contentPhotoData], ['outer', packagePhotoData]]);
+        parcel = {
+          waybill: barcode, source_type: 'courier', image_url: photos[0].url, photos,
+          status: 'IN_WHITE_BIN', logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        };
         await dbWrite('Save parcel', () => db.from('parcels').insert([parcel]));
       } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
         return showSaveError(e);
       }
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
 
       whiteBinParcels.unshift(parcel);
       document.getElementById('waybill-barcode-input').value = "";
@@ -3789,38 +3899,62 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
       alert(`✓ Parcel [${barcode}] logged into Werqroom White Bin!`);
     }
 
+    function updateDoneParcelBtn() {
+      const b = document.getElementById('btn-done-parcel');
+      if (b) b.classList.toggle('hidden', !activeIntakeWaybill || activeIntakeWaybill === 'DIRECT');
+    }
+    function finishParcelIntake() {
+      activeIntakeWaybill = "DIRECT";
+      clearRepurposedLink();
+      const tag = document.getElementById('qr-waybill-tag');
+      if (tag) tag.textContent = "Direct Intake";
+      updateDoneParcelBtn();
+    }
+
+    // Merchant goods are consignment stock tracked in the POS, so this only logs the drop-off (name + photos)
     async function logMerchantDrop() {
       const merchant = document.getElementById('merchant-name-input').value.trim();
       if (!merchant || !merchantListPhotoData || !merchantContentPhotoData) {
         alert("Please provide the Merchant / Store Name, Attached Item List Photo, and Package Content Photo.");
         return;
       }
-
-      const syntheticWaybill = `MERCH-${Date.now().toString().slice(-6)}`;
-      const parcel = {
-        waybill: syntheticWaybill,
-        source_type: 'merchant',
-        image_url: merchantContentPhotoData,
-        status: 'PROCESSING',
-        logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
-      };
-
+      const btn = document.querySelector('[onclick="logMerchantDrop()"]');
+      if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent; btn.textContent = 'Uploading photos...'; }
+      const ref = `MERCH-${Date.now().toString(36).toUpperCase()}`;
       try {
-        await dbWrite('Save parcel', () => db.from('parcels').insert([parcel]));
+        const photos = await uploadParcelPhotos(ref, [['list', merchantListPhotoData], ['content', merchantContentPhotoData]]);
+        await dbWrite('Save drop-off', () => db.from('parcels').insert([{
+          waybill: ref, source_type: 'merchant', merchant_name: merchant,
+          image_url: photos[1].url, photos, status: 'MERCHANT_POS',
+          logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        }]));
       } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
         return showSaveError(e);
       }
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label; }
 
-      activeIntakeWaybill = syntheticWaybill;
-      document.getElementById('qr-waybill-tag').textContent = `Merchant: ${merchant} (${syntheticWaybill})`;
       document.getElementById('merchant-name-input').value = "";
       document.getElementById('wrap-merch-list').classList.add('hidden');
       document.getElementById('wrap-merch-content').classList.add('hidden');
       document.getElementById('lbl-merch-list').textContent = "Upload Item List / Receipt Photo";
       document.getElementById('lbl-merch-content').textContent = "Upload Package Content Photo";
       merchantListPhotoData = ""; merchantContentPhotoData = "";
+      alert(`✓ ${merchant} drop-off saved with both photos.\n\nNext: add the items to ${merchant}'s inventory in the POS.`);
+    }
 
-      switchShelfTab('tab-qrbuilder');
+    // Shrinks each photo and stores it in photo storage; returns [{ kind, url }] in the same order
+    async function uploadParcelPhotos(ref, list) {
+      const safe = ref.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 60);
+      const out = [];
+      for (const [kind, file] of list) {
+        const blob = await shrinkImage(file, 1600, 0.8);
+        const path = `parcels/${localDateKey()}/${safe}_${kind}_${Date.now().toString(36)}.jpg`;
+        const { error } = await db.storage.from('item-photos').upload(path, blob, { contentType: 'image/jpeg' });
+        if (error) throw new Error(`Photo upload (${kind}): ${error.message}`);
+        out.push({ kind, url: db.storage.from('item-photos').getPublicUrl(path).data.publicUrl });
+      }
+      return out;
     }
 
     // ================= QR BUILDER ENGINE =================
@@ -4068,6 +4202,7 @@ if (badge) {
           // Only a pulled-out bag coming back (White Bin entries stored as "<code>#<id>") leaves White Bin stock.
           // New parcels, merchant drops and in-house crafts are fresh stock entering Werqroom.
           const source = resolvedWaybill.includes('#') ? 'WHITE_BIN' : 'DIRECT_INTAKE';
+          const parcelRef = resolvedWaybill !== 'DIRECT' ? resolvedWaybill : null;
           const mover = currentActiveCrew ? currentActiveCrew.name : 'Staff';
 
           const movementRows = [];
@@ -4075,14 +4210,14 @@ if (badge) {
             movementRows.push({
               sku: pendingSkuData.sku, action: actionType, bag_type: 'STANDARD',
               pcs_moved: pendingSkuData.pcs_per_pack || pcsPerPackForCategory(pendingSkuData.category),
-              source_location: source, dest_location: 'WERQROOM', moved_by: mover
+              source_location: source, dest_location: 'WERQROOM', moved_by: mover, parcel_ref: parcelRef
             });
           }
           if (pendingSkuData.partial_pcs > 0) {
             movementRows.push({
               sku: pendingSkuData.sku, action: actionType, bag_type: 'PARTIAL',
               pcs_moved: pendingSkuData.partial_pcs,
-              source_location: source, dest_location: 'WERQROOM', moved_by: mover
+              source_location: source, dest_location: 'WERQROOM', moved_by: mover, parcel_ref: parcelRef
             });
           }
           await dbWrite('Record intake', () => db.from('stock_movements').insert(movementRows));
@@ -4096,11 +4231,7 @@ if (badge) {
       isCommittingLabel = false;
       saveBtn.disabled = false; saveBtn.textContent = saveLabel;
 
-      activeIntakeWaybill = "DIRECT";
-      refreshGlobalStockCounters();
-      const tag = document.getElementById('qr-waybill-tag');
-      if (tag) tag.textContent = "Direct Intake";
-
+      refreshGlobalStockCounters(); // the parcel stays attached for its next SKU until "Done with this parcel"
       return true;
     }
 async function refreshGlobalStockCounters() {
@@ -4339,7 +4470,7 @@ async function refreshGlobalStockCounters() {
     async function loadWhiteBinParcels() {
       if (db) {
         try {
-          const { data } = await db.from('parcels').select('*').eq('status', 'IN_WHITE_BIN').order('created_at', { ascending: false });
+          const { data } = await db.from('parcels').select('id, waybill, source_type, image_url, status, logged_by, created_at').eq('status', 'IN_WHITE_BIN').order('created_at', { ascending: false });
           if (data) whiteBinParcels = data;
         } catch (e) {}
       }
@@ -4369,7 +4500,7 @@ async function refreshGlobalStockCounters() {
         return `
           <div class="bg-bitCream p-3.5 rounded-2xl border ${isPullOut ? 'border-amber-300 bg-amber-50/40' : 'border-bitBorderDark'} flex items-center justify-between gap-3">
             <div class="flex items-center space-x-3 min-w-0">
-              <div class="relative shrink-0 cursor-pointer" onclick="openImagePreviewModal('${p.waybill}', '${p.image_url}')" title="Tap to enlarge parcel photo">
+              <div class="relative shrink-0 cursor-pointer" onclick="openImagePreviewModal('${p.waybill.split('#')[0]}', '${p.image_url || ''}', true)" title="Tap to enlarge parcel photo">
                 <img src="${p.image_url || 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=120&q=80'}" class="w-14 h-14 object-cover rounded-xl border border-bitBorder bg-white shadow-sm" alt="Parcel">
                 <div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[9px] leading-none">🔍</div>
               </div>
@@ -4444,7 +4575,8 @@ async function refreshGlobalStockCounters() {
         switchShelfTab('tab-qrbuilder');
 
         const tag = document.getElementById('qr-waybill-tag');
-        if (tag) tag.textContent = `Intake: ${waybillMatched}`;
+        if (tag) tag.textContent = `Intake: ${waybillMatched.split('#')[0]}`;
+        updateDoneParcelBtn();
       } else {
         document.getElementById('verify-modal-error').textContent = "Scanned barcode does not match this item!";
         document.getElementById('verify-modal-input').value = "";

@@ -1349,9 +1349,9 @@
 
       <div class="shrink-0 space-y-1.5">
         <button type="button" onclick="copyDaySummary(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-          <span id="ds-copy-label">📋 Save, Copy for Telegram & Time Out</span>
+          <span id="ds-copy-label">📤 Save, Post to Telegram & Time Out</span>
         </button>
-        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Save and copy only (stay timed in)</button>
+        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Save and post only (stay timed in)</button>
       </div>
     </div>
   </div>
@@ -1908,7 +1908,11 @@
       }
       document.getElementById('start-day-modal').style.display = 'none';
       const t = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      alert(isOpening ? `✓ Store opened and timed in at ${t}.` : `✓ Timed in at ${t}.`);
+      if (!isOpening) return alert(`✓ Timed in at ${t}.`);
+      const posted = await postToTelegram('opening');
+      alert(`✓ Store opened and timed in at ${t}.\n` + (posted.ok
+        ? '✓ Opening amounts posted to the Telegram group.'
+        : `⚠️ Couldn't post to Telegram (${posted.error}). Please send the amounts in the group.`));
     }
 
     async function recordTimeOut() {
@@ -4831,6 +4835,22 @@ async function refreshGlobalStockCounters() {
       setTimeout(() => { lbl.textContent = '📋 Copy for ledger'; }, 2000);
     }
 
+    // Asks the server to post today's opening or closing to the team Telegram group.
+    // The server builds the message from saved records; this never sends its own text.
+    async function postToTelegram(action) {
+      try {
+        const res = await fetch(SUPABASE_URL + '/functions/v1/telegram-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON },
+          body: JSON.stringify({ action })
+        });
+        const body = await res.json().catch(() => ({}));
+        return res.ok ? { ok: true, skipped: body.skipped } : { ok: false, error: body.error || ('error ' + res.status) };
+      } catch (e) {
+        return { ok: false, error: e.message || 'no connection' };
+      }
+    }
+
     let isClosingDay = false;
     async function copyDaySummary(alsoTimeOut) {
       if (isClosingDay) return;
@@ -4838,19 +4858,30 @@ async function refreshGlobalStockCounters() {
       if (act.total === 0 && !confirm('Sales are all ₱0. Save the day like this?')) return;
 
       isClosingDay = true;
+      const lbl = document.getElementById('ds-copy-label');
+      lbl.textContent = '⏳ Saving and posting...';
       try {
         await saveDailyReport();
       } catch (e) {
         isClosingDay = false;
+        lbl.textContent = '📤 Save, Post to Telegram & Time Out';
         return showSaveError(e);
       }
-      await copyText(generateDaySummaryText());
+
+      // Post to Telegram; if that fails, copy the summary so it can be pasted by hand
+      const posted = await postToTelegram('closing');
+      let postNote;
+      if (posted.ok) {
+        postNote = posted.skipped ? '✓ Already posted to Telegram a moment ago.' : '✓ Posted to the Telegram group.';
+      } else {
+        await copyText(generateDaySummaryText());
+        postNote = `⚠️ Couldn't post to Telegram (${posted.error}).\nThe summary is copied: please paste it in the group.`;
+      }
+      lbl.textContent = '📤 Save, Post to Telegram & Time Out';
 
       if (!alsoTimeOut) {
         isClosingDay = false;
-        const lbl = document.getElementById('ds-copy-label');
-        lbl.textContent = '✓ Saved and copied! Paste it in Telegram';
-        setTimeout(() => { lbl.textContent = '📋 Save, Copy for Telegram & Time Out'; }, 2500);
+        alert('✓ Day saved.\n' + postNote);
         return;
       }
       if (!currentActiveCrew) { isClosingDay = false; return; }
@@ -4863,7 +4894,7 @@ async function refreshGlobalStockCounters() {
       isClosingDay = false;
       try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
       closeDaySummaryModal();
-      alert(`✓ Day saved and copied — paste it in Telegram.\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
+      alert(`✓ Day saved.\n${postNote}\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
       lockStation(false);
     }
 

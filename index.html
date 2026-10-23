@@ -235,7 +235,7 @@
         </div>
 
         <div onclick="openLocationStockView('SHOP_STORAGE')" class="bg-white hover:bg-bitCream/50 cursor-pointer transition p-3 rounded-2xl border border-bitBorder shadow-xs">
-          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop Storage</span>
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Shop</span>
           <div class="mt-0.5 flex items-baseline space-x-1">
             <span class="text-xl font-bold text-bitWalnut" id="storage-count">0</span>
             <span class="text-[10px] text-gray-400 font-bold">packs</span>
@@ -501,7 +501,10 @@
 
        <div class="bg-bitCream p-3 rounded-2xl border border-bitBorder flex items-center justify-between gap-2">
   <div class="flex-1">
-    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Live Master SKU</span>
+    <div class="flex items-center justify-between mb-1">
+      <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">Live Master SKU</span>
+      <button type="button" onclick="startCameraScanner('sku-preview-badge', code => { const sku = parseScannedCode(code).sku; document.getElementById('sku-preview-badge').value = sku; handleSkuPasteLookup(sku); })" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer"><span>📷</span><span>Camera</span></button>
+    </div>
     <input type="text" 
            id="sku-preview-badge" 
            value="BDS-BOS-BIG-SOLID-E" 
@@ -587,7 +590,7 @@
         <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
           <div class="flex items-center justify-between mb-1">
             <label class="text-[11px] font-bold text-gray-600 uppercase" id="move-scanner-label">Scan Bag QR (Eyoyo / HW)</label>
-            <button type="button" onclick="startCameraScanner('move-scanner-input', handleScannedMovement)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+            <button type="button" onclick="startContinuousScanner(handleScannedMovement, 'Move')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
               <span>📷 Camera</span>
             </button>
           </div>
@@ -998,6 +1001,7 @@
           <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag Barcode</label>
           <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
         </div>
+        <div class="flex justify-end mb-1"><button type="button" onclick="startContinuousScanner(tallyAuditCode, 'Audit')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer"><span>📷</span><span>Camera</span></button></div>
         <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
       </div>
       <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50" id="audit-scanned-log">
@@ -1028,7 +1032,10 @@
           </button>
         </div>
         <div>
-          <label class="block text-xs font-bold text-gray-700 mb-1">Item SKU / Name *</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-gray-700">Item SKU / Name *</label>
+            <button type="button" onclick="startCameraScanner('freq-item-name', code => { document.getElementById('freq-item-name').value = parseScannedCode(code).sku; })" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer"><span>📷</span><span>Camera</span></button>
+          </div>
           <input type="text" id="freq-item-name" placeholder="e.g. BDS-BOS-BIG-SOLID-E or Thermal Tape" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
         </div>
         <div class="grid grid-cols-2 gap-2">
@@ -1285,7 +1292,7 @@
 
         <div class="grid grid-cols-1 gap-2">
           <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="text-[11px] font-bold text-bitWalnut underline block">Actual Sales</span>
+            <span class="text-[11px] font-bold text-bitWalnut underline block">Sales Today</span>
             <div class="flex items-center justify-between gap-2">
               <label for="ds-act-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
               <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
@@ -1303,40 +1310,19 @@
             </div>
           </div>
 
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold text-bitWalnut underline block">Square Sales Report</span>
-              <label class="text-[10px] font-bold text-bitWalnut bg-bitMarigold hover:bg-bitMarigoldDark px-2 py-1 rounded-lg cursor-pointer">
-                <input type="file" accept="image/*" class="hidden" onchange="readSquareScreenshot(this)">
-                📷 Snap Square
-              </label>
-            </div>
-            <span id="ds-sq-status" class="text-[10px] text-gray-500 font-medium block">Snap the Square sales summary to fill these in, then check the numbers.</span>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-sq-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-sq-gcash" class="text-[11px] font-bold text-gray-600">GCash</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-gcash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-sq-card" class="text-[11px] font-bold text-gray-600">Card</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-card" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div id="ds-sq-other-row" class="hidden">
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-sq-other" class="text-[11px] font-bold text-gray-600">Other (GCash + Card)</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-sq-other" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            </div>
-            <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-bitBorder">
-              <span>Total</span><span id="ds-sq-total">₱0.00</span>
-            </div>
-          </div>
         </div>
 
-        <div id="ds-diff" class="p-2.5 rounded-xl text-center text-xs font-bold bg-gray-100 text-gray-600">Enter both reports to compare</div>
+        <div class="p-3 bg-white rounded-2xl border border-bitBorderDark space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-bitWalnut block">Ledger rows</span>
+            <button type="button" onclick="copyTodayLedgerRows()" class="text-[10px] font-bold text-bitWalnut bg-bitMarigold hover:bg-bitMarigoldDark px-2 py-1 rounded-lg cursor-pointer">
+              <span id="ds-ledger-copy-label">📋 Copy for ledger</span>
+            </button>
+          </div>
+          <div id="ds-ledger-preview" class="overflow-x-auto"></div>
+          <span class="text-[10px] text-gray-500 block">Pastes into the sales ledger sheet: click the Month cell of the first empty row, then paste.</span>
+        </div>
+
 
         <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
             <div class="flex items-center justify-between gap-2">
@@ -1363,9 +1349,9 @@
 
       <div class="shrink-0 space-y-1.5">
         <button type="button" onclick="copyDaySummary(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-          <span id="ds-copy-label">📋 Copy for Telegram & Time Out</span>
+          <span id="ds-copy-label">📋 Save, Copy for Telegram & Time Out</span>
         </button>
-        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Copy only (stay timed in)</button>
+        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Save and copy only (stay timed in)</button>
       </div>
     </div>
   </div>
@@ -1378,7 +1364,8 @@
         <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
       <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
-      <p class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
+      <p id="scanner-status" class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
+      <button type="button" id="scanner-done-btn" onclick="stopCameraScanner()" class="hidden w-full py-2.5 bg-bitWalnut text-white rounded-xl font-bold text-xs cursor-pointer">Done scanning</button>
     </div>
   </div>
 
@@ -1477,7 +1464,29 @@
       </div>
     </section>
 
-    <!-- SUB-TAB 4: STOCK INTELLIGENCE & AUDIT HEALTH -->
+    <!-- SUB-TAB: DAILY SALES (admin + payroll) -->
+    <section id="rep-subtab-sales" class="rep-pane hidden space-y-3">
+      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitGreen/30 text-bitWalnut uppercase">Closing Reports</span>
+            <h2 class="text-lg font-bold text-bitWalnut mt-1">Daily Sales</h2>
+          </div>
+          <button type="button" onclick="copyMonthLedgerRows()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
+            <span id="sales-copy-month-label">📋 Copy month</span>
+          </button>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+          <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
+          <input type="month" id="report-sales-month-input" onchange="onSalesMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
+        </div>
+        <div id="sales-report-list" class="overflow-x-auto">
+          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading daily sales...</div>
+        </div>
+        <span class="text-[10px] text-gray-500 block">"Copy" gives the ledger rows (Month · Date · Description · Category · Account · In). In the ledger sheet, click the Month cell of the first empty row, then paste.</span>
+      </div>
+    </section>
+
     <!-- SUB-TAB 4: STOCK INTELLIGENCE & AUDIT HEALTH -->
     <section id="rep-subtab-audit" class="rep-pane hidden space-y-3">
       <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-4">
@@ -1609,6 +1618,10 @@
       <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
         <span>Inventory Report</span>
+      </button>
+      <button type="button" onclick="switchReportsSubTab('sales')" id="nav-rep-sales" class="hidden flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
+        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Sales</span>
       </button>
       <button type="button" onclick="switchReportsSubTab('expenses')" id="nav-rep-expenses" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
@@ -2107,7 +2120,7 @@
                 '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.werqPacks + ' packs</span>' +
               '</div>' +
               '<div class="p-2 bg-white rounded-xl border border-bitBorder">' +
-                '<span class="text-[9px] font-bold text-gray-400 uppercase block">Shop Storage</span>' +
+                '<span class="text-[9px] font-bold text-gray-400 uppercase block">Shop</span>' +
                 '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.shopPacks + ' packs</span>' +
               '</div>' +
             '</div>' +
@@ -2187,7 +2200,7 @@ function closeMovementHistoryModal() {
     const NEW_ITEMS_DAYS = 7;
     const LOCATION_TAGS = [
       { loc: 'DISPLAY',      label: '✨ On Display',        cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
-      { loc: 'SHOP_STORAGE', label: '🏪 In Shop Storage',   cls: 'bg-amber-100 text-amber-900 border-amber-300' },
+      { loc: 'SHOP_STORAGE', label: '🏪 In Shop',   cls: 'bg-amber-100 text-amber-900 border-amber-300' },
       { loc: 'WERQROOM',     label: '📦 In Werqroom',       cls: 'bg-sky-100 text-sky-900 border-sky-300' },
       { loc: 'WHITE_BIN',    label: '⚪ In White Bin',      cls: 'bg-gray-100 text-gray-700 border-gray-300' }
     ];
@@ -3040,7 +3053,7 @@ function triggerCatalogPhotoCapture(sku) {
 
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
-      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
+      ['attendance', 'expenses', 'cards', 'audit', 'sales'].forEach(t => {
         const pane = document.getElementById(`rep-subtab-${t}`);
         if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);
@@ -3060,6 +3073,11 @@ function triggerCatalogPhotoCapture(sku) {
         if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
       }
 
+      // Sales tab is for Admin and Payroll only
+      const salesBtn = document.getElementById('nav-rep-sales');
+      salesBtn.classList.toggle('hidden', !canDownloadAttendance());
+      if (subTab === 'sales' && !canDownloadAttendance()) return switchReportsSubTab('cards');
+      if (subTab === 'sales') loadSalesReport();
       if (subTab === 'cards') loadCardDisputesReport();
       if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
       if (subTab === 'expenses') loadExpensesReport();
@@ -3193,6 +3211,68 @@ function triggerCatalogPhotoCapture(sku) {
           </div>
         `;
       }).join('');
+    }
+
+    // ---- Daily Sales report ----
+    let currentSalesMonth = localMonthKey();
+    let salesMonthRows = [];
+
+    function onSalesMonthChange() {
+      const el = document.getElementById('report-sales-month-input');
+      if (el && el.value) currentSalesMonth = el.value;
+      loadSalesReport();
+    }
+
+    async function loadSalesReport() {
+      const el = document.getElementById('report-sales-month-input');
+      if (el && !el.value) el.value = currentSalesMonth;
+      const list = document.getElementById('sales-report-list');
+      list.innerHTML = '<div class="text-xs text-gray-400 text-center py-6 font-bold">Loading daily sales...</div>';
+      const [y, m] = currentSalesMonth.split('-').map(Number);
+      const first = `${currentSalesMonth}-01`;
+      const next = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
+      try {
+        salesMonthRows = await dbWrite('Load daily sales', () => db.from('daily_reports')
+          .select('report_date, cash, gcash, card, closed_by')
+          .gte('report_date', first).lt('report_date', next)
+          .order('report_date', { ascending: true })) || [];
+      } catch (e) {
+        list.innerHTML = `<div class="text-xs text-red-500 text-center py-6 font-bold">${e.message}</div>`;
+        return;
+      }
+      if (!salesMonthRows.length) {
+        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No closing reports for ${currentSalesMonth} yet.</div>`;
+        return;
+      }
+      const sum = k => salesMonthRows.reduce((a, r) => a + Number(r[k] || 0), 0);
+      const cell = 'px-1.5 py-1.5 text-right whitespace-nowrap';
+      list.innerHTML = '<table class="w-full text-[11px] border-collapse"><thead><tr class="text-[10px] text-gray-500 uppercase">' +
+        '<th class="text-left px-1.5 py-1">Date</th><th class="text-right px-1.5">Cash</th><th class="text-right px-1.5">GCash</th><th class="text-right px-1.5">Card</th><th class="text-right px-1.5">Total</th><th></th></tr></thead><tbody>' +
+        salesMonthRows.map((r, i) => {
+          const total = Number(r.cash) + Number(r.gcash) + Number(r.card);
+          const d = new Date(r.report_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+          return `<tr class="border-t border-gray-100"><td class="px-1.5 py-1.5 whitespace-nowrap"><span class="font-bold">${d}</span><span class="block text-[9px] text-gray-400">${r.closed_by || ''}</span></td>` +
+            `<td class="${cell}">${peso(r.cash)}</td><td class="${cell}">${peso(r.gcash)}</td><td class="${cell}">${peso(r.card)}</td>` +
+            `<td class="${cell} font-bold">${peso(total)}</td>` +
+            `<td class="px-1 text-right"><button type="button" onclick="copySalesDay(${i}, this)" class="px-1.5 py-0.5 bg-bitCream border border-bitBorderDark rounded-lg text-[10px] font-bold cursor-pointer">📋</button></td></tr>`;
+        }).join('') +
+        `<tr class="border-t-2 border-bitWalnut font-bold"><td class="px-1.5 py-1.5">Total (${salesMonthRows.length} days)</td>` +
+        `<td class="${cell}">${peso(sum('cash'))}</td><td class="${cell}">${peso(sum('gcash'))}</td><td class="${cell}">${peso(sum('card'))}</td>` +
+        `<td class="${cell}">${peso(sum('cash') + sum('gcash') + sum('card'))}</td><td></td></tr></tbody></table>`;
+    }
+
+    async function copySalesDay(i, btn) {
+      const r = salesMonthRows[i];
+      await copyText(ledgerTsv(ledgerRowsFor(r.report_date, r)));
+      if (btn) { btn.textContent = '✓'; setTimeout(() => { btn.textContent = '📋'; }, 1500); }
+    }
+
+    async function copyMonthLedgerRows() {
+      if (!salesMonthRows.length) return alert(`No closing reports for ${currentSalesMonth} to copy.`);
+      await copyText(ledgerTsv(salesMonthRows.flatMap(r => ledgerRowsFor(r.report_date, r))));
+      const lbl = document.getElementById('sales-copy-month-label');
+      lbl.textContent = `✓ ${salesMonthRows.length * 3} rows copied`;
+      setTimeout(() => { lbl.textContent = '📋 Copy month'; }, 2500);
     }
 
     // Only admin and payroll may download attendance
@@ -4356,7 +4436,7 @@ async function refreshGlobalStockCounters() {
         if (scanLabel) scanLabel.textContent = "Scan Werqroom Bag QR ➔ Shop";
       } else if (mode === 'REPLENISHED_TO_DISPLAY') {
         if (btnReplenish) btnReplenish.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitWalnut bg-bitCream text-bitWalnut cursor-pointer";
-        if (scanLabel) scanLabel.textContent = "Scan Shop Storage Bag ➔ Display";
+        if (scanLabel) scanLabel.textContent = "Scan Shop Bag ➔ Display";
       } else if (mode === 'PULL_OUT' || mode === 'PULLED_TO_WHITE_BIN') {
         currentMovementMode = 'PULL_OUT';
         if (btnPullout) btnPullout.className = "py-2 px-1 text-center font-bold text-[11px] rounded-xl border-2 border-bitPink bg-pink-50 text-bitPink cursor-pointer";
@@ -4591,40 +4671,50 @@ async function refreshGlobalStockCounters() {
 
     const peso = n => '₱' + (Number(n) || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const dsVal = id => parseFloat(document.getElementById(id)?.value) || 0;
-    const DS_FIELDS = ['ds-act-cash', 'ds-act-gcash', 'ds-act-card', 'ds-sq-cash', 'ds-sq-gcash', 'ds-sq-card', 'ds-sq-other', 'ds-cash-collected', 'ds-starting-cash', 'ds-fotomatk-fund', 'ds-notes'];
-    const dsDraftKey = () => 'bitbit-day-summary-' + new Date().toISOString().slice(0, 10);
+    const DS_FIELDS = ['ds-act-cash', 'ds-act-gcash', 'ds-act-card', 'ds-cash-collected', 'ds-starting-cash', 'ds-fotomatk-fund', 'ds-notes'];
+    // Store day as YYYY-MM-DD in the phone's local (Manila) time
+    function localDateKey(dateLike) {
+      const d = dateLike ? new Date(dateLike) : new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    const dsDraftKey = () => 'bitbit-day-summary-' + localDateKey();
 
     function daySummaryNumbers() {
       const act = { cash: dsVal('ds-act-cash'), gcash: dsVal('ds-act-gcash'), card: dsVal('ds-act-card') };
-      const sq = { cash: dsVal('ds-sq-cash'), gcash: dsVal('ds-sq-gcash'), card: dsVal('ds-sq-card'), other: dsVal('ds-sq-other') };
       act.total = act.cash + act.gcash + act.card;
-      sq.total = sq.cash + sq.gcash + sq.card + sq.other;
-      return { act, sq, diff: Math.round((act.total - sq.total) * 100) / 100 };
+      return { act };
     }
 
-    function diffLine(diff) {
-      if (diff > 0) return `Cash Over: ${peso(diff)}`;
-      if (diff < 0) return `Sales Shortage: ${peso(-diff)}`;
-      return 'Balanced: actual matches Square';
+    // ---- Ledger rows, in the sales ledger sheet's column order: Month | Date | Description | CATEGORY | Account | In (+)
+    const LEDGER_ACCOUNTS = [
+      { key: 'cash',  description: 'CASH',  account: 'Cash' },
+      { key: 'gcash', description: 'GCASH', account: 'GCash' },
+      { key: 'card',  description: 'CARD',  account: 'CARD' }
+    ];
+    function ledgerRowsFor(dateKey, amounts) {
+      const month = Number(dateKey.slice(5, 7));
+      return LEDGER_ACCOUNTS.map(a => [month, dateKey, a.description, 'GROSS SALES', a.account, Number(amounts[a.key] || 0).toFixed(2)]);
+    }
+    // Tab-separated, so pasting into Google Sheets fills one cell per column
+    const ledgerTsv = rows => rows.map(r => r.join('\t')).join('\n');
+    function ledgerTableHtml(rows) {
+      const head = ['Month', 'Date', 'Description', 'Category', 'Account', 'In (+)'];
+      return '<table class="w-full text-[10px] border-collapse"><thead><tr>' +
+        head.map((h, i) => `<th class="bg-[#466B53] text-white font-bold px-1.5 py-1 ${i === 5 ? 'text-right' : 'text-left'}">${h}</th>`).join('') +
+        '</tr></thead><tbody>' +
+        rows.map(r => '<tr class="border-b border-gray-100">' +
+          `<td class="px-1.5 py-1 text-right">${r[0]}</td><td class="px-1.5 py-1 whitespace-nowrap">${r[1]}</td>` +
+          `<td class="px-1.5 py-1 font-bold italic">${r[2]}</td>` +
+          `<td class="px-1.5 py-1"><span class="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 whitespace-nowrap">${r[3]}</span></td>` +
+          `<td class="px-1.5 py-1"><span class="px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-700">${r[4]}</span></td>` +
+          `<td class="px-1.5 py-1 text-right whitespace-nowrap">${peso(r[5])}</td></tr>`).join('') +
+        '</tbody></table>';
     }
 
     function updateDaySummary() {
-      const { act, sq, diff } = daySummaryNumbers();
+      const { act } = daySummaryNumbers();
       document.getElementById('ds-act-total').textContent = peso(act.total);
-      document.getElementById('ds-sq-total').textContent = peso(sq.total);
-
-      const diffEl = document.getElementById('ds-diff');
-      if (act.total === 0 && sq.total === 0) {
-        diffEl.className = 'p-2.5 rounded-xl text-center text-xs font-bold bg-gray-100 text-gray-600';
-        diffEl.textContent = 'Enter both reports to compare';
-      } else {
-        diffEl.className = 'p-2.5 rounded-xl text-center text-xs font-bold ' +
-          (diff > 0 ? 'bg-amber-100 text-amber-900' : diff < 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800');
-        diffEl.textContent = diffLine(diff);
-      }
-
-      // Show the "Other" row whenever it has a value (Square lumps GCash + Card as "Other" unless expanded)
-      document.getElementById('ds-sq-other-row').classList.toggle('hidden', !document.getElementById('ds-sq-other').value);
+      document.getElementById('ds-ledger-preview').innerHTML = ledgerTableHtml(ledgerRowsFor(localDateKey(), act));
 
       // Keep a draft on this phone so a reload doesn't wipe what was typed
       try {
@@ -4639,10 +4729,23 @@ async function refreshGlobalStockCounters() {
       const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
       document.getElementById('ds-meta').textContent = `${dateStr} · ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}`;
 
+      // Fill from this phone's draft, or from today's saved report (e.g. closed on another phone)
+      let filled = false;
       try {
         const draft = JSON.parse(localStorage.getItem(dsDraftKey()) || 'null');
-        if (draft) DS_FIELDS.forEach(id => { if (draft[id] != null) document.getElementById(id).value = draft[id]; });
+        if (draft) { DS_FIELDS.forEach(id => { if (draft[id] != null) document.getElementById(id).value = draft[id]; }); filled = true; }
       } catch (e) {}
+      if (!filled) {
+        try {
+          const { data } = await db.from('daily_reports').select('*').eq('report_date', localDateKey()).maybeSingle();
+          if (data) {
+            const set = (id, v) => { document.getElementById(id).value = v == null ? '' : v; };
+            set('ds-act-cash', data.cash); set('ds-act-gcash', data.gcash); set('ds-act-card', data.card);
+            set('ds-cash-collected', data.cash_collected); set('ds-starting-cash', data.starting_cash_next);
+            set('ds-fotomatk-fund', data.fotomatk_fund); set('ds-notes', data.notes);
+          }
+        } catch (e) {}
+      }
       updateDaySummary();
 
       loadTodayOpeningRef();
@@ -4669,16 +4772,12 @@ async function refreshGlobalStockCounters() {
     }
 
     function generateDaySummaryText() {
-      const { act, sq, diff } = daySummaryNumbers();
+      const { act } = daySummaryNumbers();
       const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
       const notes = document.getElementById('ds-notes').value.trim();
 
       let t = `🧾 BITBIT DAY SUMMARY\n${dateStr} · Closed by: ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}\n\n`;
-      t += `ACTUAL SALES\nCash: ${peso(act.cash)}\nGCash: ${peso(act.gcash)}\nCard: ${peso(act.card)}\nTotal: ${peso(act.total)}\n\n`;
-      t += `SQUARE SALES REPORT\nCash: ${peso(sq.cash)}\nGCash: ${peso(sq.gcash)}\nCard: ${peso(sq.card)}\n`;
-      if (sq.other) t += `Other (GCash + Card): ${peso(sq.other)}\n`;
-      t += `Total: ${peso(sq.total)}\n\n`;
-      t += `${diffLine(diff)}\n\n`;
+      t += `SALES\nCash: ${peso(act.cash)}\nGCash: ${peso(act.gcash)}\nCard: ${peso(act.card)}\nTotal: ${peso(act.total)}\n\n`;
       t += `Cash collected: ${peso(dsVal('ds-cash-collected'))}\n`;
       t += `Bitbit starting cash (next day): ${peso(dsVal('ds-starting-cash'))}\n`;
       t += `Fotomatk change fund: ${peso(dsVal('ds-fotomatk-fund'))}\n`;
@@ -4704,136 +4803,127 @@ async function refreshGlobalStockCounters() {
       } catch (e) { console.warn(e.message); }
     }
 
-    // ---- Square screenshot → numbers (OCR). Labels and amounts sit far apart on Square's wide layout,
-    //      so words are paired by row position instead of reading line by line.
-// Pairs Square report labels with the amount on the same row, using OCR word positions.
-// words: [{ text, x0, y0, x1, y1 }]
-function parseSquareWords(words) {
-  const clean = w => ({ ...w, t: String(w.text || '').trim(), y: (w.y0 + w.y1) / 2, h: Math.max(1, w.y1 - w.y0) });
-  const all = words.map(clean).filter(w => w.t);
-  const amountRe = /^[P₱#F]?\s*([0-9][0-9,]*\.[0-9]{2})$/;
-  const amounts = all.filter(w => amountRe.test(w.t)).map(w => ({ ...w, value: parseFloat(w.t.match(amountRe)[1].replace(/,/g, '')) }));
-
-  function amountOnRowOf(labelWord) {
-    const tol = Math.max(labelWord.h, 12) * 0.9;
-    const sameRow = amounts.filter(a => Math.abs(a.y - labelWord.y) <= tol && a.x0 > labelWord.x0);
-    if (!sameRow.length) return null;
-    return sameRow.sort((a, b) => b.x0 - a.x0)[0].value; // right-most amount on that row
-  }
-  function find(...needles) {
-    for (const n of needles) {
-      const parts = n.split(' ');
-      for (let i = 0; i < all.length; i++) {
-        if (all[i].t.toLowerCase().replace(/[^a-z]/g, '') !== parts[0]) continue;
-        // multi-word labels: the next words on the same row must match too
-        let ok = true;
-        for (let k = 1; k < parts.length; k++) {
-          const nxt = all.find(w => w !== all[i] && Math.abs(w.y - all[i].y) <= all[i].h && w.x0 > all[i].x0 && w.t.toLowerCase().replace(/[^a-z]/g, '') === parts[k]);
-          if (!nxt) { ok = false; break; }
-        }
-        if (!ok) continue;
-        const v = amountOnRowOf(all[i]);
-        if (v != null) return v;
-      }
-    }
-    return null;
-  }
-
-  return {
-    cash: find('cash'),
-    gcash: find('gcash'),
-    card: find('card', 'credit', 'debit'),
-    other: find('other'),
-    total: find('net total', 'total payments')
-  };
-}
-
-    async function readSquareScreenshot(input) {
-      if (!input.files || !input.files[0]) return;
-      const status = document.getElementById('ds-sq-status');
-      status.className = 'text-[10px] text-gray-500 font-medium block';
-      status.textContent = '⏳ Reading the Square report...';
-      let worker = null;
-      try {
-        worker = await Tesseract.createWorker('eng');
-        await worker.setParameters({ tessedit_pageseg_mode: '11' }); // sparse text: finds labels far from their amounts
-        const { data } = await worker.recognize(input.files[0]);
-        const words = (data.words || []).map(w => ({ text: w.text, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }));
-        const r = parseSquareWords(words);
-
-        const setIf = (id, v) => { document.getElementById(id).value = v != null ? v.toFixed(2) : ''; };
-        setIf('ds-sq-cash', r.cash);
-        setIf('ds-sq-gcash', r.gcash);
-        setIf('ds-sq-card', r.card);
-        // Use "Other" only when GCash/Card weren't listed separately
-        setIf('ds-sq-other', (r.gcash == null && r.card == null) ? r.other : null);
-        updateDaySummary();
-
-        const found = (r.cash || 0) + (r.gcash || 0) + (r.card || 0) + ((r.gcash == null && r.card == null) ? (r.other || 0) : 0);
-        if (r.cash == null && r.other == null && r.gcash == null && r.card == null) {
-          status.className = 'text-[10px] text-bitPinkDark font-bold block';
-          status.textContent = "⚠️ Couldn't read the amounts. Please type them in, or try a clearer screenshot.";
-        } else if (r.total != null && Math.abs(found - r.total) > 0.009) {
-          status.className = 'text-[10px] text-bitPinkDark font-bold block';
-          status.textContent = `⚠️ Read numbers add up to ${peso(found)} but Square's total says ${peso(r.total)}. Please check them.`;
-        } else {
-          status.className = 'text-[10px] text-emerald-700 font-bold block';
-          status.textContent = '✓ Filled from screenshot' + (r.total != null ? ` (matches Square total ${peso(r.total)})` : '') + '. Please double-check.';
-        }
-      } catch (e) {
-        status.className = 'text-[10px] text-bitPinkDark font-bold block';
-        status.textContent = "⚠️ Couldn't read the screenshot (" + (e.message || e) + '). Please type the numbers in.';
-      } finally {
-        if (worker) worker.terminate();
-        input.value = '';
-      }
+    // Saves today's closing numbers; the same day saved again is updated, not duplicated
+    async function saveDailyReport() {
+      const { act } = daySummaryNumbers();
+      const optional = id => { const v = document.getElementById(id).value; return v === '' ? null : (parseFloat(v) || 0); };
+      await dbWrite('Save daily report', () => db.from('daily_reports').upsert({
+        report_date: localDateKey(),
+        cash: act.cash, gcash: act.gcash, card: act.card,
+        cash_collected: optional('ds-cash-collected'),
+        starting_cash_next: optional('ds-starting-cash'),
+        fotomatk_fund: optional('ds-fotomatk-fund'),
+        notes: document.getElementById('ds-notes').value.trim() || null,
+        closed_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'report_date' }));
     }
 
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch (e) { alert(text); return false; } // clipboard blocked: show the text so it can be copied by hand
+    }
+
+    async function copyTodayLedgerRows() {
+      await copyText(ledgerTsv(ledgerRowsFor(localDateKey(), daySummaryNumbers().act)));
+      const lbl = document.getElementById('ds-ledger-copy-label');
+      lbl.textContent = '✓ Copied';
+      setTimeout(() => { lbl.textContent = '📋 Copy for ledger'; }, 2000);
+    }
+
+    let isClosingDay = false;
     async function copyDaySummary(alsoTimeOut) {
-      const text = generateDaySummaryText();
+      if (isClosingDay) return;
+      const { act } = daySummaryNumbers();
+      if (act.total === 0 && !confirm('Sales are all ₱0. Save the day like this?')) return;
+
+      isClosingDay = true;
       try {
-        await navigator.clipboard.writeText(text);
+        await saveDailyReport();
       } catch (e) {
-        alert(text); // clipboard blocked: show the text so it can be copied by hand
+        isClosingDay = false;
+        return showSaveError(e);
       }
+      await copyText(generateDaySummaryText());
+
       if (!alsoTimeOut) {
+        isClosingDay = false;
         const lbl = document.getElementById('ds-copy-label');
-        lbl.textContent = '✓ Copied! Paste it in Telegram';
-        setTimeout(() => { lbl.textContent = '📋 Copy for Telegram & Time Out'; }, 2500);
+        lbl.textContent = '✓ Saved and copied! Paste it in Telegram';
+        setTimeout(() => { lbl.textContent = '📋 Save, Copy for Telegram & Time Out'; }, 2500);
         return;
       }
-      if (!currentActiveCrew) return;
+      if (!currentActiveCrew) { isClosingDay = false; return; }
       try {
         await recordTimeOut();
       } catch (e) {
+        isClosingDay = false;
         return showSaveError(e);
       }
+      isClosingDay = false;
       try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
       closeDaySummaryModal();
-      alert(`✓ Day Summary copied — paste it in Telegram.\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
+      alert(`✓ Day saved and copied — paste it in Telegram.\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
       lockStation(false);
     }
 
+    // One scan, then close (fills one field)
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
-      document.getElementById('camera-scanner-modal').style.display = 'flex';
-      html5QrScanner = new Html5Qrcode("scanner-reader-view");
+      openScanner(false);
       html5QrScanner.start(
         { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } },
         (decodedText) => {
-          document.getElementById(targetInputId).value = decodedText;
+          const input = document.getElementById(targetInputId);
+          if (input) input.value = decodedText;
           stopCameraScanner();
           if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
         },
         () => {}
-      ).catch(() => stopCameraScanner());
+      ).catch(cameraFailed);
+    }
+
+    // Keeps scanning until "Done" (audit, batch moves). The same label is ignored for 2 seconds
+    // so one bag isn't counted many times; scan it again after that to count another bag.
+    function startContinuousScanner(onCode, label) {
+      openScanner(true);
+      let lastCode = '', lastAt = 0, count = 0;
+      html5QrScanner.start(
+        { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } },
+        (decodedText) => {
+          const code = decodedText.trim();
+          const now = Date.now();
+          if (!code || (code === lastCode && now - lastAt < 2000)) return;
+          lastCode = code; lastAt = now; count++;
+          if (navigator.vibrate) navigator.vibrate(60);
+          const status = document.getElementById('scanner-status');
+          status.className = 'text-[11px] text-center text-emerald-700 font-bold';
+          status.textContent = `✓ ${code} · ${count} scanned (${label})`;
+          onCode(code);
+        },
+        () => {}
+      ).catch(cameraFailed);
+    }
+
+    function openScanner(continuous) {
+      if (html5QrScanner) { try { html5QrScanner.stop(); } catch (e) {} html5QrScanner = null; }
+      const status = document.getElementById('scanner-status');
+      status.className = 'text-[11px] text-center text-gray-500 font-bold';
+      status.textContent = continuous ? 'Scan each bag. Tap Done when finished.' : 'Point camera directly at the code';
+      document.getElementById('scanner-done-btn').classList.toggle('hidden', !continuous);
+      document.getElementById('camera-scanner-modal').style.display = 'flex';
+      html5QrScanner = new Html5Qrcode("scanner-reader-view");
+    }
+
+    function cameraFailed(err) {
+      stopCameraScanner();
+      alert("Couldn't open the camera. Allow camera access for this site in your browser settings, then try again.\n\n(" + (err && err.message ? err.message : err) + ')');
     }
 
     function stopCameraScanner() {
-      if (html5QrScanner) {
-        html5QrScanner.stop().then(() => {
-          html5QrScanner.clear();
-          html5QrScanner = null;
-        }).catch(() => {});
+      const scanner = html5QrScanner;
+      html5QrScanner = null;
+      if (scanner) {
+        Promise.resolve().then(() => scanner.stop()).then(() => scanner.clear()).catch(() => { try { scanner.clear(); } catch (e) {} });
       }
       document.getElementById('camera-scanner-modal').style.display = 'none';
     }

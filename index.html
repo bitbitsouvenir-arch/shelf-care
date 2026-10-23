@@ -7,7 +7,7 @@
  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
   </style>
@@ -4854,19 +4854,35 @@ async function refreshGlobalStockCounters() {
       lockStation(false);
     }
 
+    // Camera settings: high resolution (small labels stay sharp), a big scan area (75% of the view,
+    // so the label doesn't have to sit exactly in the middle) and autofocus where the phone allows it.
+    const BACK_CAMERA = { facingMode: "environment" };
+    function scannerConfig(qrOnly, hiRes) {
+      const cfg = {
+        fps: 15,
+        qrbox: (w, h) => { const side = Math.max(160, Math.floor(Math.min(w, h) * 0.75)); return { width: side, height: side }; },
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+      };
+      // Bag labels are always QR codes; reading only QR makes those scans faster
+      if (qrOnly && window.Html5QrcodeSupportedFormats) cfg.formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
+      if (hiRes) cfg.videoConstraints = { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 }, advanced: [{ focusMode: "continuous" }] };
+      return cfg;
+    }
+    function startCamera(onDecoded, qrOnly) {
+      // Some phones reject the high-resolution request; fall back to the plain back camera
+      return html5QrScanner.start(BACK_CAMERA, scannerConfig(qrOnly, true), onDecoded, () => {})
+        .catch(() => html5QrScanner.start(BACK_CAMERA, scannerConfig(qrOnly, false), onDecoded, () => {}));
+    }
+
     // One scan, then close (fills one field)
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
       openScanner(false);
-      html5QrScanner.start(
-        { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } },
-        (decodedText) => {
-          const input = document.getElementById(targetInputId);
-          if (input) input.value = decodedText;
-          stopCameraScanner();
-          if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
-        },
-        () => {}
-      ).catch(cameraFailed);
+      startCamera((decodedText) => {
+        const input = document.getElementById(targetInputId);
+        if (input) input.value = decodedText;
+        stopCameraScanner();
+        if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
+      }, false).catch(cameraFailed);
     }
 
     // Keeps scanning until "Done" (audit, batch moves). The same label is ignored for 2 seconds
@@ -4874,9 +4890,7 @@ async function refreshGlobalStockCounters() {
     function startContinuousScanner(onCode, label) {
       openScanner(true);
       let lastCode = '', lastAt = 0, count = 0;
-      html5QrScanner.start(
-        { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } },
-        (decodedText) => {
+      startCamera((decodedText) => {
           const code = decodedText.trim();
           const now = Date.now();
           if (!code || (code === lastCode && now - lastAt < 2000)) return;
@@ -4886,16 +4900,14 @@ async function refreshGlobalStockCounters() {
           status.className = 'text-[11px] text-center text-emerald-700 font-bold';
           status.textContent = `✓ ${code} · ${count} scanned (${label})`;
           onCode(code);
-        },
-        () => {}
-      ).catch(cameraFailed);
+        }, true).catch(cameraFailed);
     }
 
     function openScanner(continuous) {
       if (html5QrScanner) { try { html5QrScanner.stop(); } catch (e) {} html5QrScanner = null; }
       const status = document.getElementById('scanner-status');
       status.className = 'text-[11px] text-center text-gray-500 font-bold';
-      status.textContent = continuous ? 'Scan each bag. Tap Done when finished.' : 'Point camera directly at the code';
+      status.textContent = (continuous ? 'Scan each bag. Tap Done when finished. ' : '') + 'Hold the label about a hand-span (15–20 cm) away, flat and steady, until it looks sharp.';
       document.getElementById('scanner-done-btn').classList.toggle('hidden', !continuous);
       document.getElementById('camera-scanner-modal').style.display = 'flex';
       html5QrScanner = new Html5Qrcode("scanner-reader-view");

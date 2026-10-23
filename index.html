@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
   </style>
@@ -1371,7 +1372,11 @@
         <h3 class="font-bold text-sm text-bitWalnut">Scan Barcode / QR</h3>
         <button type="button" onclick="stopCameraScanner()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
-      <div id="scanner-reader-view" class="w-full aspect-square rounded-2xl overflow-hidden bg-black"></div>
+      <div id="scanner-reader-view" class="relative w-full aspect-square rounded-2xl overflow-hidden bg-black">
+        <video id="scanner-video" playsinline muted autoplay class="absolute inset-0 w-full h-full object-cover"></video>
+        <div class="absolute inset-[10%] border-2 border-white/80 rounded-xl pointer-events-none"></div>
+      </div>
+      <div id="scanner-file-fallback" class="hidden"></div>
       <p id="scanner-status" class="text-[11px] text-center text-gray-500 font-bold">Point camera directly at the code</p>
       <button type="button" id="scanner-done-btn" onclick="stopCameraScanner()" class="hidden w-full py-2.5 bg-bitWalnut text-white rounded-xl font-bold text-xs cursor-pointer">Done scanning</button>
     </div>
@@ -1617,7 +1622,6 @@
     let currentActiveCrew = null;
     let selectedCrewForGate = null;
     let enteredGatePin = "";
-    let html5QrScanner = null;
 
     let packagePhotoData = "";
     let contentPhotoData = "";
@@ -4854,77 +4858,139 @@ async function refreshGlobalStockCounters() {
       lockStation(false);
     }
 
-    // Camera settings: high resolution (small labels stay sharp), a big scan area (75% of the view,
-    // so the label doesn't have to sit exactly in the middle) and autofocus where the phone allows it.
-    const BACK_CAMERA = { facingMode: "environment" };
-    function scannerConfig(qrOnly, hiRes) {
-      const cfg = {
-        fps: 15,
-        qrbox: (w, h) => { const side = Math.max(160, Math.floor(Math.min(w, h) * 0.75)); return { width: side, height: side }; },
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-      };
-      // Bag labels are always QR codes; reading only QR makes those scans faster
-      if (qrOnly && window.Html5QrcodeSupportedFormats) cfg.formatsToSupport = [Html5QrcodeSupportedFormats.QR_CODE];
-      if (hiRes) cfg.videoConstraints = { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 }, advanced: [{ focusMode: "continuous" }] };
-      return cfg;
+    // ================= CAMERA SCANNER =================
+    // Reads the camera at full resolution (the old library shrank each frame to the on-screen preview size,
+    // so small labels on iPad and laptop cameras became unreadable). Whatever is visible in the square is read.
+    // Decoders, best first: the browser's built-in BarcodeDetector (Chrome/Android/Mac: QR + barcodes),
+    // then jsQR for QR labels, then html5-qrcode on a full-size snapshot for courier barcodes.
+    const scanCam = { stream: null, timer: null, busy: false, tick: 0, detector: null, onCode: null };
+
+    async function getBarcodeDetector(qrOnly) {
+      if (!('BarcodeDetector' in window)) return null;
+      try {
+        const supported = await BarcodeDetector.getSupportedFormats();
+        const want = qrOnly ? ['qr_code'] : ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'itf', 'codabar', 'data_matrix', 'pdf417'];
+        const formats = want.filter(f => supported.includes(f));
+        return formats.includes('qr_code') ? new BarcodeDetector({ formats }) : null;
+      } catch (e) { return null; }
     }
-    function startCamera(onDecoded, qrOnly) {
-      // Some phones reject the high-resolution request; fall back to the plain back camera
-      return html5QrScanner.start(BACK_CAMERA, scannerConfig(qrOnly, true), onDecoded, () => {})
-        .catch(() => html5QrScanner.start(BACK_CAMERA, scannerConfig(qrOnly, false), onDecoded, () => {}));
+
+    async function openCameraStream() {
+      const tries = [
+        { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false },
+        { video: { facingMode: { ideal: 'environment' } }, audio: false },
+        { video: true, audio: false }
+      ];
+      let lastErr;
+      for (const c of tries) {
+        try { return await navigator.mediaDevices.getUserMedia(c); } catch (e) { lastErr = e; if (e && e.name === 'NotAllowedError') break; }
+      }
+      throw lastErr || new Error('No camera found');
+    }
+
+    async function startScanning(onCode, continuous, qrOnly) {
+      stopCameraScanner(true);
+      const status = document.getElementById('scanner-status');
+      status.className = 'text-[11px] text-center text-gray-500 font-bold';
+      status.textContent = (continuous ? 'Scan each bag. Tap Done when finished. ' : '') + 'Fit the label inside the white square, flat and steady, until it looks sharp.';
+      document.getElementById('scanner-done-btn').classList.toggle('hidden', !continuous);
+      document.getElementById('camera-scanner-modal').style.display = 'flex';
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return cameraFailed(new Error('This browser has no camera access'));
+      let stream;
+      try { stream = await openCameraStream(); } catch (e) { return cameraFailed(e); }
+      if (document.getElementById('camera-scanner-modal').style.display === 'none') { stream.getTracks().forEach(t => t.stop()); return; }
+
+      scanCam.stream = stream; scanCam.onCode = onCode; scanCam.tick = 0; scanCam.busy = false; scanCam.qrOnly = qrOnly;
+      const track = stream.getVideoTracks()[0];
+      try { await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }); } catch (e) { /* not supported: fine */ }
+      // A front/laptop camera is shown mirrored so moving the label feels natural (reading uses the real image)
+      const facing = (track.getSettings && track.getSettings().facingMode) || '';
+      const video = document.getElementById('scanner-video');
+      video.style.transform = (facing === 'environment') ? '' : 'scaleX(-1)';
+      video.srcObject = stream;
+      try { await video.play(); } catch (e) { }
+      scanCam.detector = await getBarcodeDetector(qrOnly);
+      scanCam.timer = setInterval(scanFrame, 120);
+    }
+
+    const scanCanvas = document.createElement('canvas');
+    async function scanFrame() {
+      const video = document.getElementById('scanner-video');
+      if (scanCam.busy || !scanCam.stream || video.readyState < 2 || !video.videoWidth) return;
+      scanCam.busy = true; scanCam.tick++;
+      try {
+        // The centre square of the camera image = exactly what's visible in the preview
+        const vw = video.videoWidth, vh = video.videoHeight, side = Math.min(vw, vh);
+        const out = Math.min(side, 1000);
+        scanCanvas.width = out; scanCanvas.height = out;
+        const ctx = scanCanvas.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, out, out);
+
+        let code = null;
+        if (scanCam.detector) {
+          const found = await scanCam.detector.detect(scanCanvas);
+          if (found && found.length) code = found[0].rawValue;
+        } else if (window.jsQR) {
+          const img = ctx.getImageData(0, 0, out, out);
+          const r = jsQR(img.data, out, out, { inversionAttempts: 'attemptBoth' });
+          if (r && r.data) code = r.data;
+        }
+        // Courier barcodes without a built-in reader (e.g. iPhone/iPad Safari): try the barcode library now and then
+        if (!code && !scanCam.qrOnly && !scanCam.detector && window.Html5Qrcode && scanCam.tick % 6 === 0) {
+          const blob = await new Promise(res => scanCanvas.toBlob(res, 'image/jpeg', 0.92));
+          if (blob) {
+            try { code = await new Html5Qrcode('scanner-file-fallback').scanFile(new File([blob], 'frame.jpg', { type: 'image/jpeg' }), false); } catch (e) { /* nothing found */ }
+          }
+        }
+        if (code && scanCam.onCode && scanCam.stream) scanCam.onCode(String(code));
+      } catch (e) { /* skip this frame */ }
+      scanCam.busy = false;
     }
 
     // One scan, then close (fills one field)
     function startCameraScanner(targetInputId, onScanSuccessCallback) {
-      openScanner(false);
-      startCamera((decodedText) => {
+      startScanning((decodedText) => {
         const input = document.getElementById(targetInputId);
         if (input) input.value = decodedText;
         stopCameraScanner();
+        if (navigator.vibrate) navigator.vibrate(60);
         if (onScanSuccessCallback) onScanSuccessCallback(decodedText);
-      }, false).catch(cameraFailed);
+      }, false, false);
     }
 
     // Keeps scanning until "Done" (audit, batch moves). The same label is ignored for 2 seconds
     // so one bag isn't counted many times; scan it again after that to count another bag.
     function startContinuousScanner(onCode, label) {
-      openScanner(true);
       let lastCode = '', lastAt = 0, count = 0;
-      startCamera((decodedText) => {
-          const code = decodedText.trim();
-          const now = Date.now();
-          if (!code || (code === lastCode && now - lastAt < 2000)) return;
-          lastCode = code; lastAt = now; count++;
-          if (navigator.vibrate) navigator.vibrate(60);
-          const status = document.getElementById('scanner-status');
-          status.className = 'text-[11px] text-center text-emerald-700 font-bold';
-          status.textContent = `✓ ${code} · ${count} scanned (${label})`;
-          onCode(code);
-        }, true).catch(cameraFailed);
-    }
-
-    function openScanner(continuous) {
-      if (html5QrScanner) { try { html5QrScanner.stop(); } catch (e) {} html5QrScanner = null; }
-      const status = document.getElementById('scanner-status');
-      status.className = 'text-[11px] text-center text-gray-500 font-bold';
-      status.textContent = (continuous ? 'Scan each bag. Tap Done when finished. ' : '') + 'Hold the label about a hand-span (15–20 cm) away, flat and steady, until it looks sharp.';
-      document.getElementById('scanner-done-btn').classList.toggle('hidden', !continuous);
-      document.getElementById('camera-scanner-modal').style.display = 'flex';
-      html5QrScanner = new Html5Qrcode("scanner-reader-view");
+      startScanning((decodedText) => {
+        const code = decodedText.trim();
+        const now = Date.now();
+        if (!code || (code === lastCode && now - lastAt < 2000)) return;
+        lastCode = code; lastAt = now; count++;
+        if (navigator.vibrate) navigator.vibrate(60);
+        const status = document.getElementById('scanner-status');
+        status.className = 'text-[11px] text-center text-emerald-700 font-bold';
+        status.textContent = `✓ ${code} · ${count} scanned (${label})`;
+        onCode(code);
+      }, true, true);
     }
 
     function cameraFailed(err) {
       stopCameraScanner();
-      alert("Couldn't open the camera. Allow camera access for this site in your browser settings, then try again.\n\n(" + (err && err.message ? err.message : err) + ')');
+      const denied = err && err.name === 'NotAllowedError';
+      alert((denied ? "Camera access is blocked. Allow the camera for this site in your browser settings, then try again."
+                    : "Couldn't open the camera.") + "\n\n(" + (err && err.message ? err.message : err) + ')');
     }
 
-    function stopCameraScanner() {
-      const scanner = html5QrScanner;
-      html5QrScanner = null;
-      if (scanner) {
-        Promise.resolve().then(() => scanner.stop()).then(() => scanner.clear()).catch(() => { try { scanner.clear(); } catch (e) {} });
-      }
-      document.getElementById('camera-scanner-modal').style.display = 'none';
+    function stopCameraScanner(keepOpen) {
+      if (scanCam.timer) clearInterval(scanCam.timer);
+      scanCam.timer = null; scanCam.onCode = null;
+      if (scanCam.stream) scanCam.stream.getTracks().forEach(t => t.stop());
+      scanCam.stream = null;
+      const video = document.getElementById('scanner-video');
+      if (video) video.srcObject = null;
+      if (!keepOpen) document.getElementById('camera-scanner-modal').style.display = 'none';
     }
 
     window.addEventListener('DOMContentLoaded', initApp);

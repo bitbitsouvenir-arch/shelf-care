@@ -562,7 +562,7 @@
         </div>
 
         <button type="button" id="btn-save-print" onclick="openPrintStationModal()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-          Save SKU & Print Labels →
+          Save to Werqroom →
         </button>
       </div>
     </section>
@@ -991,26 +991,42 @@
     <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3.5 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
         <div>
-          <span class="text-[10px] font-bold uppercase text-red-800 bg-red-100 px-2 py-0.5 rounded-full">Floor Audit</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Continuous Scan Mode</h3>
+          <span class="text-[10px] font-bold uppercase text-red-800 bg-red-100 px-2 py-0.5 rounded-full">Stock Audit</span>
+          <h3 id="audit-modal-title" class="font-bold text-base text-bitWalnut mt-0.5">Which area are you counting?</h3>
         </div>
         <button type="button" onclick="closeFloorAuditModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
-      <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-[10px] font-bold text-gray-500 uppercase">Scan Bag Barcode</label>
-          <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 Scans</span>
-        </div>
-        <div class="flex justify-end mb-1"><button type="button" onclick="startContinuousScanner(tallyAuditCode, 'Audit')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer"><span>📷</span><span>Camera</span></button></div>
-        <input type="text" id="audit-continuous-input" placeholder="Point Eyoyo scanner or type..." class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none" autofocus>
-      </div>
-      <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50" id="audit-scanned-log">
-        <div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>
-      </div>
-      <div class="pt-2 shrink-0 space-y-2">
-        <button type="button" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
-          Complete Audit & Run Analysis →
+
+      <!-- Step 1: pick the location -->
+      <div id="audit-step-location" class="space-y-2.5">
+        <button type="button" onclick="chooseAuditLocation('WERQROOM')" class="w-full p-3.5 bg-bitCream hover:bg-bitMarigold/30 border border-bitBorderDark rounded-2xl text-left cursor-pointer">
+          <span class="font-bold text-sm text-bitWalnut block">📦 Werqroom</span>
+          <span class="text-[11px] text-gray-500">Scan every bag in the Werqroom</span>
         </button>
+        <button type="button" onclick="chooseAuditLocation('SHOP_STORAGE')" class="w-full p-3.5 bg-bitCream hover:bg-bitMarigold/30 border border-bitBorderDark rounded-2xl text-left cursor-pointer">
+          <span class="font-bold text-sm text-bitWalnut block">🏪 Shop</span>
+          <span class="text-[11px] text-gray-500">Scan every bag in the Shop (not Display)</span>
+        </button>
+        <p class="text-[10px] text-gray-500">Count one area at a time, then the other. Doing both on the same day lets the report spot bags that moved without being scanned. Display isn't counted yet, since its items have no labels.</p>
+      </div>
+
+      <!-- Step 2: scan -->
+      <div id="audit-step-scan" class="hidden flex-1 flex flex-col space-y-2.5 min-h-0">
+        <div class="bg-bitCream p-2.5 rounded-2xl border border-bitBorderDark shrink-0">
+          <div class="flex items-center justify-between mb-1.5">
+            <span id="audit-tally-counter" class="text-xs font-bold text-bitWalnut">0 packs · 0 SKUs</span>
+            <button type="button" onclick="startContinuousScanner(tallyAuditCode, 'Audit')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer"><span>📷</span><span>Camera</span></button>
+          </div>
+          <input type="text" id="audit-continuous-input" placeholder="Scan with Eyoyo or type a code, then Enter" class="w-full bg-white p-2 rounded-xl border border-bitBorderDark font-mono font-bold text-xs text-bitWalnut outline-none">
+          <span class="text-[10px] text-gray-500 block mt-1">Each bag = 1 pack, partial bags too. Progress is saved on this phone as you go.</span>
+        </div>
+        <div class="flex-1 overflow-y-auto space-y-1.5 pr-1 border border-dashed border-bitBorder rounded-2xl p-2 bg-bitCream/50 min-h-[120px]" id="audit-scanned-log"></div>
+        <div class="shrink-0 space-y-1.5">
+          <button type="button" id="btn-complete-audit" onclick="completeFloorAuditAndSave()" class="w-full py-3 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
+            Complete & Compare with System →
+          </button>
+          <button type="button" onclick="discardAuditProgress()" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Discard this count</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1183,6 +1199,7 @@
         </div>
         <button type="button" onclick="closePrintStation()" class="text-gray-400 font-bold p-1 text-base">✕</button>
       </div>
+      <div id="print-saved-note" class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 font-bold"></div>
       <div class="grid grid-cols-2 gap-1.5 text-center">
         <button type="button" onclick="setPrintModeSelection('SINGLE')" id="pill-mode-single" class="p-2 bg-bitCream border-2 border-bitWalnut rounded-xl cursor-pointer block transition">
           <span class="text-[11px] font-bold text-bitWalnut block">Standard Pack</span>
@@ -1214,9 +1231,10 @@
         <span>📋</span>
         <span id="btn-copy-label-text">Copy Code for Niimbot App</span>
       </button>
-      <button type="button" onclick="finalizeLabelPrintAndCommit()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
-        ✓ Done Printing & Applied on Bags
+      <button type="button" onclick="closePrintStation()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs shadow-sm cursor-pointer transition">
+        Done
       </button>
+      <span class="text-[10px] text-gray-500 block text-center">Printing is optional. Close this if the bags already have labels.</span>
     </div>
   </div>
 
@@ -1476,76 +1494,20 @@
           </button>
         </div>
 
-        <!-- PLACEHOLDER STATE (VISIBLE UNTIL AUDIT DATE SELECTED) -->
+        <!-- PLACEHOLDER STATE (VISIBLE UNTIL AN AUDIT IS OPENED) -->
         <div id="weekly-health-placeholder" class="text-center py-10 px-4 border border-dashed border-bitBorder rounded-2xl space-y-3 bg-bitCream/40">
           <span class="text-2xl block">📋</span>
           <div>
-            <span class="text-xs font-bold text-bitWalnut block">No Completed Audit Selected</span>
-            <p class="text-[11px] text-gray-400 mt-0.5">Click <strong>"Inventory Report"</strong> to pick a past audit, or tap <strong>"Start Audit"</strong> above to run a fresh scan.</p>
+            <span class="text-xs font-bold text-bitWalnut block">No audit open</span>
+            <p class="text-[11px] text-gray-400 mt-0.5">Tap <strong>"Inventory Report"</strong> to open a past audit, or start a new count.</p>
           </div>
           <button type="button" onclick="startFloorAuditMode()" class="px-4 py-2 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl shadow-sm inline-flex items-center gap-1.5 cursor-pointer">
-            <span>⚡ Start Continuous Audit Scan</span>
+            <span>⚡ Start Audit</span>
           </button>
         </div>
 
-        <!-- HEALTH REPORT CONTAINER (HIDDEN UNTIL AUDIT SELECTED) -->
-        <div id="weekly-health-content" class="space-y-3.5 text-xs pt-1 hidden">
-          <div class="flex items-center justify-between bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
-            <span id="selected-audit-title-badge" class="font-bold text-[10px] text-amber-900 font-mono">Date: -</span>
-            <button type="button" onclick="copyWeeklyHealthReport()" class="px-2.5 py-1 bg-bitWalnut hover:bg-black text-white text-[10px] font-bold rounded-lg cursor-pointer flex items-center gap-1">
-              <span>📋</span>
-              <span>Copy Report</span>
-            </button>
-          </div>
-
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">1. Executive Snapshot</span>
-            <div class="grid grid-cols-2 gap-2 pt-1 font-medium text-gray-700">
-              <div>Total Stock: <strong id="rep-health-total-units">0 pcs</strong></div>
-              <div>Retail Value: <strong id="rep-health-retail-val">₱0</strong></div>
-              <div>Units Sold (7D): <strong id="rep-health-units-sold">320 pcs</strong></div>
-              <div>STR: <strong id="rep-health-str">22.5%</strong></div>
-            </div>
-          </div>
-
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">2. Hardware & Attachment Health</span>
-            <p class="text-gray-700 font-medium">Attachment Ratio: <strong class="text-bitGreen">3.8 charms / base</strong> (Target: 3.5:1)</p>
-            <ul class="text-[11px] space-y-0.5 text-gray-600 pl-2">
-              <li>• Starter Bracelets: <strong>4.2 weeks</strong> [Healthy]</li>
-              <li>• Necklaces / Chains: <strong>2.1 weeks</strong> [Warning]</li>
-              <li>• Keyrings & Extras: <strong>5.8 weeks</strong> [Healthy]</li>
-              <li>• Findings (Jump rings/clasps): <strong>Sufficient</strong></li>
-            </ul>
-          </div>
-
-          <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 space-y-1">
-            <span class="font-bold text-amber-950 text-[11px] uppercase tracking-wider block">3. Floor Pull-Outs to White Bin</span>
-            <div id="rep-health-pullout-note" class="text-[11px] text-amber-900 font-medium">
-              Loading pull-out records...
-            </div>
-          </div>
-
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">4. Top 5 Velocity SKUs (Stock-Out Risk)</span>
-            <div id="rep-top5-velocity" class="space-y-1 text-[11px]">
-              <div class="flex items-center justify-between">
-                <span>• BDS-BOS-BIG-SOLID-E</span>
-                <span class="text-bitPink font-bold">1.2 wks [Reorder ASAP]</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="font-bold text-bitWalnut text-[11px] uppercase tracking-wider block">5. Bottom 5 Slow-Movers (Pull-Out Candidates)</span>
-            <div id="rep-bottom5-dead" class="space-y-1 text-[11px]">
-              <div class="flex items-center justify-between">
-                <span>• CHM-STN-OLD-01</span>
-                <span class="text-gray-500 font-bold">4 wks 0-sales [Move to White Bin]</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- AUDIT REPORT (filled by renderAuditReport) -->
+        <div id="weekly-health-content" class="space-y-3 text-xs pt-1 hidden"></div>
       </div>
     </section>
 
@@ -1680,7 +1642,6 @@
     let currentFreqType = 'STOCK_RESTOCK';
 
     let masterCatalogCache = [];
-    let liveAuditScans = {};
     let auditHistoryCache = [];
 
     // Month key (YYYY-MM) in the phone's local time, so late-night Manila entries land in the right month
@@ -2016,9 +1977,11 @@
       return catalogMap.get(s) || { sku: s, name: s, image_url: null };
     });
 
-    // Fetch any intake batches for these SKUs
-    const batchesRes = await db.from('intake_batches').select('sku, pack_count').in('sku', allFoundSkus);
-    const legacyBatches = batchesRes.data || [];
+    // Live stock per location (the same numbers as the Stocks tab and the audit)
+    const levelsRes = await db.from('inventory_levels').select('sku, location, packs').in('sku', allFoundSkus.slice(0, 300));
+    if (levelsRes.error) throw new Error("Couldn't load stock (" + levelsRes.error.message + ")");
+    const packsAt = {};
+    (levelsRes.data || []).forEach(l => { (packsAt[l.sku.toUpperCase()] = packsAt[l.sku.toUpperCase()] || {})[l.location] = Number(l.packs) || 0; });
     const movements = directMoves;
         const defaultThumb = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
         activeSearchMovements = {};
@@ -2026,28 +1989,9 @@
         const itemsWithStock = matchedItems.map(item => {
           const itemMovements = movements.filter(m => m.sku === item.sku);
 
-          // 1. Tally legacy packs from intake_batches
-          const legacyPacks = legacyBatches
-            .filter(b => b.sku === item.sku)
-            .reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
-
-          // 2. Tally unified lifecycle intake packs from stock_movements
-          const unifiedIntakePacks = itemMovements.filter(m => 
-            m.action === 'NEW_SKU_INTAKE' || 
-            m.action === 'RESTOCK_INTAKE'
-          ).length;
-
-          const totalIntakes = legacyPacks + unifiedIntakePacks;
-
-          const deliveredCount = itemMovements.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-          const depletedFromShop = itemMovements.filter(m => 
-            m.action === 'REPLENISHED_TO_DISPLAY' || 
-            m.action === 'PULL_OUT' || 
-            m.action === 'PULLED_TO_WHITE_BIN'
-          ).length;
-
-          const werqPacks = Math.max(0, totalIntakes - deliveredCount);
-          const shopPacks = Math.max(0, deliveredCount - depletedFromShop);
+          const here = packsAt[(item.sku || '').toUpperCase()] || {};
+          const werqPacks = here.WERQROOM || 0;
+          const shopPacks = here.SHOP_STORAGE || 0;
           const totalPacks = werqPacks + shopPacks;
 
           activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -2452,17 +2396,63 @@ function triggerCatalogPhotoCapture(sku) {
         if (thumbEl) thumbEl.style.opacity = '1';
       }
     }
-    // ================= CONTINUOUS FLOOR AUDIT SCAN =================
+    // ================= STOCK AUDIT (one location per round) =================
+    // Progress lives on this phone (localStorage) so a refresh or a dead battery doesn't lose the count.
+    const AUDIT_PROGRESS_KEY = 'bitbit_audit_progress';
+    let auditRound = null; // { location, started_at, by, scans: { SKU: { packs, partials } } }
+
+    function saveAuditProgress() {
+      try { localStorage.setItem(AUDIT_PROGRESS_KEY, JSON.stringify(auditRound)); } catch (e) { /* storage off: count still works */ }
+    }
+    function loadAuditProgress() {
+      try { const r = JSON.parse(localStorage.getItem(AUDIT_PROGRESS_KEY) || 'null'); return r && r.location && r.scans ? r : null; } catch (e) { return null; }
+    }
+    function clearAuditProgress() {
+      try { localStorage.removeItem(AUDIT_PROGRESS_KEY); } catch (e) { }
+    }
+
     function startFloorAuditMode() {
-      liveAuditScans = {};
-      document.getElementById('audit-scanned-log').innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-medium">Scanned items will tally here live.</div>`;
-      document.getElementById('audit-tally-counter').textContent = "0 Scans";
+      const saved = loadAuditProgress();
       document.getElementById('floor-audit-modal').style.display = 'flex';
+      if (saved) {
+        const packs = Object.values(saved.scans).reduce((a, x) => a + x.packs, 0);
+        if (confirm(`Continue the unfinished ${AUDIT_LOC_LABEL[saved.location]} count (${packs} packs scanned)?\n\nOK = continue · Cancel = choose again`)) {
+          auditRound = saved;
+          return showAuditScanStep();
+        }
+        if (packs > 0 && !confirm('Throw away that unfinished count?')) { auditRound = saved; return showAuditScanStep(); }
+        clearAuditProgress();
+      }
+      auditRound = null;
+      document.getElementById('audit-step-location').classList.remove('hidden');
+      document.getElementById('audit-step-scan').classList.add('hidden');
+      document.getElementById('audit-modal-title').textContent = 'Which area are you counting?';
+    }
+
+    function chooseAuditLocation(loc) {
+      auditRound = { location: loc, started_at: new Date().toISOString(), by: currentActiveCrew ? currentActiveCrew.name : 'Staff', scans: {} };
+      saveAuditProgress();
+      showAuditScanStep();
+    }
+
+    function showAuditScanStep() {
+      document.getElementById('audit-step-location').classList.add('hidden');
+      document.getElementById('audit-step-scan').classList.remove('hidden');
+      document.getElementById('audit-modal-title').textContent = `Counting: ${AUDIT_LOC_LABEL[auditRound.location]}`;
+      renderAuditTally();
       setTimeout(() => document.getElementById('audit-continuous-input')?.focus(), 150);
     }
 
     function closeFloorAuditModal() {
+      // Progress stays saved; Start Audit offers to continue it
       document.getElementById('floor-audit-modal').style.display = 'none';
+    }
+
+    function discardAuditProgress() {
+      if (auditRound && Object.keys(auditRound.scans).length && !confirm('Discard this count? Everything scanned in this round is cleared.')) return;
+      auditRound = null;
+      clearAuditProgress();
+      startFloorAuditMode();
     }
 
     const auditInput = document.getElementById('audit-continuous-input');
@@ -2470,57 +2460,126 @@ function triggerCatalogPhotoCapture(sku) {
       if (e.key === 'Enter') {
         e.preventDefault();
         const code = auditInput.value.trim();
-        if (code) {
-          tallyAuditCode(code);
-          auditInput.value = '';
-        }
+        if (code) tallyAuditCode(code);
+        auditInput.value = '';
       }
     });
 
     function tallyAuditCode(code) {
+      if (!auditRound) return;
       const parsed = parseScannedCode(code);
-      const cleanSku = parsed.sku;
-      const count = parsed.pcs;
+      const sku = (parsed.sku || '').trim().toUpperCase();
+      if (!sku) return;
+      const row = auditRound.scans[sku] || (auditRound.scans[sku] = { packs: 0, partials: 0 });
+      row.packs += 1;                     // every bag is one pack, partial or full
+      if (parsed.isPartial) row.partials += 1;
+      row.last = Date.now();
+      saveAuditProgress();
+      renderAuditTally(sku);
+      if (navigator.vibrate) navigator.vibrate(40);
+    }
 
-      if (!liveAuditScans[cleanSku]) {
-        liveAuditScans[cleanSku] = 0;
-      }
-      liveAuditScans[cleanSku] += count;
+    function adjustAuditScan(sku, delta) {
+      const row = auditRound && auditRound.scans[sku];
+      if (!row) return;
+      row.packs = Math.max(0, row.packs + delta);
+      if (row.partials > row.packs) row.partials = row.packs;
+      if (row.packs === 0) delete auditRound.scans[sku];
+      saveAuditProgress();
+      renderAuditTally();
+    }
 
-      const totalScanned = Object.values(liveAuditScans).reduce((a, b) => a + b, 0);
-      document.getElementById('audit-tally-counter').textContent = `${totalScanned} Total Pcs`;
-
+    function renderAuditTally(flashSku) {
+      const entries = Object.entries(auditRound.scans).sort((a, b) => (b[1].last || 0) - (a[1].last || 0));
+      const packs = entries.reduce((a, [, r]) => a + r.packs, 0);
+      document.getElementById('audit-tally-counter').textContent = `${packs} pack${packs === 1 ? '' : 's'} · ${entries.length} SKU${entries.length === 1 ? '' : 's'}`;
       const log = document.getElementById('audit-scanned-log');
-      log.innerHTML = Object.entries(liveAuditScans).map(([sku, tally]) => `
-        <div class="bg-white p-2 rounded-xl border border-bitBorderDark flex items-center justify-between text-xs font-bold">
-          <span class="font-mono text-bitWalnut truncate">${sku}</span>
-          <span class="px-2 py-0.5 bg-bitMarigold/20 text-bitWalnut rounded-md font-sans">${tally} pcs</span>
-        </div>
-      `).join('');
+      if (!entries.length) {
+        log.innerHTML = `<div class="text-center py-8 text-xs text-gray-400 font-medium">Scan every bag in the ${AUDIT_LOC_LABEL[auditRound.location]}. Each one shows up here.</div>`;
+        return;
+      }
+      log.innerHTML = entries.map(([sku, r]) => `
+        <div class="bg-white p-2 rounded-xl border ${sku === flashSku ? 'border-bitGreen ring-2 ring-bitGreen/40' : 'border-bitBorderDark'} flex items-center justify-between gap-2 text-xs font-bold">
+          <span class="font-mono text-bitWalnut truncate">${sku}${r.partials ? `<span class="font-sans text-[10px] text-gray-500 font-medium"> · ${r.partials} partial</span>` : ''}</span>
+          <span class="flex items-center gap-1 shrink-0">
+            <button type="button" onclick="adjustAuditScan('${sku}', -1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">−</button>
+            <span class="min-w-[2rem] text-center px-1 py-0.5 bg-bitMarigold/20 text-bitWalnut rounded-md">${r.packs}</span>
+            <button type="button" onclick="adjustAuditScan('${sku}', 1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">+</button>
+          </span>
+        </div>`).join('');
+    }
+
+    // Pure comparison, so it can be tested on its own
+    function buildAuditComparison(scans, expectedBySku, catalogSkus) {
+      const rows = [];
+      const all = new Set([...Object.keys(scans), ...Object.keys(expectedBySku)]);
+      all.forEach(sku => {
+        const counted = scans[sku] ? scans[sku].packs : 0;
+        const expected = expectedBySku[sku] || 0;
+        if (!counted && !expected) return;
+        let status = 'BALANCED';
+        if (!catalogSkus.has(sku)) status = 'NOT_IN_SYSTEM';
+        else if (counted < expected) status = 'MISSING';
+        else if (counted > expected) status = 'EXCESS';
+        rows.push({ sku, counted, expected, partials: scans[sku] ? scans[sku].partials : 0, status });
+      });
+      const order = { MISSING: 0, EXCESS: 1, NOT_IN_SYSTEM: 2, BALANCED: 3 };
+      rows.sort((a, b) => order[a.status] - order[b.status] || Math.abs(b.counted - b.expected) - Math.abs(a.counted - a.expected) || a.sku.localeCompare(b.sku));
+      const n = st => rows.filter(r => r.status === st).length;
+      return {
+        rows,
+        summary: {
+          counted_packs: rows.reduce((a, r) => a + r.counted, 0),
+          expected_packs: rows.reduce((a, r) => a + r.expected, 0),
+          balanced: n('BALANCED'), missing: n('MISSING'), excess: n('EXCESS'), not_in_system: n('NOT_IN_SYSTEM')
+        }
+      };
     }
 
     async function completeFloorAuditAndSave() {
-      const totalScanned = Object.values(liveAuditScans).reduce((a, b) => a + b, 0);
-      if (totalScanned === 0) {
-        alert("No items scanned yet.");
-        return;
-      }
+      if (!auditRound) return;
+      const scannedSkus = Object.keys(auditRound.scans);
+      const locLabel = AUDIT_LOC_LABEL[auditRound.location];
+      if (!scannedSkus.length && !confirm(`Nothing scanned. Save the ${locLabel} as empty?`)) return;
+      if (scannedSkus.length && !confirm(`Done counting the ${locLabel}?\n\nThe app compares your count with the system now.`)) return;
 
+      const btn = document.getElementById('btn-complete-audit');
+      btn.disabled = true; btn.textContent = 'Comparing...';
+      let saved;
       try {
-        await dbWrite('Save audit', () => db.from('inventory_audits').insert([{
-          audited_by: currentActiveCrew ? currentActiveCrew.name : 'Staff',
-          total_scanned_units: totalScanned,
-          discrepancies_count: Object.keys(liveAuditScans).length,
-          audit_summary: liveAuditScans
-        }]));
-      } catch (e) {
-        return showSaveError(e);
-      }
+        // What the system thinks is here right now
+        const levels = await dbWrite('Load stock', () => db.from('inventory_levels').select('sku, packs')
+          .eq('location', auditRound.location).gt('packs', 0).range(0, 9999));
+        const expected = {};
+        levels.forEach(l => { expected[l.sku.toUpperCase()] = (expected[l.sku.toUpperCase()] || 0) + Number(l.packs); });
 
-      alert(`✓ Floor Audit Complete!\nLogged ${totalScanned} physical pieces into the Stock Health Engine.`);
+        // Which scanned labels are real catalog SKUs
+        const catalog = new Set(Object.keys(expected));
+        const unknown = scannedSkus.filter(s => !catalog.has(s));
+        for (let i = 0; i < unknown.length; i += 150) {
+          const found = await dbWrite('Check catalog', () => db.from('items').select('sku').in('sku', unknown.slice(i, i + 150)));
+          found.forEach(f => catalog.add(f.sku.toUpperCase()));
+        }
+
+        const cmp = buildAuditComparison(auditRound.scans, expected, catalog);
+        const ins = await dbWrite('Save audit', () => db.from('inventory_audits').insert([{
+          audited_by: auditRound.by,
+          location: auditRound.location,
+          total_scanned_units: cmp.summary.counted_packs,
+          discrepancies_count: cmp.summary.missing + cmp.summary.excess + cmp.summary.not_in_system,
+          audit_summary: auditRound.scans,
+          discrepancy_details: { started_at: auditRound.started_at, ...cmp }
+        }]).select());
+        saved = ins[0];
+      } catch (e) {
+        btn.disabled = false; btn.textContent = 'Complete & Compare with System →';
+        return showSaveError(e); // the count stays saved on this phone, so they can try again
+      }
+      clearAuditProgress();
+      auditRound = null;
+      btn.disabled = false; btn.textContent = 'Complete & Compare with System →';
       closeFloorAuditModal();
-      goToView('view-reports');
-      switchReportsSubTab('audit');
+      await renderAuditReport(saved);
     }
 
     // ================= FLOOR RESTOCK REQUEST MODAL =================
@@ -3320,192 +3379,238 @@ function triggerCatalogPhotoCapture(sku) {
       downloadBlob(csv, `Bitbit_Card_Issues_${currentCardsMonth}.csv`, "text/csv");
     }
 
-    let currentSelectedAudit = null;
-
     // --- 1. OVERALL LIVE STOCK CSV EXPORT ---
     async function exportLiveStockCSV() {
-      if (!db) return alert("Database not ready.");
-
       try {
-        const [itemsRes, batchesRes, movesRes] = await Promise.all([
-          db.from('items').select('*').order('sku'),
-          db.from('intake_batches').select('sku, pack_count'),
-          db.from('stock_movements').select('sku, action')
+        const [items, levels] = await Promise.all([
+          dbWrite('Load catalog', () => db.from('items').select('sku, name, category, subcategory').order('sku').range(0, 9999)),
+          dbWrite('Load stock', () => db.from('inventory_levels').select('sku, location, packs').range(0, 9999))
         ]);
-
-        const items = itemsRes.data || [];
-        const batches = batchesRes.data || [];
-        const moves = movesRes.data || [];
-
-        let csv = "SKU,Item Name,Category,Subcategory,Werqroom Packs,Shop Packs,Total Packs,Pcs On Hand\n";
-
+        const at = {};
+        levels.forEach(l => { (at[l.sku.toUpperCase()] = at[l.sku.toUpperCase()] || {})[l.location] = Number(l.packs) || 0; });
+        let csv = "SKU,Item Name,Category,Subcategory,Werqroom Packs,Shop Packs,Display Packs,White Bin Packs,Total Packs\n";
         items.forEach(it => {
-          const legacyPacks = batches.filter(b => b.sku === it.sku).reduce((sum, b) => sum + (Number(b.pack_count) || 0), 0);
-          const itemMoves = moves.filter(m => m.sku === it.sku);
-
-          const unifiedIntakes = itemMoves.filter(m => 
-            m.action === 'NEW_SKU_INTAKE' || 
-            m.action === 'RESTOCK_INTAKE' || 
-            m.action === 'INTAKE_RECEIVED' || 
-            m.action === 'NEW_INTAKE'
-          ).length;
-
-          const totalIntakes = legacyPacks + unifiedIntakes;
-
-          const delivered = itemMoves.filter(m => m.action === 'DELIVERED_TO_SHOP').length;
-          const depleted = itemMoves.filter(m => 
-            m.action === 'REPLENISHED_TO_DISPLAY' || 
-            m.action === 'PULL_OUT' || 
-            m.action === 'PULLED_TO_WHITE_BIN'
-          ).length;
-
-          const werqPacks = Math.max(0, totalIntakes - delivered);
-          const shopPacks = Math.max(0, delivered - depleted);
-          const totalPacks = werqPacks + shopPacks;
-          const totalPcs = totalPacks * 10;
-
-          csv += `"${it.sku}","${(it.name || '').replace(/"/g, '""')}","${it.category || ''}","${it.subcategory || ''}",${werqPacks},${shopPacks},${totalPacks},${totalPcs}\n`;
+          const h = at[(it.sku || '').toUpperCase()] || {};
+          const w = h.WERQROOM || 0, sh = h.SHOP_STORAGE || 0, d = h.DISPLAY || 0, wb = h.WHITE_BIN || 0;
+          csv += [it.sku, it.name, it.category, it.subcategory, w, sh, d, wb, w + sh + d + wb].map(csvCell).join(',') + "\n";
         });
-
-        const todayStr = new Date().toISOString().slice(0, 10);
-        downloadBlob(csv, `Bitbit_Live_Stock_${todayStr}.csv`, "text/csv");
+        downloadBlob(csv, `Bitbit_Live_Stock_${localDateKey()}.csv`, "text/csv");
       } catch (err) {
         alert("Failed to export live stock: " + err.message);
       }
     }
 
-    // --- 2. AUDIT DATE SELECTION MODAL ---
+    // --- 2. AUDIT HISTORY ---
+    const AUDIT_LOC_LABEL = { WERQROOM: 'Werqroom', SHOP_STORAGE: 'Shop' };
+
     async function openAuditSelectModal() {
       const modal = document.getElementById('audit-dates-modal');
       const listContainer = document.getElementById('audit-dates-list');
       modal.style.display = 'flex';
-      listContainer.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">Loading completed audits...</div>`;
-
-      if (!db) return;
-
+      listContainer.innerHTML = `<div class="text-center py-6 text-xs text-gray-400 font-bold">Loading audits...</div>`;
       try {
-        // Query without created_at order clause to avoid the missing column error
-        const { data: audits, error } = await db.from('inventory_audits').select('*');
-        if (error) throw error;
-
-        auditHistoryCache = audits || [];
-
-        if (auditHistoryCache.length === 0) {
-          listContainer.innerHTML = `
-            <div class="text-center py-8 text-xs text-gray-400 space-y-2">
-              <p>No floor audits completed yet.</p>
-              <button type="button" onclick="closeAuditSelectModal(); startFloorAuditMode();" class="px-3 py-1.5 bg-bitGreen text-bitWalnut font-bold text-xs rounded-xl cursor-pointer">
-                ⚡ Start First Audit
-              </button>
-            </div>`;
-          return;
-        }
-
-        // Sort defensively using whatever timestamp/date column exists, or fallback to 0
-        auditHistoryCache.sort((a, b) => {
-          const timeA = new Date(a.audit_date || a.created_at || a.audited_at || a.date || a.timestamp || 0).getTime();
-          const timeB = new Date(b.audit_date || b.created_at || b.audited_at || b.date || b.timestamp || 0).getTime();
-          return timeB - timeA;
-        });
-
-        listContainer.innerHTML = auditHistoryCache.map(a => {
-          const rawDate = a.audit_date || a.created_at || a.audited_at || a.date || a.timestamp;
-          const dt = rawDate ? new Date(rawDate) : new Date();
-          const dateOnly = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-          const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-          const units = a.total_scanned_units || 0;
-          const auditor = a.audited_by || 'Staff';
-
-          return `
-            <div onclick="selectAuditForReport('${a.id}')" class="p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl cursor-pointer transition flex items-center justify-between">
-              <div>
-                <span class="font-bold text-bitWalnut block text-xs">${dateOnly}</span>
-                <span class="text-[10px] text-gray-500 font-medium block">${timeStr} • by ${auditor}</span>
-              </div>
-              <span class="px-2 py-1 bg-white border border-bitBorderDark text-[10px] font-bold rounded-xl text-bitWalnut">
-                ${units} pcs
-              </span>
-            </div>
-          `;
-        }).join('');
+        auditHistoryCache = await dbWrite('Load audits', () => db.from('inventory_audits').select('*')
+          .order('audit_date', { ascending: false }).limit(60)) || [];
       } catch (err) {
-        listContainer.innerHTML = `<div class="text-xs text-red-500 text-center py-4">Error: ${err.message}</div>`;
+        listContainer.innerHTML = `<div class="text-xs text-red-500 text-center py-4">${err.message}</div>`;
+        return;
       }
+      if (auditHistoryCache.length === 0) {
+        listContainer.innerHTML = `<div class="text-center py-8 text-xs text-gray-400">No audits yet.</div>`;
+        return;
+      }
+      listContainer.innerHTML = auditHistoryCache.map(a => {
+        const dt = new Date(a.audit_date);
+        const s = (a.discrepancy_details && a.discrepancy_details.summary) || {};
+        const status = a.applied_at ? '<span class="text-emerald-700">✓ fixed</span>' : (a.discrepancies_count ? `<span class="text-red-700">${a.discrepancies_count} to check</span>` : '<span class="text-emerald-700">all balanced</span>');
+        return `<div onclick="selectAuditForReport('${a.id}')" class="p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl cursor-pointer flex items-center justify-between">
+            <div>
+              <span class="font-bold text-bitWalnut block text-xs">${AUDIT_LOC_LABEL[a.location] || 'Old audit'} · ${dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <span class="text-[10px] text-gray-500 font-medium block">${dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} · by ${a.audited_by || 'Staff'} · ${s.counted_packs != null ? s.counted_packs + ' packs' : (a.total_scanned_units || 0) + ' scanned'}</span>
+            </div>
+            <span class="text-[10px] font-bold">${status}</span>
+          </div>`;
+      }).join('');
     }
 
     function closeAuditSelectModal() {
       document.getElementById('audit-dates-modal').style.display = 'none';
     }
 
-    // --- 3. REVEAL REPORT UPON AUDIT SELECTION ---
     async function selectAuditForReport(auditId) {
-      currentSelectedAudit = auditHistoryCache.find(a => a.id === auditId);
       closeAuditSelectModal();
+      const audit = auditHistoryCache.find(a => a.id === auditId);
+      if (audit) await renderAuditReport(audit);
+    }
 
-      if (!currentSelectedAudit) return;
+    // --- 3. AUDIT REPORT ---
+    const AUDIT_STATUS = {
+      MISSING:       { label: '🚨 MISSING',       cls: 'bg-red-50 border-red-200 text-red-900',          note: 'System expected more than was found' },
+      EXCESS:        { label: '⚠️ EXCESS',        cls: 'bg-amber-50 border-amber-200 text-amber-900',    note: 'Found more than the system expected' },
+      NOT_IN_SYSTEM: { label: '❓ NOT IN SYSTEM', cls: 'bg-violet-50 border-violet-200 text-violet-900', note: "Label isn't in the catalog: check it, or add it in QR Builder" },
+      BALANCED:      { label: '✅ BALANCED',      cls: 'bg-emerald-50 border-emerald-200 text-emerald-900', note: 'Count matches' }
+    };
 
+    // Compares one location's latest other-location audit (within 3 days) to spot bags that moved without a scan
+    async function findFlowMisses(audit) {
+      const other = audit.location === 'WERQROOM' ? 'SHOP_STORAGE' : 'WERQROOM';
+      const t = new Date(audit.audit_date).getTime();
+      let otherAudit = null;
+      try {
+        const rows = await dbWrite('Load other audit', () => db.from('inventory_audits').select('*')
+          .eq('location', other)
+          .gte('audit_date', new Date(t - 3 * 86400000).toISOString())
+          .lte('audit_date', new Date(t + 3 * 86400000).toISOString())
+          .order('audit_date', { ascending: false }).limit(1));
+        otherAudit = rows && rows[0];
+      } catch (e) { return { other, otherAudit: null, misses: [] }; }
+      if (!otherAudit) return { other, otherAudit: null, misses: [] };
+
+      const diffOf = au => {
+        const m = {};
+        ((au.discrepancy_details && au.discrepancy_details.rows) || []).forEach(r => { m[r.sku] = r.counted - r.expected; });
+        return m;
+      };
+      const here = diffOf(audit), there = diffOf(otherAudit);
+      const werq = audit.location === 'WERQROOM' ? here : there;
+      const shop = audit.location === 'WERQROOM' ? there : here;
+      const misses = [];
+      Object.keys(werq).forEach(sku => {
+        const w = werq[sku], sh = shop[sku] || 0;
+        if (w < 0 && sh > 0) misses.push({ sku, packs: Math.min(-w, sh), hint: 'Probably delivered to Shop without a Delivered scan' });
+        else if (w > 0 && sh < 0) misses.push({ sku, packs: Math.min(w, -sh), hint: 'Probably scanned as Delivered but the bag stayed in the Werqroom (or was brought back)' });
+      });
+      return { other, otherAudit, misses: misses.sort((a, b) => b.packs - a.packs) };
+    }
+
+    let currentSelectedAudit = null;
+    async function renderAuditReport(audit) {
+      currentSelectedAudit = audit;
+      goToView('view-reports');
+      switchReportsSubTab('audit');
       document.getElementById('weekly-health-placeholder').classList.add('hidden');
-      document.getElementById('weekly-health-content').classList.remove('hidden');
+      const box = document.getElementById('weekly-health-content');
+      box.classList.remove('hidden');
 
-      const dt = new Date(currentSelectedAudit.audit_date || currentSelectedAudit.created_at);
-      const auditDateStr = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-      document.getElementById('selected-audit-title-badge').textContent = `Audit Date: ${auditDateStr} (${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+      const det = audit.discrepancy_details || {};
+      if (!det.rows) {
+        box.innerHTML = '<div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark text-[11px]">This audit was made with the old scanner, which didn\'t compare against the system. Run a new audit to get a full report.</div>';
+        return;
+      }
+      const sum = det.summary;
+      const locLabel = AUDIT_LOC_LABEL[audit.location] || audit.location;
+      const dt = new Date(audit.audit_date);
+      const byStatus = st => det.rows.filter(r => r.status === st);
+      const isAdmin = currentActiveCrew && (currentActiveCrew.role || '').toLowerCase() === 'admin';
+      const toFix = det.rows.filter(r => r.status !== 'BALANCED' && r.status !== 'NOT_IN_SYSTEM').length;
 
-      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
-      document.getElementById('rep-health-total-units').textContent = `${totalUnits} pcs`;
-      document.getElementById('rep-health-retail-val').textContent = `₱${(totalUnits * 100).toLocaleString()}`;
+      const rowHtml = r => `<div class="flex items-center justify-between gap-2 py-1 border-b border-black/5 last:border-0">
+          <span class="font-mono text-[10px] truncate">${r.sku}</span>
+          <span class="shrink-0 text-[10px] whitespace-nowrap">counted <strong>${r.counted}</strong> · system ${r.expected} · <strong>${r.counted - r.expected > 0 ? '+' : ''}${r.counted - r.expected}</strong></span>
+        </div>`;
+      const section = (st, open) => {
+        const rows = byStatus(st);
+        if (!rows.length) return '';
+        const cfg = AUDIT_STATUS[st];
+        return `<details class="p-2.5 rounded-2xl border ${cfg.cls}" ${open ? 'open' : ''}>
+            <summary class="font-bold text-[11px] cursor-pointer">${cfg.label} · ${rows.length} SKU${rows.length > 1 ? 's' : ''} <span class="font-medium opacity-70">(${cfg.note})</span></summary>
+            <div class="mt-1.5">${rows.map(rowHtml).join('')}</div>
+          </details>`;
+      };
 
-      if (db) {
-        try {
-          const { data: pullOuts } = await db.from('parcels').select('*').eq('source_type', 'pull_out');
-          const pullNote = document.getElementById('rep-health-pullout-note');
-          if (pullNote) {
-            if (pullOuts && pullOuts.length > 0) {
-              pullNote.innerHTML = `• <strong>${pullOuts.length} item(s)</strong> pulled from shop floor and staged in White Bin.`;
-            } else {
-              pullNote.innerHTML = `• No active pull-outs currently pending in White Bin.`;
-            }
-          }
-        } catch (e) {}
+      box.innerHTML = `
+        <div class="flex items-center justify-between bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
+          <span class="font-bold text-[11px] text-amber-900">${locLabel} audit · ${dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} ${dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} · ${audit.audited_by || 'Staff'}</span>
+          <button type="button" onclick="exportAuditCSV()" class="px-2 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg cursor-pointer">📥 CSV</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-2.5 bg-bitCream rounded-xl border border-bitBorderDark"><span class="text-[10px] text-gray-500 block">Counted</span><strong class="text-base">${sum.counted_packs}</strong> packs</div>
+          <div class="p-2.5 bg-bitCream rounded-xl border border-bitBorderDark"><span class="text-[10px] text-gray-500 block">System expected</span><strong class="text-base">${sum.expected_packs}</strong> packs</div>
+        </div>
+        <div class="grid grid-cols-4 gap-1 text-center text-[10px] font-bold">
+          <div class="p-1.5 rounded-lg bg-emerald-50 text-emerald-900">${sum.balanced}<br>balanced</div>
+          <div class="p-1.5 rounded-lg bg-red-50 text-red-900">${sum.missing}<br>missing</div>
+          <div class="p-1.5 rounded-lg bg-amber-50 text-amber-900">${sum.excess}<br>excess</div>
+          <div class="p-1.5 rounded-lg bg-violet-50 text-violet-900">${sum.not_in_system}<br>unknown</div>
+        </div>
+        <div id="audit-flow-box" class="p-2.5 bg-sky-50 border border-sky-200 rounded-2xl text-[11px] text-sky-900">Checking the other area's audit...</div>
+        ${section('MISSING', true)}${section('EXCESS', true)}${section('NOT_IN_SYSTEM', true)}${section('BALANCED', false)}
+        <div class="p-3 rounded-2xl border ${audit.applied_at ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-bitBorderDark'} space-y-1.5">
+          ${audit.applied_at
+            ? `<span class="font-bold text-[11px] text-emerald-900 block">✓ System set to this count on ${new Date(audit.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${audit.applied_by || 'Admin'}.</span>`
+            : (toFix === 0
+              ? '<span class="font-bold text-[11px] text-emerald-900 block">✓ Nothing to fix: every known SKU matches.</span>'
+              : (isAdmin
+                ? `<span class="text-[11px] block">Set the system to what was counted for <strong>${toFix} SKU${toFix > 1 ? 's' : ''}</strong>. Each change is logged as an audit adjustment.</span>
+                   <button type="button" id="btn-apply-audit" onclick="applyAuditFix()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Fix it: set ${locLabel} to the count</button>`
+                : '<span class="text-[11px] text-gray-600 block">An admin can open this audit and set the system to the count.</span>'))}
+        </div>`;
+
+      const flow = await findFlowMisses(audit);
+      const fb = document.getElementById('audit-flow-box');
+      if (!fb || currentSelectedAudit !== audit) return;
+      const otherLabel = AUDIT_LOC_LABEL[flow.other];
+      if (!flow.otherAudit) {
+        fb.innerHTML = `<strong>Flow check:</strong> count the ${otherLabel} too (same day) to see bags that moved without being scanned.`;
+      } else if (!flow.misses.length) {
+        fb.innerHTML = `<strong>Flow check</strong> with the ${otherLabel} audit: no bags look like they moved without a scan.`;
+      } else {
+        fb.innerHTML = `<strong>Flow check</strong> with the ${otherLabel} audit: ${flow.misses.length} SKU${flow.misses.length > 1 ? 's' : ''} look like they moved without a scan.` +
+          '<div class="mt-1.5 space-y-1">' + flow.misses.map(m => `<div class="bg-white/70 rounded-lg p-1.5"><span class="font-mono text-[10px] font-bold">${m.sku}</span> · ${m.packs} pack${m.packs > 1 ? 's' : ''}<span class="block text-[10px]">${m.hint}</span></div>`).join('') + '</div>' +
+          '<span class="block text-[10px] mt-1">Fixing both audits corrects the counts; use these to remind the team which scans were skipped.</span>';
       }
     }
 
-    // --- 4. COPY FORMATTED WEEKLY REPORT ---
-    function copyWeeklyHealthReport() {
-      if (!currentSelectedAudit) return alert("Please select an audit first.");
+    // Admin: set the system to the count, as audit adjustment movements (the stock trigger updates the totals)
+    async function applyAuditFix() {
+      const audit = currentSelectedAudit;
+      if (!audit || audit.applied_at) return;
+      if ((currentActiveCrew && currentActiveCrew.role || '').toLowerCase() !== 'admin') return alert('Only an admin can fix an audit.');
+      const rows = (audit.discrepancy_details.rows || []).filter(r => r.status === 'MISSING' || r.status === 'EXCESS');
+      const add = rows.filter(r => r.counted > r.expected).reduce((a, r) => a + (r.counted - r.expected), 0);
+      const remove = rows.filter(r => r.counted < r.expected).reduce((a, r) => a + (r.expected - r.counted), 0);
+      const locLabel = AUDIT_LOC_LABEL[audit.location];
+      if (!confirm(`Set ${locLabel} to the count?\n\n+${add} packs added (found)\n−${remove} packs removed (missing)\nacross ${rows.length} SKUs.\n\nThis can't be undone with one tap.`)) return;
 
-      const dt = new Date(currentSelectedAudit.audit_date || currentSelectedAudit.created_at);
-      const auditDateFormatted = dt.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
-      const monthCycle = dt.toISOString().slice(0, 7);
-      const totalUnits = currentSelectedAudit.total_scanned_units || 0;
-      const retailVal = (totalUnits * 100).toLocaleString();
-
-      const text = `([WEEKLY STOCK HEALTH REPORT - BITBIT]
-Month / Cycle: ${monthCycle} // Audit date: ${auditDateFormatted})
-
-1. EXECUTIVE SNAPSHOT
-- Total Stock: ${totalUnits} pcs | Retail Value: ₱${retailVal}
-- Units Sold (7D): 320 pcs | STR: 22.5%
-
-2. HARDWARE & ATTACHMENT HEALTH
-- Charm-to-Base Attachment Ratio: 3.8 charms / base (Target: 3.5:1)
-  * Starter Bracelets: 4.2 weeks [Healthy]
-  * Necklaces / Chains: 2.1 weeks [Warning]
-  * Keyrings & Extras: 5.8 weeks [Healthy]
-  * Findings (Jump rings/clasps): Sufficient
-
-3. FLOOR PULL-OUTS TO WHITE BIN
-- Active items pulled from floor and staged in White Bin
-
-4. TOP 5 VELOCITY SKUs (STOCK-OUT RISK)
-- BDS-BOS-BIG-SOLID-E: 1.2 wks [Reorder ASAP]
-
-5. BOTTOM 5 SLOW-MOVERS (PULL-OUT CANDIDATES)
-- CHM-STN-OLD-01: 4 wks 0-sales [Move to White Bin]`;
-
-      navigator.clipboard.writeText(text).then(() => {
-        alert("✓ Weekly Stock Health Report copied with audit date header!");
+      const btn = document.getElementById('btn-apply-audit');
+      if (btn) { btn.disabled = true; btn.textContent = 'Applying...'; }
+      const reason = `Audit ${new Date(audit.audit_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (${locLabel})`;
+      const who = currentActiveCrew.name;
+      const movements = [];
+      rows.forEach(r => {
+        const diff = r.counted - r.expected;
+        const pcs = pcsPerPackForCategory(r.sku.split('-')[0]);
+        for (let i = 0; i < Math.abs(diff); i++) {
+          movements.push(diff > 0
+            ? { sku: r.sku, action: 'AUDIT_ADJUSTMENT', bag_type: 'STANDARD', pcs_moved: pcs, source_location: null, dest_location: audit.location, pull_out_reason: reason + ': found', moved_by: who }
+            : { sku: r.sku, action: 'AUDIT_ADJUSTMENT', bag_type: 'STANDARD', pcs_moved: pcs, source_location: audit.location, dest_location: null, pull_out_reason: reason + ': missing', moved_by: who });
+        }
       });
+      try {
+        for (let i = 0; i < movements.length; i += 500) {
+          const chunk = movements.slice(i, i + 500);
+          await dbWrite('Apply audit', () => db.from('stock_movements').insert(chunk));
+        }
+        const applied_at = new Date().toISOString();
+        await dbWrite('Mark audit fixed', () => db.from('inventory_audits').update({ applied_at, applied_by: who }).eq('id', audit.id));
+        audit.applied_at = applied_at; audit.applied_by = who;
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = `Fix it: set ${locLabel} to the count`; }
+        return showSaveError(e);
+      }
+      alert(`✓ ${locLabel} now matches the count.`);
+      refreshGlobalStockCounters();
+      renderAuditReport(audit);
+    }
+
+    function exportAuditCSV() {
+      const a = currentSelectedAudit;
+      if (!a || !a.discrepancy_details || !a.discrepancy_details.rows) return;
+      let csv = "SKU,Status,Counted Packs,System Packs,Difference\n";
+      a.discrepancy_details.rows.forEach(r => {
+        csv += [r.sku, r.status.replace(/_/g, ' '), r.counted, r.expected, r.counted - r.expected].map(csvCell).join(',') + "\n";
+      });
+      downloadBlob(csv, `Bitbit_Audit_${AUDIT_LOC_LABEL[a.location]}_${localDateKey(a.audit_date)}.csv`, "text/csv");
     }
 
     function downloadBlob(content, filename, contentType) {
@@ -3772,7 +3877,7 @@ if (badge) {
       document.getElementById('wrap-pcs-per-pack').classList.toggle('invisible', on);
       document.getElementById('wrap-total-pcs').classList.toggle('invisible', on);
       document.getElementById('print-only-note').classList.toggle('hidden', !on);
-      document.getElementById('btn-save-print').textContent = on ? 'Reprint Label →' : 'Save SKU & Print Labels →';
+      document.getElementById('btn-save-print').textContent = on ? 'Reprint Label →' : 'Save to Werqroom →';
     }
 
     function calculateTotalPcs() {
@@ -3784,6 +3889,7 @@ if (badge) {
       return total;
     }
 
+    let isCommittingLabel = false;
     function openPhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'flex'; }
     function closePhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'none'; }
     function handleChosenMasterPhoto(input) {
@@ -3801,7 +3907,8 @@ if (badge) {
       }
     }
 
-    function openPrintStationModal() {
+    async function openPrintStationModal() {
+      if (isCommittingLabel) return;
       // 1. Prioritize pasted SKU from preview badge if filled, else generate from dropdowns
       const badgeInput = document.getElementById('sku-preview-badge');
       const badgeVal = badgeInput ? (badgeInput.value || badgeInput.textContent || '').trim().toUpperCase() : '';
@@ -3840,8 +3947,29 @@ if (badge) {
       if (partial > 0) pillPartial.classList.remove('opacity-40', 'pointer-events-none');
       else pillPartial.classList.add('opacity-40', 'pointer-events-none');
 
+      if (!sku || sku.includes('______')) return alert('Fill in the identifier first.');
+      if (!isPrintOnly) {
+        if (packs <= 0 && partial <= 0) return alert('Enter how many packs (or partial pcs) are going into the Werqroom.\n\nOnly printing a label? Tick "Reprint label only".');
+        const what = [packs ? `${packs} pack${packs > 1 ? 's' : ''}` : '', partial ? `1 partial (${partial} pcs)` : ''].filter(Boolean).join(' + ');
+        if (!confirm(`Save ${what} of ${sku} to the Werqroom?`)) return;
+      }
+
+      // 2. Save first, so the stock is recorded whether or not labels get printed
+      const ok = await finalizeLabelPrintAndCommit();
+      if (!ok) return;
+
+      document.getElementById('print-saved-note').textContent = pendingSkuData.is_print_only
+        ? (pendingSkuData.wasNew ? `✓ ${sku} added to the catalog. No stock added.` : 'Reprint only: no stock added.')
+        : `✓ Saved: ${[packs ? packs + ' pack' + (packs > 1 ? 's' : '') : '', partial ? '1 partial' : ''].filter(Boolean).join(' + ')} of ${sku} now in the Werqroom.`;
       setPrintModeSelection(packs > 0 || partial === 0 ? 'SINGLE' : 'PARTIAL');
       document.getElementById('print-station-modal').style.display = 'flex';
+
+      // So a second tap can't add the same packs twice
+      if (!pendingSkuData.is_print_only) {
+        document.getElementById('sku-pack-count').value = 0;
+        document.getElementById('sku-partial-pcs').value = 0;
+        calculateTotalPcs();
+      }
     }
 
     function closePrintStation() { document.getElementById('print-station-modal').style.display = 'none'; }
@@ -3895,10 +4023,12 @@ if (badge) {
       });
     }
 
-    let isCommittingLabel = false;
     async function finalizeLabelPrintAndCommit() {
-      if (!pendingSkuData || isCommittingLabel) return;
+      if (!pendingSkuData || isCommittingLabel) return false;
       isCommittingLabel = true;
+      const saveBtn = document.getElementById('btn-save-print');
+      const saveLabel = saveBtn.textContent;
+      saveBtn.disabled = true; saveBtn.textContent = 'Saving...';
       try {
         // 1. Is this SKU already in the catalog?
         const existing = await dbWrite('Check catalog', () => db
@@ -3955,21 +4085,19 @@ if (badge) {
         }
       } catch (e) {
         isCommittingLabel = false;
-        return showSaveError(e);
+        saveBtn.disabled = false; saveBtn.textContent = saveLabel;
+        showSaveError(e);
+        return false;
       }
       isCommittingLabel = false;
+      saveBtn.disabled = false; saveBtn.textContent = saveLabel;
 
       activeIntakeWaybill = "DIRECT";
       refreshGlobalStockCounters();
       const tag = document.getElementById('qr-waybill-tag');
       if (tag) tag.textContent = "Direct Intake";
 
-      alert(pendingSkuData.is_print_only 
-        ? (pendingSkuData.wasNew
-            ? `✓ [${pendingSkuData.sku}] added to the catalog and its label is ready. No stock was added.`
-            : `✓ Label reprinted for [${pendingSkuData.sku}]. No stock was added.`)
-        : `✓ Logged ${pendingSkuData.pack_count} pack(s) of [${pendingSkuData.sku}] into Werqroom stock!`);
-      closePrintStation();
+      return true;
     }
 async function refreshGlobalStockCounters() {
       if (!db) return;

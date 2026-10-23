@@ -1338,10 +1338,10 @@
       </div>
 
       <div class="shrink-0 space-y-1.5">
-        <button type="button" onclick="copyDaySummary(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-          <span id="ds-copy-label">📤 Save, Post to Telegram & Time Out</span>
+        <button type="button" onclick="closeTheDay()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+          <span id="ds-copy-label">✓ Save & Time Out</span>
         </button>
-        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Save and post only (stay timed in)</button>
+        <span class="block text-center text-[10px] text-gray-500">The summary posts to the team Telegram group automatically.</span>
       </div>
     </div>
   </div>
@@ -4644,21 +4644,6 @@ async function refreshGlobalStockCounters() {
       document.getElementById('day-summary-modal').style.display = 'none';
     }
 
-    function generateDaySummaryText() {
-      const { act } = daySummaryNumbers();
-      const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      const notes = document.getElementById('ds-notes').value.trim();
-
-      let t = `🧾 BITBIT DAY SUMMARY\n${dateStr} · Closed by: ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}\n\n`;
-      t += `SALES\nCash: ${peso(act.cash)}\nGCash: ${peso(act.gcash)}\nCard: ${peso(act.card)}\nTotal: ${peso(act.total)}\n\n`;
-      t += `Cash collected: ${peso(dsVal('ds-cash-collected'))}\n`;
-      t += `Bitbit starting cash (next day): ${peso(dsVal('ds-starting-cash'))}\n`;
-      t += `Fotomatk change fund: ${peso(dsVal('ds-fotomatk-fund'))}\n`;
-      if (notes) t += `Notes: ${notes}\n`;
-      t += `\n${generateMovementSummaryText()}`;
-      return t;
-    }
-
     async function loadTodayOpeningRef() {
       const box = document.getElementById('ds-opening-ref');
       box.classList.add('hidden');
@@ -4692,11 +4677,6 @@ async function refreshGlobalStockCounters() {
       }, { onConflict: 'report_date' }));
     }
 
-    async function copyText(text) {
-      try { await navigator.clipboard.writeText(text); return true; }
-      catch (e) { alert(text); return false; } // clipboard blocked: show the text so it can be copied by hand
-    }
-
     // Asks the server to post today's opening or closing to the team Telegram group.
     // The server builds the message from saved records; this never sends its own text.
     async function postToTelegram(action) {
@@ -4713,50 +4693,36 @@ async function refreshGlobalStockCounters() {
       }
     }
 
+    // Closing: save the day, post the summary to Telegram in the background, time out, lock
     let isClosingDay = false;
-    async function copyDaySummary(alsoTimeOut) {
-      if (isClosingDay) return;
+    async function closeTheDay() {
+      if (isClosingDay || !currentActiveCrew) return;
       const { act } = daySummaryNumbers();
       if (act.total === 0 && !confirm('Sales are all ₱0. Save the day like this?')) return;
 
       isClosingDay = true;
       const lbl = document.getElementById('ds-copy-label');
-      lbl.textContent = '⏳ Saving and posting...';
+      const reset = () => { isClosingDay = false; lbl.textContent = '✓ Save & Time Out'; };
+      lbl.textContent = '⏳ Saving...';
       try {
         await saveDailyReport();
       } catch (e) {
-        isClosingDay = false;
-        lbl.textContent = '📤 Save, Post to Telegram & Time Out';
+        reset();
         return showSaveError(e);
       }
 
-      // Post to Telegram; if that fails, copy the summary so it can be pasted by hand
       const posted = await postToTelegram('closing');
-      let postNote;
-      if (posted.ok) {
-        postNote = posted.skipped ? '✓ Already posted to Telegram a moment ago.' : '✓ Posted to the Telegram group.';
-      } else {
-        await copyText(generateDaySummaryText());
-        postNote = `⚠️ Couldn't post to Telegram (${posted.error}).\nThe summary is copied: please paste it in the group.`;
-      }
-      lbl.textContent = '📤 Save, Post to Telegram & Time Out';
-
-      if (!alsoTimeOut) {
-        isClosingDay = false;
-        alert('✓ Day saved.\n' + postNote);
-        return;
-      }
-      if (!currentActiveCrew) { isClosingDay = false; return; }
       try {
         await recordTimeOut();
       } catch (e) {
-        isClosingDay = false;
+        reset();
         return showSaveError(e);
       }
-      isClosingDay = false;
+      reset();
       try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
       closeDaySummaryModal();
-      alert(`✓ Day saved.\n${postNote}\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
+      alert(`✓ Day saved. ${currentActiveCrew.name} timed out. Thanks for closing!` +
+        (posted.ok ? '' : `\n\n⚠️ The Telegram post didn't go through (${posted.error}). Please let Mems know.`));
       lockStation(false);
     }
 

@@ -1312,16 +1312,6 @@
 
         </div>
 
-        <div class="p-3 bg-white rounded-2xl border border-bitBorderDark space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold text-bitWalnut block">Ledger rows</span>
-            <button type="button" onclick="copyTodayLedgerRows()" class="text-[10px] font-bold text-bitWalnut bg-bitMarigold hover:bg-bitMarigoldDark px-2 py-1 rounded-lg cursor-pointer">
-              <span id="ds-ledger-copy-label">📋 Copy for ledger</span>
-            </button>
-          </div>
-          <div id="ds-ledger-preview" class="overflow-x-auto"></div>
-          <span class="text-[10px] text-gray-500 block">Pastes into the sales ledger sheet: click the Month cell of the first empty row, then paste.</span>
-        </div>
 
 
         <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
@@ -1348,10 +1338,10 @@
       </div>
 
       <div class="shrink-0 space-y-1.5">
-        <button type="button" onclick="copyDaySummary(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-          <span id="ds-copy-label">📤 Save, Post to Telegram & Time Out</span>
+        <button type="button" onclick="closeTheDay()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+          <span id="ds-copy-label">✓ Save & Time Out</span>
         </button>
-        <button type="button" onclick="copyDaySummary(false)" class="w-full text-[11px] font-bold text-gray-500 cursor-pointer">Save and post only (stay timed in)</button>
+        <span class="block text-center text-[10px] text-gray-500">The summary posts to the team Telegram group automatically.</span>
       </div>
     </div>
   </div>
@@ -1461,29 +1451,6 @@
         <div id="cards-report-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
           <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading card dispute records...</div>
         </div>
-      </div>
-    </section>
-
-    <!-- SUB-TAB: DAILY SALES (admin + payroll) -->
-    <section id="rep-subtab-sales" class="rep-pane hidden space-y-3">
-      <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3.5">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitGreen/30 text-bitWalnut uppercase">Closing Reports</span>
-            <h2 class="text-lg font-bold text-bitWalnut mt-1">Daily Sales</h2>
-          </div>
-          <button type="button" onclick="copyMonthLedgerRows()" class="px-2.5 py-1 bg-bitWalnut text-white font-bold text-[11px] rounded-xl cursor-pointer">
-            <span id="sales-copy-month-label">📋 Copy month</span>
-          </button>
-        </div>
-        <div class="flex items-center justify-between gap-2">
-          <label class="text-[11px] font-bold text-gray-500 uppercase">Select Month:</label>
-          <input type="month" id="report-sales-month-input" onchange="onSalesMonthChange()" class="p-1.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none cursor-pointer">
-        </div>
-        <div id="sales-report-list" class="overflow-x-auto">
-          <div class="text-xs text-gray-400 text-center py-6 font-bold">Loading daily sales...</div>
-        </div>
-        <span class="text-[10px] text-gray-500 block">"Copy" gives the ledger rows (Month · Date · Description · Category · Account · In). In the ledger sheet, click the Month cell of the first empty row, then paste.</span>
       </div>
     </section>
 
@@ -1618,10 +1585,6 @@
       <button type="button" onclick="switchReportsSubTab('audit')" id="nav-rep-audit" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
         <span>Inventory Report</span>
-      </button>
-      <button type="button" onclick="switchReportsSubTab('sales')" id="nav-rep-sales" class="hidden flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
-        <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
-        <span>Sales</span>
       </button>
       <button type="button" onclick="switchReportsSubTab('expenses')" id="nav-rep-expenses" class="flex flex-col items-center flex-1 text-gray-400 cursor-pointer">
         <span class="nav-rep-ind w-8 h-1 rounded-full bg-transparent mb-1"></span>
@@ -3057,7 +3020,7 @@ function triggerCatalogPhotoCapture(sku) {
 
     // ================= REPORTS HUB (MONTHLY ENGINE) =================
     function switchReportsSubTab(subTab) {
-      ['attendance', 'expenses', 'cards', 'audit', 'sales'].forEach(t => {
+      ['attendance', 'expenses', 'cards', 'audit'].forEach(t => {
         const pane = document.getElementById(`rep-subtab-${t}`);
         if (pane) pane.classList.add('hidden');
         const btn = document.getElementById(`nav-rep-${t}`);
@@ -3077,11 +3040,6 @@ function triggerCatalogPhotoCapture(sku) {
         if (ind) ind.className = "nav-rep-ind w-8 h-1 rounded-full bg-bitWalnut mb-1";
       }
 
-      // Sales tab is for Admin and Payroll only
-      const salesBtn = document.getElementById('nav-rep-sales');
-      salesBtn.classList.toggle('hidden', !canDownloadAttendance());
-      if (subTab === 'sales' && !canDownloadAttendance()) return switchReportsSubTab('cards');
-      if (subTab === 'sales') loadSalesReport();
       if (subTab === 'cards') loadCardDisputesReport();
       if (subTab === 'audit') { /* placeholder stays visible until audit is selected */ }
       if (subTab === 'expenses') loadExpensesReport();
@@ -3215,68 +3173,6 @@ function triggerCatalogPhotoCapture(sku) {
           </div>
         `;
       }).join('');
-    }
-
-    // ---- Daily Sales report ----
-    let currentSalesMonth = localMonthKey();
-    let salesMonthRows = [];
-
-    function onSalesMonthChange() {
-      const el = document.getElementById('report-sales-month-input');
-      if (el && el.value) currentSalesMonth = el.value;
-      loadSalesReport();
-    }
-
-    async function loadSalesReport() {
-      const el = document.getElementById('report-sales-month-input');
-      if (el && !el.value) el.value = currentSalesMonth;
-      const list = document.getElementById('sales-report-list');
-      list.innerHTML = '<div class="text-xs text-gray-400 text-center py-6 font-bold">Loading daily sales...</div>';
-      const [y, m] = currentSalesMonth.split('-').map(Number);
-      const first = `${currentSalesMonth}-01`;
-      const next = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
-      try {
-        salesMonthRows = await dbWrite('Load daily sales', () => db.from('daily_reports')
-          .select('report_date, cash, gcash, card, closed_by')
-          .gte('report_date', first).lt('report_date', next)
-          .order('report_date', { ascending: true })) || [];
-      } catch (e) {
-        list.innerHTML = `<div class="text-xs text-red-500 text-center py-6 font-bold">${e.message}</div>`;
-        return;
-      }
-      if (!salesMonthRows.length) {
-        list.innerHTML = `<div class="text-xs text-gray-400 text-center py-6 font-bold">No closing reports for ${currentSalesMonth} yet.</div>`;
-        return;
-      }
-      const sum = k => salesMonthRows.reduce((a, r) => a + Number(r[k] || 0), 0);
-      const cell = 'px-1.5 py-1.5 text-right whitespace-nowrap';
-      list.innerHTML = '<table class="w-full text-[11px] border-collapse"><thead><tr class="text-[10px] text-gray-500 uppercase">' +
-        '<th class="text-left px-1.5 py-1">Date</th><th class="text-right px-1.5">Cash</th><th class="text-right px-1.5">GCash</th><th class="text-right px-1.5">Card</th><th class="text-right px-1.5">Total</th><th></th></tr></thead><tbody>' +
-        salesMonthRows.map((r, i) => {
-          const total = Number(r.cash) + Number(r.gcash) + Number(r.card);
-          const d = new Date(r.report_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
-          return `<tr class="border-t border-gray-100"><td class="px-1.5 py-1.5 whitespace-nowrap"><span class="font-bold">${d}</span><span class="block text-[9px] text-gray-400">${r.closed_by || ''}</span></td>` +
-            `<td class="${cell}">${peso(r.cash)}</td><td class="${cell}">${peso(r.gcash)}</td><td class="${cell}">${peso(r.card)}</td>` +
-            `<td class="${cell} font-bold">${peso(total)}</td>` +
-            `<td class="px-1 text-right"><button type="button" onclick="copySalesDay(${i}, this)" class="px-1.5 py-0.5 bg-bitCream border border-bitBorderDark rounded-lg text-[10px] font-bold cursor-pointer">📋</button></td></tr>`;
-        }).join('') +
-        `<tr class="border-t-2 border-bitWalnut font-bold"><td class="px-1.5 py-1.5">Total (${salesMonthRows.length} days)</td>` +
-        `<td class="${cell}">${peso(sum('cash'))}</td><td class="${cell}">${peso(sum('gcash'))}</td><td class="${cell}">${peso(sum('card'))}</td>` +
-        `<td class="${cell}">${peso(sum('cash') + sum('gcash') + sum('card'))}</td><td></td></tr></tbody></table>`;
-    }
-
-    async function copySalesDay(i, btn) {
-      const r = salesMonthRows[i];
-      await copyText(ledgerTsv(ledgerRowsFor(r.report_date, r)));
-      if (btn) { btn.textContent = '✓'; setTimeout(() => { btn.textContent = '📋'; }, 1500); }
-    }
-
-    async function copyMonthLedgerRows() {
-      if (!salesMonthRows.length) return alert(`No closing reports for ${currentSalesMonth} to copy.`);
-      await copyText(ledgerTsv(salesMonthRows.flatMap(r => ledgerRowsFor(r.report_date, r))));
-      const lbl = document.getElementById('sales-copy-month-label');
-      lbl.textContent = `✓ ${salesMonthRows.length * 3} rows copied`;
-      setTimeout(() => { lbl.textContent = '📋 Copy month'; }, 2500);
     }
 
     // Only admin and payroll may download attendance
@@ -4689,36 +4585,9 @@ async function refreshGlobalStockCounters() {
       return { act };
     }
 
-    // ---- Ledger rows, in the sales ledger sheet's column order: Month | Date | Description | CATEGORY | Account | In (+)
-    const LEDGER_ACCOUNTS = [
-      { key: 'cash',  description: 'CASH',  account: 'Cash' },
-      { key: 'gcash', description: 'GCASH', account: 'GCash' },
-      { key: 'card',  description: 'CARD',  account: 'CARD' }
-    ];
-    function ledgerRowsFor(dateKey, amounts) {
-      const month = Number(dateKey.slice(5, 7));
-      return LEDGER_ACCOUNTS.map(a => [month, dateKey, a.description, 'GROSS SALES', a.account, Number(amounts[a.key] || 0).toFixed(2)]);
-    }
-    // Tab-separated, so pasting into Google Sheets fills one cell per column
-    const ledgerTsv = rows => rows.map(r => r.join('\t')).join('\n');
-    function ledgerTableHtml(rows) {
-      const head = ['Month', 'Date', 'Description', 'Category', 'Account', 'In (+)'];
-      return '<table class="w-full text-[10px] border-collapse"><thead><tr>' +
-        head.map((h, i) => `<th class="bg-[#466B53] text-white font-bold px-1.5 py-1 ${i === 5 ? 'text-right' : 'text-left'}">${h}</th>`).join('') +
-        '</tr></thead><tbody>' +
-        rows.map(r => '<tr class="border-b border-gray-100">' +
-          `<td class="px-1.5 py-1 text-right">${r[0]}</td><td class="px-1.5 py-1 whitespace-nowrap">${r[1]}</td>` +
-          `<td class="px-1.5 py-1 font-bold italic">${r[2]}</td>` +
-          `<td class="px-1.5 py-1"><span class="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 whitespace-nowrap">${r[3]}</span></td>` +
-          `<td class="px-1.5 py-1"><span class="px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-700">${r[4]}</span></td>` +
-          `<td class="px-1.5 py-1 text-right whitespace-nowrap">${peso(r[5])}</td></tr>`).join('') +
-        '</tbody></table>';
-    }
-
     function updateDaySummary() {
       const { act } = daySummaryNumbers();
       document.getElementById('ds-act-total').textContent = peso(act.total);
-      document.getElementById('ds-ledger-preview').innerHTML = ledgerTableHtml(ledgerRowsFor(localDateKey(), act));
 
       // Keep a draft on this phone so a reload doesn't wipe what was typed
       try {
@@ -4775,21 +4644,6 @@ async function refreshGlobalStockCounters() {
       document.getElementById('day-summary-modal').style.display = 'none';
     }
 
-    function generateDaySummaryText() {
-      const { act } = daySummaryNumbers();
-      const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      const notes = document.getElementById('ds-notes').value.trim();
-
-      let t = `🧾 BITBIT DAY SUMMARY\n${dateStr} · Closed by: ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}\n\n`;
-      t += `SALES\nCash: ${peso(act.cash)}\nGCash: ${peso(act.gcash)}\nCard: ${peso(act.card)}\nTotal: ${peso(act.total)}\n\n`;
-      t += `Cash collected: ${peso(dsVal('ds-cash-collected'))}\n`;
-      t += `Bitbit starting cash (next day): ${peso(dsVal('ds-starting-cash'))}\n`;
-      t += `Fotomatk change fund: ${peso(dsVal('ds-fotomatk-fund'))}\n`;
-      if (notes) t += `Notes: ${notes}\n`;
-      t += `\n${generateMovementSummaryText()}`;
-      return t;
-    }
-
     async function loadTodayOpeningRef() {
       const box = document.getElementById('ds-opening-ref');
       box.classList.add('hidden');
@@ -4823,18 +4677,6 @@ async function refreshGlobalStockCounters() {
       }, { onConflict: 'report_date' }));
     }
 
-    async function copyText(text) {
-      try { await navigator.clipboard.writeText(text); return true; }
-      catch (e) { alert(text); return false; } // clipboard blocked: show the text so it can be copied by hand
-    }
-
-    async function copyTodayLedgerRows() {
-      await copyText(ledgerTsv(ledgerRowsFor(localDateKey(), daySummaryNumbers().act)));
-      const lbl = document.getElementById('ds-ledger-copy-label');
-      lbl.textContent = '✓ Copied';
-      setTimeout(() => { lbl.textContent = '📋 Copy for ledger'; }, 2000);
-    }
-
     // Asks the server to post today's opening or closing to the team Telegram group.
     // The server builds the message from saved records; this never sends its own text.
     async function postToTelegram(action) {
@@ -4851,50 +4693,36 @@ async function refreshGlobalStockCounters() {
       }
     }
 
+    // Closing: save the day, post the summary to Telegram in the background, time out, lock
     let isClosingDay = false;
-    async function copyDaySummary(alsoTimeOut) {
-      if (isClosingDay) return;
+    async function closeTheDay() {
+      if (isClosingDay || !currentActiveCrew) return;
       const { act } = daySummaryNumbers();
       if (act.total === 0 && !confirm('Sales are all ₱0. Save the day like this?')) return;
 
       isClosingDay = true;
       const lbl = document.getElementById('ds-copy-label');
-      lbl.textContent = '⏳ Saving and posting...';
+      const reset = () => { isClosingDay = false; lbl.textContent = '✓ Save & Time Out'; };
+      lbl.textContent = '⏳ Saving...';
       try {
         await saveDailyReport();
       } catch (e) {
-        isClosingDay = false;
-        lbl.textContent = '📤 Save, Post to Telegram & Time Out';
+        reset();
         return showSaveError(e);
       }
 
-      // Post to Telegram; if that fails, copy the summary so it can be pasted by hand
       const posted = await postToTelegram('closing');
-      let postNote;
-      if (posted.ok) {
-        postNote = posted.skipped ? '✓ Already posted to Telegram a moment ago.' : '✓ Posted to the Telegram group.';
-      } else {
-        await copyText(generateDaySummaryText());
-        postNote = `⚠️ Couldn't post to Telegram (${posted.error}).\nThe summary is copied: please paste it in the group.`;
-      }
-      lbl.textContent = '📤 Save, Post to Telegram & Time Out';
-
-      if (!alsoTimeOut) {
-        isClosingDay = false;
-        alert('✓ Day saved.\n' + postNote);
-        return;
-      }
-      if (!currentActiveCrew) { isClosingDay = false; return; }
       try {
         await recordTimeOut();
       } catch (e) {
-        isClosingDay = false;
+        reset();
         return showSaveError(e);
       }
-      isClosingDay = false;
+      reset();
       try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
       closeDaySummaryModal();
-      alert(`✓ Day saved.\n${postNote}\n✓ ${currentActiveCrew.name} timed out. Thanks for closing!`);
+      alert(`✓ Day saved. ${currentActiveCrew.name} timed out. Thanks for closing!` +
+        (posted.ok ? '' : `\n\n⚠️ The Telegram post didn't go through (${posted.error}). Please let Mems know.`));
       lockStation(false);
     }
 

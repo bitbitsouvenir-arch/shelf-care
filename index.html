@@ -190,7 +190,7 @@
       <div class="w-full mb-3">
         <button type="button" onclick="openNewArrivalsModal()" class="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
           <span>✨</span>
-          <span>New Items (7 Days)</span>
+          <span>New & Back in Stock</span>
         </button>
       </div>
 
@@ -952,8 +952,8 @@
       <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
         <div>
           <span class="text-[10px] font-bold uppercase text-bitGreen bg-emerald-100 px-2 py-0.5 rounded-full">Floor Awareness</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">🆕 New Items (Past 7 Days)</h3>
-          <span class="text-[10px] text-gray-500 font-medium block">Brand-new SKUs only, with where they are now</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">🆕 New & Back in Stock</h3>
+          <span class="text-[10px] text-gray-500 font-medium block">Past 7 days: new products and restocks, with where they are now</span>
         </div>
         <button type="button" onclick="closeNewArrivalsModal()" class="text-gray-400 font-bold p-1 text-base">&times;</button>
       </div>
@@ -2167,69 +2167,65 @@ function closeMovementHistoryModal() {
       const modal = document.getElementById('new-arrivals-modal');
       const listContainer = document.getElementById('new-arrivals-scroll-list');
       modal.style.display = 'flex';
-      listContainer.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Looking for new items...</div>';
+      listContainer.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Looking for new and restocked items...</div>';
 
       try {
         const since = new Date();
         since.setDate(since.getDate() - NEW_ITEMS_DAYS);
-
-        const intakes = await dbWrite('Load new items', () => db.from('stock_movements')
-          .select('sku, created_at')
-          .eq('action', 'NEW_SKU_INTAKE')
+        const intakes = await dbWrite('Load intakes', () => db.from('stock_movements')
+          .select('sku, action, created_at')
+          .in('action', ['NEW_SKU_INTAKE', 'RESTOCK_INTAKE', 'INTAKE_RECEIVED', 'NEW_INTAKE'])
           .gte('created_at', since.toISOString())
-          .order('created_at', { ascending: true }));
+          .order('created_at', { ascending: true }).range(0, 4999));
 
-        // First intake per SKU, newest first
-        const firstSeen = {};
-        (intakes || []).forEach(m => { if (!firstSeen[m.sku]) firstSeen[m.sku] = m.created_at; });
-        const newSkus = Object.keys(firstSeen).sort((a, b) => new Date(firstSeen[b]) - new Date(firstSeen[a]));
-
-        const catalogRows = newSkus.length ? await dbWrite('Load item details', () => db.from('items')
-          .select('sku, name, image_url').in('sku', newSkus)) : [];
-        const bySku = {};
-        (catalogRows || []).forEach(r => { bySku[r.sku] = r; });
-        const newItems = newSkus.map(sku => ({ sku, name: (bySku[sku] || {}).name || sku, image_url: (bySku[sku] || {}).image_url, created_at: firstSeen[sku] }));
-
-        if (newItems.length === 0) {
-          listContainer.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs italic">No new items in the past ${NEW_ITEMS_DAYS} days.</div>`;
+        // New = first-ever intake this week; Back in stock = restocked this week (not new)
+        const info = {};
+        (intakes || []).forEach(m => {
+          const r = info[m.sku] || (info[m.sku] = { sku: m.sku, isNew: false, first: m.created_at, last: m.created_at, packs: 0 });
+          if (m.action === 'NEW_SKU_INTAKE') r.isNew = true;
+          r.last = m.created_at; r.packs++;
+        });
+        const all = Object.values(info);
+        if (!all.length) {
+          listContainer.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs italic">Nothing new or restocked in the past ${NEW_ITEMS_DAYS} days.</div>`;
           return;
         }
+        const skus = all.map(r => r.sku);
+        const [catalogRows, levels] = await Promise.all([
+          dbWrite('Load item details', () => db.from('items').select('sku, name, image_url').in('sku', skus)),
+          dbWrite('Load locations', () => db.from('inventory_levels').select('sku, location, packs').in('sku', skus).gt('packs', 0))
+        ]);
+        const bySku = {}; (catalogRows || []).forEach(r => { bySku[r.sku] = r; });
+        const packsAt = {}; (levels || []).forEach(l => { (packsAt[l.sku] = packsAt[l.sku] || {})[l.location] = l.packs; });
 
-        const levels = await dbWrite('Load locations', () => db.from('inventory_levels')
-          .select('sku, location, packs')
-          .in('sku', newItems.map(i => i.sku))
-          .gt('packs', 0));
-        const packsAt = {};
-        (levels || []).forEach(l => { (packsAt[l.sku] = packsAt[l.sku] || {})[l.location] = l.packs; });
-
-        listContainer.innerHTML = newItems.map(it => {
-          const sku = it.sku;
-          const added = new Date(it.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          const thumbSrc = (it.image_url && typeof it.image_url === 'string' && it.image_url.startsWith('http'))
-            ? it.image_url
-            : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
-          const here = packsAt[sku] || {};
+        const card = (it, badge, when) => {
+          const cat = bySku[it.sku] || {};
+          const thumbSrc = (cat.image_url && String(cat.image_url).startsWith('http')) ? cat.image_url : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=80&q=80";
+          const here = packsAt[it.sku] || {};
           const tags = LOCATION_TAGS.filter(t => here[t.loc] > 0)
             .map(t => `<span class="inline-block px-1.5 py-0.5 rounded-md border text-[9px] font-bold ${t.cls}">${t.label} · ${here[t.loc]} pk${here[t.loc] > 1 ? 's' : ''}</span>`)
-            .join(' ') || '<span class="inline-block px-1.5 py-0.5 rounded-md border text-[9px] font-bold bg-white text-gray-500 border-gray-200">No stock yet</span>';
-
+            .join(' ') || '<span class="inline-block px-1.5 py-0.5 rounded-md border text-[9px] font-bold bg-white text-gray-500 border-gray-200">No stock now</span>';
           return '<div class="p-3 bg-bitCream rounded-2xl border border-bitBorder flex items-center justify-between gap-3">' +
             '<div class="flex items-center space-x-3 min-w-0">' +
-              '<img src="' + thumbSrc + '" class="w-12 h-12 rounded-xl object-cover border border-bitBorder bg-white shrink-0" alt="' + sku + '">' +
+              '<img src="' + thumbSrc + '" loading="lazy" class="w-12 h-12 rounded-xl object-cover border border-bitBorder bg-white shrink-0" alt="' + it.sku + '">' +
               '<div class="min-w-0 space-y-1">' +
-                '<span class="font-mono font-bold text-xs text-bitWalnut block truncate">🆕 ' + sku + '</span>' +
-                '<span class="text-[11px] text-gray-600 block truncate">' + (it.name || '') + ' · added ' + added + '</span>' +
+                '<span class="font-mono font-bold text-xs text-bitWalnut block truncate">' + badge + ' ' + it.sku + '</span>' +
+                '<span class="text-[11px] text-gray-600 block truncate">' + (cat.name || '') + ' · ' + when + '</span>' +
                 '<div class="flex flex-wrap gap-1">' + tags + '</div>' +
               '</div>' +
             '</div>' +
-            '<button type="button" onclick="closeNewArrivalsModal(); document.getElementById(\'shelf-help-search-input\').value = \'' + sku + '\'; runShelfHelpSearch(\'' + sku + '\');" class="shrink-0 px-2.5 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg">' +
-              'Check Stock' +
-            '</button>' +
+            '<button type="button" onclick="closeNewArrivalsModal(); document.getElementById(\'shelf-help-search-input\').value = \'' + it.sku + '\'; runShelfHelpSearch(\'' + it.sku + '\');" class="shrink-0 px-2.5 py-1 bg-bitWalnut text-white text-[10px] font-bold rounded-lg">Check Stock</button>' +
           '</div>';
-        }).join("");
-
+        };
+        const day = d => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const fresh = all.filter(r => r.isNew).sort((a, b) => new Date(b.first) - new Date(a.first));
+        const back = all.filter(r => !r.isNew).sort((a, b) => new Date(b.last) - new Date(a.last));
+        const head = (t, n) => `<div class="text-[11px] font-bold text-gray-500 uppercase pt-1">${t} · ${n}</div>`;
+        listContainer.innerHTML =
+          (fresh.length ? head('🆕 New products', fresh.length) + fresh.map(r => card(r, '🆕', 'added ' + day(r.first))).join('') : '') +
+          (back.length ? head('🔁 Back in stock', back.length) + back.map(r => card(r, '🔁', `+${r.packs} pk${r.packs > 1 ? 's' : ''} · ${day(r.last)}`)).join('') : '');
       } catch (e) {
-        listContainer.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Failed to load arrivals: ' + e.message + '</div>';
+        listContainer.innerHTML = '<div class="text-center py-6 text-xs text-red-500 font-bold">Failed to load: ' + e.message + '</div>';
       }
     }
 

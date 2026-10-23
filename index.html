@@ -773,6 +773,18 @@
           </button>
         </div>
       </div>
+
+      <!-- This month at a glance -->
+      <div class="bg-white p-4 rounded-[28px] border border-bitBorder shadow-sm space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-gray-500 uppercase block">This month</span>
+            <span id="exp-month-summary" class="text-sm font-bold text-bitWalnut">…</span>
+          </div>
+          <button type="button" onclick="openExpensesReport()" class="px-3 py-1.5 bg-bitCream border border-bitBorderDark text-bitWalnut font-bold text-[11px] rounded-xl cursor-pointer">View all →</button>
+        </div>
+        <div id="exp-month-recent" class="space-y-1.5"></div>
+      </div>
     </section>
 
     <!-- SUB-TAB 3: PETTY CASH -->
@@ -2764,6 +2776,7 @@ function triggerCatalogPhotoCapture(sku) {
 
       if (subTab === 'requests') loadSuppliesRequestsDesk();
       if (subTab === 'petty') loadPettyCashReconcileDesk();
+      if (subTab === 'logger') loadExpenseMonthStrip();
     }
 
     function filterSupplyRequests(filterType) {
@@ -2921,6 +2934,39 @@ function triggerCatalogPhotoCapture(sku) {
       document.getElementById('expense-receipt-no').value = "";
       document.getElementById('expense-category-input').value = "";
       document.getElementById('receipt-label').textContent = "📷 Snap Receipt to Auto-Fill Tax & Amount";
+      loadExpenseMonthStrip();
+    }
+
+    // Under the expense form: this month's total, count and last 3 entries
+    async function loadExpenseMonthStrip() {
+      const sumEl = document.getElementById('exp-month-summary');
+      const list = document.getElementById('exp-month-recent');
+      if (!sumEl || !db) return;
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1), end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      try {
+        const rows = await dbWrite('Load expenses', () => db.from('requests')
+          .select('item_name, total_amount, delivery_fee, merchant_name, created_at')
+          .eq('status', 'PURCHASED').gte('created_at', start.toISOString()).lt('created_at', end.toISOString())
+          .order('created_at', { ascending: false })) || [];
+        const total = rows.reduce((a, e) => a + Number(e.total_amount || 0) + Number(e.delivery_fee || 0), 0);
+        const peso = n => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        sumEl.textContent = `${peso(total)} · ${rows.length} expense${rows.length === 1 ? '' : 's'}`;
+        const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        list.innerHTML = rows.length ? rows.slice(0, 3).map(e => `
+          <div class="flex items-center justify-between gap-2 text-[11px] bg-bitCream rounded-xl px-2.5 py-1.5 border border-bitBorderDark">
+            <span class="truncate"><strong>${esc(e.item_name)}</strong> <span class="text-gray-500">· ${esc(e.merchant_name || 'Store')}</span></span>
+            <span class="shrink-0 font-bold">${peso(Number(e.total_amount || 0) + Number(e.delivery_fee || 0))} <span class="text-gray-400 font-medium">${new Date(e.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></span>
+          </div>`).join('') : '<div class="text-[11px] text-gray-400">Nothing recorded yet this month.</div>';
+      } catch (e) {
+        sumEl.textContent = '—';
+        list.innerHTML = `<div class="text-[11px] text-red-500">${e.message}</div>`;
+      }
+    }
+
+    function openExpensesReport() {
+      goToView('view-reports');
+      switchReportsSubTab('expenses');
     }
 
     async function submitPettyCashRequest() {

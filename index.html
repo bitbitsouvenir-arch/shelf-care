@@ -181,10 +181,16 @@
           <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-bitMarigold/20 text-bitWalnut uppercase tracking-wide">Stock Checker</span>
           <h2 class="text-lg font-bold text-bitWalnut mt-1">Shelf Help</h2>
         </div>
-        <button type="button" onclick="goToView('view-shelf-care')" class="px-2.5 py-1 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer">
-          <span>📦</span>
-          <span>Shelf Care ➔</span>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="shelfHelpSync()" class="px-2.5 py-1 bg-white border border-bitBorderDark text-bitWalnut font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer" title="Get the latest stock and photos without logging out">
+            <span id="shelf-help-sync-icon" class="inline-block transition-transform duration-300">🔄</span>
+            <span id="shelf-help-sync-label">Sync</span>
+          </button>
+          <button type="button" onclick="goToView('view-shelf-care')" class="px-2.5 py-1 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut font-bold text-xs rounded-xl shadow-xs flex items-center space-x-1 cursor-pointer">
+            <span>📦</span>
+            <span>Shelf Care ➔</span>
+          </button>
+        </div>
       </div>
 
       <div class="w-full mb-3">
@@ -1970,6 +1976,23 @@
       const sku = currentPreviewSku;
       closeImagePreviewModal();
       triggerCatalogPhotoCapture(sku);
+    }
+
+    // Shelf Help "Sync": re-reads the current search (stock and photos) from the database without a page reload,
+    // which would log the person out
+    async function shelfHelpSync() {
+      const icon = document.getElementById('shelf-help-sync-icon');
+      const label = document.getElementById('shelf-help-sync-label');
+      icon.classList.add('rotate-180');
+      label.textContent = 'Syncing…';
+      const q = document.getElementById('shelf-help-search-input').value.trim();
+      try {
+        if (q) await runShelfHelpSearch(q);
+        await refreshGlobalStockCounters();
+      } catch (e) { console.warn('Sync warning:', e); }
+      setTimeout(() => icon.classList.remove('rotate-180'), 350);
+      label.textContent = '✓ ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      setTimeout(() => { label.textContent = 'Sync'; }, 4000);
     }
 
     async function runShelfHelpSearch(query) {

@@ -362,9 +362,11 @@
               <label class="block text-xs font-bold text-gray-700 mb-1">Craft Batch Description</label>
               <input type="text" id="inhouse-prod-notes" placeholder="e.g. Handmade Clay Batch 04, Beaded Lanyards" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none focus:border-bitWalnut">
             </div>
-            <button type="button" onclick="proceedInhouseProductionToQr()" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-              Proceed to QR Builder →
-            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="proceedInhouseProduction('QR')" class="py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">Proceed to QR Builder →</button>
+              <button type="button" onclick="proceedInhouseProduction('POS')" class="py-3.5 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">Save &amp; Proceed to POS →</button>
+            </div>
+            <p class="text-[10px] text-gray-500">QR Builder: label it and add it to our Werqroom stock. POS: save the batch only; the items are sold and tracked in the POS.</p>
           </div>
 
           <!-- TRACK B: REPURPOSE / REMAKE (DEDUCTS PULLED WHITE BIN STOCK) -->
@@ -374,26 +376,18 @@
               <button type="button" onclick="setRemakeMode('NOQR')" id="btn-remake-noqr" class="py-2 rounded-xl border cursor-pointer">✍️ No label (from Display)</button>
             </div>
 
-            <!-- With a label: taken off stock -->
-            <div id="remake-qr-fields" class="space-y-3">
+            <!-- With a label: taken off stock (several bags allowed) -->
+            <div id="remake-qr-fields" class="space-y-2.5">
               <div class="bg-bitCream p-3 rounded-2xl border border-bitBorderDark focus-within:ring-2 focus-within:ring-bitWalnut">
                 <div class="flex items-center justify-between mb-1">
-                  <label class="text-[11px] font-bold text-gray-600 uppercase">Scan the bag's QR</label>
-                  <button type="button" onclick="startCameraScanner('repurpose-source-sku-input', lookupRemakeSource)" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
+                  <label class="text-[11px] font-bold text-gray-600 uppercase">Scan each bag being remade</label>
+                  <button type="button" onclick="startContinuousScanner(addRemakeSource, 'Remake')" class="text-[11px] font-bold text-bitViolet flex items-center space-x-1 cursor-pointer">
                     <span>📷 Camera</span>
                   </button>
                 </div>
-                <input type="text" id="repurpose-source-sku-input" onchange="lookupRemakeSource(this.value)" placeholder="Scan or type, e.g. BDS-BOS-BIG-SOLID-E-P7" class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
+                <input type="text" id="repurpose-source-sku-input" placeholder="Scan or type, then Enter, e.g. BDS-BOS-BIG-SOLID-E-P7" class="w-full bg-transparent font-mono font-bold text-sm text-bitWalnut outline-none">
               </div>
-              <div id="remake-source-info" class="hidden p-2.5 bg-white rounded-2xl border border-bitBorderDark space-y-1.5">
-                <span class="text-[10px] font-bold text-gray-500 uppercase block">Take it off from</span>
-                <div id="remake-loc-options" class="grid grid-cols-2 gap-1.5 text-[11px] font-bold"></div>
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-gray-600 mb-1">Packs Being Remade</label>
-                <input type="number" id="repurpose-qty-input" value="1" min="1" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold text-center outline-none">
-                <span id="remake-qty-note" class="text-[10px] text-gray-500 block mt-0.5"></span>
-              </div>
+              <div id="remake-source-list" class="space-y-2"></div>
             </div>
 
             <!-- No label: description only -->
@@ -408,9 +402,10 @@
               <input type="text" id="repurpose-reason-input" placeholder="e.g. Broken cord, harvested clasps" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-xs font-bold outline-none">
             </div>
 
-            <button type="button" id="btn-remake-go" onclick="proceedInhouseRepurposeToQr()" class="w-full py-3.5 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">
-              Take Off Stock & Build New SKU →
-            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="proceedInhouseRepurpose('QR')" class="py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">Proceed to QR Builder →</button>
+              <button type="button" onclick="proceedInhouseRepurpose('POS')" class="py-3.5 bg-bitGreen hover:bg-bitGreenDark text-bitWalnut rounded-2xl font-bold text-xs shadow-sm cursor-pointer transition">Save &amp; Proceed to POS →</button>
+            </div>
           </div>
         </div>
         </div>
@@ -1522,7 +1517,7 @@
           <button type="button" onclick="filterParcelsReport('courier')" id="pill-parcel-courier" class="py-1.5 rounded-lg border cursor-pointer">Courier</button>
           <button type="button" onclick="filterParcelsReport('merchant')" id="pill-parcel-merchant" class="py-1.5 rounded-lg border cursor-pointer">Merchant</button>
           <button type="button" onclick="filterParcelsReport('pull_out')" id="pill-parcel-pull_out" class="py-1.5 rounded-lg border cursor-pointer">Pull-outs</button>
-          <button type="button" onclick="filterParcelsReport('repurpose')" id="pill-parcel-repurpose" class="py-1.5 rounded-lg border cursor-pointer">Remakes</button>
+          <button type="button" onclick="filterParcelsReport('repurpose')" id="pill-parcel-repurpose" class="py-1.5 rounded-lg border cursor-pointer">In-house</button>
         </div>
         <div id="parcels-report-list" class="space-y-2"></div>
       </div>
@@ -3471,8 +3466,8 @@ function triggerCatalogPhotoCapture(sku) {
 
     // --- PARCELS LOG ---
     let parcelsReportRows = [], parcelsReportSkus = {}, parcelsReportFilter = 'ALL';
-    const PARCEL_TYPE = { courier: '📦 Courier', merchant: '🏷️ Merchant', pull_out: '🔻 Pull-out', repurpose: '♻️ Remake' };
-    const PARCEL_STATUS = { IN_WHITE_BIN: 'In White Bin', PROCESSING: 'Opened', MERCHANT_POS: 'Sent to POS', REPURPOSED: 'Repurposed' };
+    const PARCEL_TYPE = { courier: '📦 Courier', merchant: '🏷️ Merchant', pull_out: '🔻 Pull-out', repurpose: '♻️ Remake', production: '💎 In-house' };
+    const PARCEL_STATUS = { IN_WHITE_BIN: 'In White Bin', PROCESSING: 'Opened', MERCHANT_POS: 'Sent to POS', SENT_TO_POS: 'Sent to POS', REPURPOSED: 'Repurposed' };
     const PHOTO_LABEL = { content: 'Contents', outer: 'Outer box', list: 'Item list' };
 
     async function loadParcelsReport() {
@@ -3506,14 +3501,14 @@ function triggerCatalogPhotoCapture(sku) {
         const b = document.getElementById('pill-parcel-' + k);
         if (b) b.className = 'py-1.5 rounded-lg border cursor-pointer ' + (k === f ? 'bg-bitWalnut text-white border-bitWalnut' : 'bg-bitCream text-bitWalnut border-bitBorderDark');
       });
-      const rows = parcelsReportRows.filter(p => f === 'ALL' || p.source_type === f);
+      const rows = parcelsReportRows.filter(p => f === 'ALL' || p.source_type === f || (f === 'repurpose' && p.source_type === 'production'));
       const list = document.getElementById('parcels-report-list');
       if (!rows.length) { list.innerHTML = '<div class="text-xs text-gray-400 text-center py-6 font-bold border border-dashed border-bitBorder rounded-2xl">No parcels this month.</div>'; return; }
       const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
       list.innerHTML = rows.map(p => {
         const dt = new Date(p.created_at);
         const code = p.waybill.split('#')[0];
-        const title = p.merchant_name ? esc(p.merchant_name) : (p.source_type === 'repurpose' ? 'Remake' : `<span class="font-mono">${esc(code)}</span>`);
+        const title = p.merchant_name ? esc(p.merchant_name) : (p.source_type === 'repurpose' ? 'Remake' : p.source_type === 'production' ? 'In-house batch' : `<span class="font-mono">${esc(code)}</span>`);
         const photos = (Array.isArray(p.photos) && p.photos.length) ? p.photos : (p.image_url ? [{ kind: 'content', url: p.image_url }] : []);
         const thumbs = photos.filter(ph => ph.url && !ph.url.startsWith('data:')).map(ph =>
           `<div class="text-center cursor-pointer" onclick="openImagePreviewModal('${esc(code).replace(/&#39;/g, '')} · ${PHOTO_LABEL[ph.kind] || 'Photo'}', '${ph.url}', true)">
@@ -3522,7 +3517,7 @@ function triggerCatalogPhotoCapture(sku) {
            </div>`).join('');
         const skus = parcelsReportSkus[p.waybill] || {};
         const skuList = Object.entries(skus).map(([sku, n]) => `<span class="inline-block font-mono text-[10px] bg-white border border-bitBorder rounded-md px-1.5 py-0.5 mr-1 mb-1">${esc(sku)} × ${n}</span>`).join('');
-        const after = p.source_type === 'merchant' ? '<span class="text-[10px] text-gray-500">Items tracked in the POS</span>'
+        const after = (p.source_type === 'merchant' || p.status === 'SENT_TO_POS') ? '<span class="text-[10px] text-gray-500">Items tracked in the POS</span>'
           : (skuList || `<span class="text-[10px] text-gray-400">${p.status === 'IN_WHITE_BIN' ? 'Not opened yet' : 'No SKUs linked'}</span>`);
         return `<div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-2">
             <div class="flex items-start justify-between gap-2">
@@ -3849,14 +3844,27 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         viewRepur.classList.remove('hidden');
         viewProd.classList.add('hidden');
         setRemakeMode(remakeMode);
+        renderRemakeSources();
         setTimeout(() => document.getElementById('repurpose-source-sku-input')?.focus(), 100);
       }
     }
 
-    function proceedInhouseProductionToQr() {
-      const notes = document.getElementById('inhouse-prod-notes').value.trim() || 'New In-House Craft';
-      activeIntakeWaybill = `CRAFT-${Date.now().toString().slice(-6)}`;
-      document.getElementById('qr-waybill-tag').textContent = `In-House: ${notes}`;
+    // New Production: QR = label it into our stock; POS = record the batch only (sold and tracked in the POS)
+    async function proceedInhouseProduction(dest) {
+      const desc = document.getElementById('inhouse-prod-notes').value.trim();
+      if (dest === 'POS' && !desc) return alert('Describe the batch first (e.g. "Beaded lanyards, 12 pcs").');
+      const ref = `CRAFT-${Date.now().toString(36).toUpperCase()}`;
+      try {
+        await dbWrite('Save batch', () => db.from('parcels').insert([{
+          waybill: ref, source_type: 'production', notes: desc || 'New in-house craft',
+          status: dest === 'POS' ? 'SENT_TO_POS' : 'PROCESSING',
+          logged_by: currentActiveCrew ? currentActiveCrew.name : 'Staff'
+        }]));
+      } catch (e) { return showSaveError(e); }
+      document.getElementById('inhouse-prod-notes').value = '';
+      if (dest === 'POS') return alert(`✓ Batch saved: ${desc}.\n\nNext: add the items in the POS.`);
+      activeIntakeWaybill = ref;
+      document.getElementById('qr-waybill-tag').textContent = `In-House: ${desc || 'New craft'}`;
       updateDoneParcelBtn();
       clearRepurposedLink();
       switchShelfTab('tab-qrbuilder');
@@ -3867,7 +3875,8 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
     // stock from wherever it is; Display items without a label are just described. Either way a "remake"
     // record is kept (Reports → Parcels) and the new SKUs saved in QR Builder are linked to it.
     const REMAKE_LOCS = [['WHITE_BIN', 'White Bin'], ['SHOP_STORAGE', 'Shop'], ['DISPLAY', 'Display'], ['WERQROOM', 'Werqroom']];
-    let remakeMode = 'QR', remakeSource = null; // { code, sku, isPartial, levels: {LOC: packs}, loc }
+    let remakeMode = 'QR';
+    let remakeSources = []; // [{ code, sku, isPartial, pcs, levels: {LOC: packs}, loc, qty }]
 
     function setRemakeMode(mode) {
       remakeMode = mode;
@@ -3877,62 +3886,60 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
       document.getElementById('btn-remake-noqr').className = mode === 'NOQR' ? on : off;
       document.getElementById('remake-qr-fields').classList.toggle('hidden', mode !== 'QR');
       document.getElementById('remake-noqr-fields').classList.toggle('hidden', mode !== 'NOQR');
-      document.getElementById('btn-remake-go').textContent = mode === 'QR' ? 'Take Off Stock & Build New SKU →' : 'Save & Build New SKU →';
     }
 
-    async function lookupRemakeSource(code) {
-      const box = document.getElementById('remake-source-info');
+    document.getElementById('repurpose-source-sku-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); const v = e.target.value; e.target.value = ''; addRemakeSource(v); }
+    });
+
+    // Adds a scanned bag. The same standard label again = one more pack; each partial label is its own bag.
+    async function addRemakeSource(code) {
       const raw = (code || '').trim().toUpperCase();
-      remakeSource = null;
-      if (!raw) { box.classList.add('hidden'); return; }
+      if (!raw) return;
       const parsed = parseScannedCode(raw);
+      const same = remakeSources.find(r => r.code === raw && !r.isPartial);
+      if (same) { same.qty = Math.min(same.qty + 1, same.levels[same.loc] || 1); return renderRemakeSources(); }
       let levels = {};
       try {
         const rows = await dbWrite('Load stock', () => db.from('inventory_levels').select('location, packs').eq('sku', parsed.sku));
         rows.forEach(r => { levels[r.location] = Number(r.packs) || 0; });
       } catch (e) { return showSaveError(e); }
-      const withStock = REMAKE_LOCS.filter(([k]) => (levels[k] || 0) > 0);
-      // Usually comes back from the Shop or Display; a pulled-out bag sits in the White Bin
-      const loc = withStock.length ? withStock[0][0] : null;
-      remakeSource = { code: raw, sku: parsed.sku, isPartial: parsed.isPartial, pcs: parsed.pcs, levels, loc };
-      renderRemakeSource();
+      const first = REMAKE_LOCS.find(([k]) => (levels[k] || 0) > 0);
+      remakeSources.push({ code: raw, sku: parsed.sku, isPartial: parsed.isPartial, pcs: parsed.pcs, levels, loc: first ? first[0] : null, qty: 1 });
+      renderRemakeSources();
     }
 
-    document.getElementById('repurpose-source-sku-input')?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); lookupRemakeSource(e.target.value); }
-    });
+    function setRemakeSourceLoc(i, loc) { const r = remakeSources[i]; if (!r) return; r.loc = loc; r.qty = Math.min(r.qty, r.levels[loc] || 1); renderRemakeSources(); }
+    function changeRemakeQty(i, d) { const r = remakeSources[i]; if (!r || r.isPartial) return; r.qty = Math.max(1, Math.min(r.qty + d, r.levels[r.loc] || 1)); renderRemakeSources(); }
+    function removeRemakeSource(i) { remakeSources.splice(i, 1); renderRemakeSources(); }
 
-    function chooseRemakeLoc(loc) { if (remakeSource) { remakeSource.loc = loc; renderRemakeSource(); } }
-
-    function renderRemakeSource() {
-      const box = document.getElementById('remake-source-info');
-      const opts = document.getElementById('remake-loc-options');
-      const qty = document.getElementById('repurpose-qty-input');
-      const note = document.getElementById('remake-qty-note');
-      box.classList.remove('hidden');
-      const r = remakeSource;
-      if (!Object.values(r.levels).some(n => n > 0)) {
-        opts.innerHTML = `<div class="col-span-2 text-[11px] text-red-700">No stock of <span class="font-mono">${r.sku}</span> anywhere in the system. Check the label, or use "No label".</div>`;
-        note.textContent = '';
-        return;
-      }
-      opts.innerHTML = REMAKE_LOCS.map(([k, label]) => {
-        const n = r.levels[k] || 0;
-        const cls = k === r.loc ? 'border-2 border-bitWalnut bg-bitCream text-bitWalnut' : (n > 0 ? 'border border-bitBorderDark bg-white text-gray-600' : 'border border-gray-100 bg-gray-50 text-gray-300 pointer-events-none');
-        return `<button type="button" onclick="chooseRemakeLoc('${k}')" class="py-1.5 rounded-xl ${cls} cursor-pointer">${label} · ${n}</button>`;
+    function renderRemakeSources() {
+      const box = document.getElementById('remake-source-list');
+      if (!remakeSources.length) { box.innerHTML = '<div class="text-[11px] text-gray-400 text-center py-2">No bags scanned yet.</div>'; return; }
+      box.innerHTML = remakeSources.map((r, i) => {
+        const hasStock = Object.values(r.levels).some(n => n > 0);
+        const locs = hasStock ? REMAKE_LOCS.map(([k, label]) => {
+          const n = r.levels[k] || 0;
+          const cls = k === r.loc ? 'border-2 border-bitWalnut bg-bitCream text-bitWalnut' : (n > 0 ? 'border border-bitBorderDark bg-white text-gray-600' : 'border border-gray-100 bg-gray-50 text-gray-300 pointer-events-none');
+          return `<button type="button" onclick="setRemakeSourceLoc(${i}, '${k}')" class="py-1 rounded-lg ${cls} cursor-pointer">${label} · ${n}</button>`;
+        }).join('') : `<div class="col-span-4 text-[10px] text-red-700">No stock of this SKU anywhere. Check the label or remove it.</div>`;
+        const qty = r.isPartial
+          ? `<span class="text-[10px] text-gray-500">Partial (${r.pcs} pcs) · 1 bag</span>`
+          : `<span class="flex items-center gap-1"><button type="button" onclick="changeRemakeQty(${i}, -1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">−</button><span class="min-w-[1.5rem] text-center font-bold">${r.qty}</span><button type="button" onclick="changeRemakeQty(${i}, 1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">+</button><span class="text-[10px] text-gray-500">pack${r.qty > 1 ? 's' : ''}</span></span>`;
+        return `<div class="p-2.5 bg-white rounded-2xl border border-bitBorderDark space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[11px] font-bold truncate">${r.code}</span>
+              <button type="button" onclick="removeRemakeSource(${i})" class="text-gray-400 font-bold px-1 cursor-pointer">✕</button>
+            </div>
+            <div class="grid grid-cols-4 gap-1 text-[10px] font-bold">${locs}</div>
+            <div class="flex items-center justify-between text-[11px]"><span class="text-[10px] text-gray-500">Take off</span>${qty}</div>
+          </div>`;
       }).join('');
-      if (r.isPartial) {
-        qty.value = 1; qty.disabled = true;
-        note.textContent = `Partial bag (${r.pcs} pcs): counts as 1 bag.`;
-      } else {
-        qty.disabled = false;
-        const max = r.levels[r.loc] || 0;
-        if ((parseInt(qty.value) || 1) > max) qty.value = Math.max(1, max);
-        note.textContent = `${max} pack${max === 1 ? '' : 's'} in the ${REMAKE_LOCS.find(x => x[0] === r.loc)[1]}.`;
-      }
     }
 
-    async function proceedInhouseRepurposeToQr() {
+    // Both buttons save the remake and take the bags off stock; QR then opens QR Builder for the new SKU,
+    // POS stops there (the finished items are sold and tracked in the POS)
+    async function proceedInhouseRepurpose(dest) {
       const reason = document.getElementById('repurpose-reason-input').value.trim() || 'Harvested for remake';
       const who = currentActiveCrew ? currentActiveCrew.name : 'Staff';
       const ref = `REMAKE-${Date.now().toString(36).toUpperCase()}`;
@@ -3944,69 +3951,66 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         notes = `${desc} · Reason: ${reason}`;
         label = desc;
       } else {
-        const typed = document.getElementById('repurpose-source-sku-input').value.trim().toUpperCase();
-        if (!typed) return alert("Scan or type the bag's QR first. No label? Choose \"No label (from Display)\".");
-        if (!remakeSource || remakeSource.code !== typed) await lookupRemakeSource(typed);
-        const r = remakeSource;
-        if (!r || !r.loc) return alert(`No stock of ${r ? r.sku : typed} found to take off. Check the label, or use "No label".`);
-        const qty = r.isPartial ? 1 : Math.max(1, parseInt(document.getElementById('repurpose-qty-input').value) || 1);
-        const have = r.levels[r.loc] || 0;
-        const locLabel = REMAKE_LOCS.find(x => x[0] === r.loc)[1];
-        if (qty > have) return alert(`Only ${have} pack(s) of ${r.sku} in the ${locLabel}.`);
-        for (let i = 0; i < qty; i++) {
-          movements.push({
+        const pending = document.getElementById('repurpose-source-sku-input').value.trim();
+        if (pending) { document.getElementById('repurpose-source-sku-input').value = ''; await addRemakeSource(pending); }
+        if (!remakeSources.length) return alert('Scan the bag(s) being remade first. No label? Choose "No label (from Display)".');
+        const bad = remakeSources.find(r => !r.loc);
+        if (bad) return alert(`No stock of ${bad.sku} found to take off. Remove it from the list, or use "No label".`);
+        // Same SKU and place listed twice must still fit what's there
+        const need = {};
+        remakeSources.forEach(r => { const k = r.sku + '|' + r.loc; need[k] = (need[k] || 0) + r.qty; });
+        for (const r of remakeSources) {
+          const have = r.levels[r.loc] || 0, k = r.sku + '|' + r.loc;
+          if (need[k] > have) return alert(`Only ${have} pack(s) of ${r.sku} in the ${REMAKE_LOCS.find(x => x[0] === r.loc)[1]}.`);
+        }
+        for (const r of remakeSources) {
+          for (let i = 0; i < r.qty; i++) movements.push({
             sku: r.sku, action: 'REPURPOSED_FROM_WHITE_BIN', bag_type: r.isPartial ? 'PARTIAL' : 'STANDARD',
             pcs_moved: r.isPartial ? r.pcs : pcsPerPackForCategory(r.sku.split('-')[0]),
             source_location: r.loc, dest_location: 'DISASSEMBLED_PRODUCTION',
             pull_out_reason: reason, moved_by: who, parcel_ref: ref
           });
+          if (r.loc === 'WHITE_BIN') {
+            try {
+              const bins = await dbWrite('Load White Bin', () => db.from('parcels').select('id')
+                .eq('status', 'IN_WHITE_BIN').eq('source_type', 'pull_out').like('waybill', r.code + '#%')
+                .not('id', 'in', `(${whiteBinIds.length ? whiteBinIds.join(',') : '00000000-0000-0000-0000-000000000000'})`)
+                .order('created_at').limit(r.qty));
+              bins.forEach(b => whiteBinIds.push(b.id));
+            } catch (e) { return showSaveError(e); }
+          }
         }
-        // Pulled-out bags waiting in the White Bin are stored as "<label code>#<id>": clear the ones being remade
-        if (r.loc === 'WHITE_BIN') {
-          try {
-            const bins = await dbWrite('Load White Bin', () => db.from('parcels').select('id, waybill')
-              .eq('status', 'IN_WHITE_BIN').eq('source_type', 'pull_out').like('waybill', r.code + '#%').order('created_at').limit(qty));
-            whiteBinIds = bins.map(b => b.id);
-          } catch (e) { return showSaveError(e); }
-        }
-        notes = `${qty} pack${qty > 1 ? 's' : ''} of ${r.code} from the ${locLabel} · Reason: ${reason}`;
-        label = r.code;
-        if (!confirm(`Take ${qty} pack${qty > 1 ? 's' : ''} of ${r.code} off the ${locLabel} to remake?`)) return;
+        const parts = remakeSources.map(r => `${r.qty} × ${r.code} (${REMAKE_LOCS.find(x => x[0] === r.loc)[1]})`);
+        notes = `${parts.join(', ')} · Reason: ${reason}`;
+        label = remakeSources.length === 1 ? remakeSources[0].code : `${remakeSources.length} bags`;
+        if (!confirm(`Take these off stock to remake?\n\n${parts.join('\n')}`)) return;
       }
 
-      const btn = document.getElementById('btn-remake-go');
-      btn.disabled = true;
       try {
         await dbWrite('Save remake', () => db.from('parcels').insert([{
-          waybill: ref, source_type: 'repurpose', status: 'REPURPOSED', notes, logged_by: who
+          waybill: ref, source_type: 'repurpose', status: dest === 'POS' ? 'SENT_TO_POS' : 'REPURPOSED', notes, logged_by: who
         }]));
         if (movements.length) await dbWrite('Take off stock', () => db.from('stock_movements').insert(movements));
         if (whiteBinIds.length) await dbWrite('Clear White Bin', () => db.from('parcels').update({ status: 'REPURPOSED' }).in('id', whiteBinIds));
       } catch (e) {
-        btn.disabled = false;
         return showSaveError(e);
       }
-      btn.disabled = false;
 
       await loadWhiteBinParcels();
       refreshGlobalStockCounters();
+      ['repurpose-source-sku-input', 'repurpose-reason-input', 'remake-desc-input'].forEach(id => { document.getElementById(id).value = ''; });
+      remakeSources = [];
+      renderRemakeSources();
+
+      const taken = movements.length ? `✓ ${movements.length} pack(s) taken off stock.\n` : `✓ Remake saved: ${label}.\n`;
+      if (dest === 'POS') return alert(taken + '\nNext: add the finished items in the POS.');
+
       document.getElementById('repurposed-source-badge').classList.remove('hidden');
       document.getElementById('repurposed-source-text').textContent = `♻️ Remade from: ${label}`;
       activeIntakeWaybill = ref; // new SKUs saved in QR Builder link back to this remake
       document.getElementById('qr-waybill-tag').textContent = 'Remake intake';
       updateDoneParcelBtn();
-
-      // reset the form
-      ['repurpose-source-sku-input', 'repurpose-reason-input', 'remake-desc-input'].forEach(id => { document.getElementById(id).value = ''; });
-      document.getElementById('repurpose-qty-input').value = 1;
-      document.getElementById('repurpose-qty-input').disabled = false;
-      document.getElementById('remake-source-info').classList.add('hidden');
-      document.getElementById('remake-qty-note').textContent = '';
-      remakeSource = null;
-
-      alert(movements.length
-        ? `✓ ${movements.length} pack(s) of ${label} taken off stock.\nNow build the new SKU in QR Builder.`
-        : `✓ Remake saved: ${label}.\nNow build the new SKU in QR Builder.`);
+      alert(taken + 'Now build the new SKU in QR Builder.');
       switchShelfTab('tab-qrbuilder');
     }
 

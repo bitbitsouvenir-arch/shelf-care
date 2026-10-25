@@ -3026,7 +3026,7 @@ function triggerCatalogPhotoCapture(sku) {
               <span>Current Count: <strong>${r.qty_requested || 0} pcs</strong> • By ${r.requested_by || 'Staff'}</span>
               ${!canReviewRequests() ? '<span class="shrink-0 text-[10px] text-gray-400 font-bold">Waiting for Admin or Lead</span>' : `<div class="flex space-x-1.5 shrink-0">
                 <button type="button" onclick="resolveFloorRequest('${r.id}', 'APPROVED')" class="px-2.5 py-1 bg-bitGreen text-bitWalnut font-bold text-[10px] rounded-lg hover:bg-bitGreenDark cursor-pointer">
-                  ${r.request_type === 'STOCK_RESTOCK' ? '✓ Ordered' : '✓ Accept'}
+                  ✓ Accept
                 </button>
                 <button type="button" onclick="resolveFloorRequest('${r.id}', 'REJECTED')" class="px-2 py-1 bg-gray-200 text-gray-700 font-bold text-[10px] rounded-lg hover:bg-red-100 hover:text-red-700 cursor-pointer">
                   ✕ Reject
@@ -3065,7 +3065,7 @@ function triggerCatalogPhotoCapture(sku) {
       rawPendingRequests = rawPendingRequests.filter(r => r.id !== id);
       renderSuppliesRequestsList();
       alert(action === 'APPROVED' && req && req.request_type === 'STOCK_RESTOCK'
-        ? `✓ Marked as ordered. It shows as ✅ Ordered in the Day Summary until the stock arrives.`
+        ? `✓ Accepted. It shows as ✅ Ordered in the Day Summary until the stock arrives.`
         : `Request marked ${action}!`);
     }
 

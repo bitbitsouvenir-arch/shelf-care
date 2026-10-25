@@ -193,7 +193,11 @@
         </div>
       </div>
 
-      <div class="w-full mb-3">
+      <div class="w-full mb-3 flex flex-wrap gap-2">
+        <button type="button" onclick="openFavoritesModal()" class="py-2.5 px-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>⭐</span>
+          <span>Favorites</span>
+        </button>
         <button type="button" onclick="openNewArrivalsModal()" class="py-2.5 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
           <span>✨</span>
           <span>New & Back in Stock</span>
@@ -960,6 +964,49 @@
   </div>
 
   <!-- RECENT ARRIVALS (LAST 7 DAYS) MODAL -->
+  <!-- FAVORITES LIST -->
+  <div id="favorites-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full">Low-stock alerts</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">⭐ Favorites</h3>
+          <span class="text-[10px] text-gray-500 font-medium block">Full packs only (partial bags not counted). Alerts post to BitBit-Team.</span>
+        </div>
+        <button type="button" onclick="document.getElementById('favorites-modal').style.display='none'" class="text-gray-400 font-bold p-1 text-base">&times;</button>
+      </div>
+      <div id="favorites-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+    </div>
+  </div>
+
+  <!-- FAVORITE SETTINGS (Admin, Lead, Stock Coordinator) -->
+  <div id="fav-edit-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+        <div class="min-w-0">
+          <span class="text-[10px] font-bold uppercase text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full">⭐ Favorite</span>
+          <h3 id="fav-edit-sku" class="font-mono font-bold text-sm text-bitWalnut mt-1 break-all">-</h3>
+        </div>
+        <button type="button" onclick="document.getElementById('fav-edit-modal').style.display='none'" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <div id="fav-edit-now" class="text-[11px] text-gray-600 bg-bitCream rounded-xl p-2.5 border border-bitBorderDark"></div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-600 mb-1">🛒 Reorder at (Werqroom + Shop)</label>
+          <input type="number" id="fav-edit-reorder" min="0" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-sm font-bold text-center outline-none">
+          <span class="text-[10px] text-gray-500">packs or fewer</span>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-600 mb-1">🚚 Shop minimum</label>
+          <input type="number" id="fav-edit-shopmin" min="0" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark text-sm font-bold text-center outline-none">
+          <span class="text-[10px] text-gray-500">packs or fewer in Shop</span>
+        </div>
+      </div>
+      <button type="button" onclick="saveFavoriteEdit(true)" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Save</button>
+      <button type="button" id="fav-edit-remove" onclick="saveFavoriteEdit(false)" class="w-full py-2 text-red-700 font-bold text-[11px] cursor-pointer">☆ Remove from favorites</button>
+    </div>
+  </div>
+
   <div id="new-arrivals-modal" style="display: none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[32px] p-5 space-y-4 shadow-2xl border border-bitBorder max-h-[85vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
@@ -1998,6 +2045,129 @@
       setTimeout(() => { label.textContent = 'Sync'; }, 4000);
     }
 
+    // ================= FAVORITES =================
+    // Starred items get low-stock alerts in BitBit-Team. Thresholds count FULL packs (partial -P bags excluded).
+    const FAV_EDITORS = ['admin', 'lead', 'coordinator'];
+    const favCache = {}; // sku → item fields seen on screen
+    function canEditFavorites() { return !!currentActiveCrew && FAV_EDITORS.includes((currentActiveCrew.role || '').toLowerCase()); }
+    function favStatus(it, werqFull, shopFull) {
+      const s = [];
+      if (werqFull + shopFull <= (it.reorder_at ?? 3)) s.push('REORDER');
+      if (shopFull <= (it.shop_min ?? 1) && werqFull > 0) s.push('DELIVER');
+      return s;
+    }
+    function favChips(st) {
+      if (!st.length) return '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800">OK</span>';
+      return st.map(k => k === 'REORDER'
+        ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-100 text-red-800">🛒 Reorder</span>'
+        : '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-sky-100 text-sky-800">🚚 Deliver</span>').join(' ');
+    }
+    function favStarButton(item) {
+      const on = !!item.is_favorite;
+      if (!canEditFavorites()) return on ? '<span class="shrink-0 text-base leading-none" title="Favorite">⭐</span>' : '';
+      return `<button type="button" onclick="event.stopPropagation(); toggleFavorite('${item.sku}')" class="shrink-0 text-lg leading-none px-1 cursor-pointer" title="${on ? 'Edit or remove favorite' : 'Add to favorites'}">${on ? '⭐' : '☆'}</button>`;
+    }
+    function favNoteHtml(item) {
+      if (!item.is_favorite) return '';
+      const when = item.fav_at ? new Date(item.fav_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+      const st = favStatus(item, item.werqFull || 0, item.shopFull || 0);
+      return '<div class="p-2 bg-amber-50 border border-amber-200 rounded-xl text-[10px] text-amber-900 flex items-center justify-between gap-2">' +
+        '<span>⭐ Favorite · reorder at ≤' + (item.reorder_at ?? 3) + ' · Shop min ' + (item.shop_min ?? 1) + (item.fav_by ? ' · by ' + item.fav_by + (when ? ', ' + when : '') : '') + '</span>' +
+        '<span class="shrink-0">' + favChips(st) + '</span></div>';
+    }
+
+    let favEditSku = null;
+    async function toggleFavorite(sku) {
+      if (!canEditFavorites()) return alert('Only Admin, Lead and Stock Coordinator can change favorites.');
+      const it = favCache[sku] || {};
+      if (!it.is_favorite) {
+        // Star with the standard thresholds: reorder at 3 or fewer full packs, Shop minimum 1
+        try {
+          await dbWrite('Star item', () => db.rpc('set_favorite', { p_sku: sku, p_on: true, p_reorder_at: 3, p_shop_min: 1, p_by: currentActiveCrew.name }));
+        } catch (e) { return showSaveError(e); }
+        alert(`⭐ ${sku} is now a favorite.\nAlerts when 3 or fewer full packs are left (Werqroom + Shop), or the Shop is down to 1.\nTap ⭐ again to change these.`);
+        return refreshAfterFavoriteChange();
+      }
+      openFavoriteEdit(sku);
+    }
+    async function openFavoriteEdit(sku) {
+      if (!canEditFavorites()) return;
+      favEditSku = sku;
+      let it = favCache[sku] || {};
+      try {
+        const rows = await dbWrite('Load favorite', () => db.from('items').select('sku, name, is_favorite, reorder_at, shop_min, fav_by, fav_at').eq('sku', sku).limit(1));
+        if (rows && rows[0]) it = Object.assign(it, rows[0]);
+      } catch (e) { return showSaveError(e); }
+      document.getElementById('fav-edit-sku').textContent = sku;
+      document.getElementById('fav-edit-reorder').value = it.reorder_at ?? 3;
+      document.getElementById('fav-edit-shopmin').value = it.shop_min ?? 1;
+      document.getElementById('fav-edit-now').textContent = it.is_favorite
+        ? `Starred${it.fav_by ? ' by ' + it.fav_by : ''}${it.fav_at ? ' on ' + new Date(it.fav_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}. Changing a number doesn't post an alert; the next stock change or the Day Summary will.`
+        : 'Not a favorite yet.';
+      document.getElementById('fav-edit-remove').classList.toggle('hidden', !it.is_favorite);
+      document.getElementById('fav-edit-modal').style.display = 'flex';
+    }
+    async function saveFavoriteEdit(on) {
+      if (!canEditFavorites() || !favEditSku) return;
+      const r = parseInt(document.getElementById('fav-edit-reorder').value), m = parseInt(document.getElementById('fav-edit-shopmin').value);
+      if (on && (isNaN(r) || isNaN(m) || r < 0 || m < 0)) return alert('Enter both numbers (0 or more).');
+      if (!on && !confirm(`Remove ${favEditSku} from favorites? It won't send alerts any more.`)) return;
+      try {
+        await dbWrite('Save favorite', () => db.rpc('set_favorite', { p_sku: favEditSku, p_on: on, p_reorder_at: on ? r : 3, p_shop_min: on ? m : 1, p_by: currentActiveCrew.name }));
+      } catch (e) { return showSaveError(e); }
+      document.getElementById('fav-edit-modal').style.display = 'none';
+      if (favCache[favEditSku]) favCache[favEditSku].is_favorite = on;
+      refreshAfterFavoriteChange();
+    }
+    function refreshAfterFavoriteChange() {
+      const q = document.getElementById('shelf-help-search-input')?.value.trim();
+      if (q && !document.getElementById('view-shelf-help').classList.contains('hidden')) runShelfHelpSearch(q);
+      if (!document.getElementById('view-shelf-care').classList.contains('hidden')) loadLocationStockData();
+      if (document.getElementById('favorites-modal').style.display === 'flex') openFavoritesModal();
+    }
+
+    async function openFavoritesModal() {
+      const modal = document.getElementById('favorites-modal'), list = document.getElementById('favorites-list');
+      modal.style.display = 'flex';
+      list.innerHTML = '<div class="text-center py-8 text-xs text-gray-400 font-bold">Loading favorites...</div>';
+      try {
+        const favs = await dbWrite('Load favorites', () => db.from('items').select('sku, name, image_url, is_favorite, reorder_at, shop_min, fav_by, fav_at').eq('is_favorite', true).range(0, 999));
+        if (!favs.length) {
+          list.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs">No favorites yet.${canEditFavorites() ? ' Tap ☆ on an item in Shelf Help or Stocks to add one.' : ''}</div>`;
+          return;
+        }
+        const lv = await dbWrite('Load stock', () => db.from('inventory_levels').select('sku, location, packs, partial_bags').in('sku', favs.map(f => f.sku)).in('location', ['WERQROOM', 'SHOP_STORAGE']));
+        const at = {};
+        lv.forEach(l => {
+          const r = (at[l.sku] = at[l.sku] || { w: 0, s: 0, wp: 0, sp: 0 });
+          const full = Math.max(0, (l.packs || 0) - (l.partial_bags || 0)), part = Math.min(l.packs || 0, l.partial_bags || 0);
+          if (l.location === 'WERQROOM') { r.w += full; r.wp += part; } else if (l.location === 'SHOP_STORAGE') { r.s += full; r.sp += part; }
+        });
+        const rows = favs.map(f => { const c = at[f.sku] || { w: 0, s: 0, wp: 0, sp: 0 }; const st = favStatus(f, c.w, c.s);
+          favCache[f.sku] = Object.assign(favCache[f.sku] || {}, f, { werqFull: c.w, shopFull: c.s });
+          return { f, c, st, urg: st.includes('REORDER') ? (c.w + c.s) / Math.max(1, f.reorder_at) : st.includes('DELIVER') ? 10 + c.s / Math.max(1, f.shop_min) : 100 }; })
+          .sort((a, b) => a.urg - b.urg || a.f.sku.localeCompare(b.f.sku));
+        const part = n => n ? ` <span class="text-gray-400">+${n}P</span>` : '';
+        list.innerHTML = rows.map(({ f, c, st }) => `
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <span class="font-mono font-bold text-xs text-bitWalnut block break-all">${f.sku}</span>
+                <span class="text-[11px] text-gray-600 block truncate">${f.name || ''}</span>
+              </div>
+              <div class="shrink-0 flex items-center gap-1">${favChips(st)}${canEditFavorites() ? `<button type="button" onclick="openFavoriteEdit('${f.sku}')" class="px-1.5 text-[11px] cursor-pointer" title="Edit">✏️</button>` : ''}</div>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 text-center text-[10px]">
+              <div class="bg-white rounded-lg border border-bitBorder p-1"><span class="text-gray-400 block">Werqroom</span><strong>${c.w}</strong>${part(c.wp)}</div>
+              <div class="bg-white rounded-lg border border-bitBorder p-1"><span class="text-gray-400 block">Shop</span><strong>${c.s}</strong>${part(c.sp)}</div>
+              <div class="bg-white rounded-lg border border-bitBorder p-1"><span class="text-gray-400 block">Reorder at</span><strong>≤${f.reorder_at ?? 3}</strong> <span class="text-gray-400">· Shop ≤${f.shop_min ?? 1}</span></div>
+            </div>
+          </div>`).join('');
+      } catch (e) {
+        list.innerHTML = `<div class="text-xs text-red-500 text-center py-4">${e.message}</div>`;
+      }
+    }
+
     async function runShelfHelpSearch(query) {
       // Commas and brackets would break the database search filter, so they're stripped out
       const q = (query || document.getElementById('shelf-help-search-input').value).trim().replace(/[,()]/g, ' ').trim();
@@ -2058,10 +2228,14 @@
     });
 
     // Live stock per location (the same numbers as the Stocks tab and the audit)
-    const levelsRes = await db.from('inventory_levels').select('sku, location, packs').in('sku', allFoundSkus.slice(0, 300));
+    const levelsRes = await db.from('inventory_levels').select('sku, location, packs, partial_bags').in('sku', allFoundSkus.slice(0, 300));
     if (levelsRes.error) throw new Error("Couldn't load stock (" + levelsRes.error.message + ")");
-    const packsAt = {};
-    (levelsRes.data || []).forEach(l => { (packsAt[l.sku.toUpperCase()] = packsAt[l.sku.toUpperCase()] || {})[l.location] = Number(l.packs) || 0; });
+    const packsAt = {}, fullAt = {};
+    (levelsRes.data || []).forEach(l => {
+      const k = l.sku.toUpperCase();
+      (packsAt[k] = packsAt[k] || {})[l.location] = Number(l.packs) || 0;
+      (fullAt[k] = fullAt[k] || {})[l.location] = Math.max(0, (Number(l.packs) || 0) - (Number(l.partial_bags) || 0));
+    });
     const movements = directMoves;
         const defaultThumb = NO_PHOTO;
         activeSearchMovements = {};
@@ -2076,15 +2250,19 @@
 
           activeSearchMovements[item.sku] = itemMovements.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+          const full = fullAt[(item.sku || '').toUpperCase()] || {};
           return {
             ...item,
             werqPacks,
             shopPacks,
             totalPacks,
+            werqFull: full.WERQROOM || 0,
+            shopFull: full.SHOP_STORAGE || 0,
             movementCount: itemMovements.length
           };
         });
-        itemsWithStock.sort((a, b) => b.totalPacks - a.totalPacks);
+        itemsWithStock.sort((a, b) => (b.is_favorite ? 1 : 0) - (a.is_favorite ? 1 : 0) || b.totalPacks - a.totalPacks);
+        itemsWithStock.forEach(it => { favCache[it.sku] = it; });
 
         resultArea.innerHTML = itemsWithStock.map(item => {
           const thumbSrc = (item.image_url && typeof item.image_url === 'string' && item.image_url.startsWith('http')) 
@@ -2100,7 +2278,7 @@
                 '<div class="absolute bottom-1 right-1 bg-black/60 text-white rounded-md p-0.5 text-[10px] leading-none">🔍</div>' +
               '</div>' +
               '<div class="min-w-0 flex-1">' +
-                '<span class="text-xs font-mono font-bold text-bitWalnut block break-all">' + item.sku + '</span>' +
+                '<div class="flex items-start justify-between gap-2"><span class="text-xs font-mono font-bold text-bitWalnut block break-all">' + item.sku + '</span>' + favStarButton(item) + '</div>' +
                 '<span class="text-xs font-bold text-gray-700 block">' + (item.name || 'Catalog Item') + '</span>' +
                 '<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-1 ' + stockBadgeClass + '">' + stockBadgeText + '</span>' +
               '</div>' +
@@ -2115,6 +2293,7 @@
                 '<span class="text-sm font-bold text-bitWalnut font-sans">' + item.shopPacks + ' packs</span>' +
               '</div>' +
             '</div>' +
+            favNoteHtml(item) +
             '<div class="w-full pt-1">' +
             '<button type="button" onclick="openMovementHistoryModal(\'' + item.sku + '\')" class="w-full py-2 bg-white hover:bg-gray-100 text-bitWalnut border border-bitBorder font-bold text-xs rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shadow-sm">' +
                 '🕒 History (' + item.movementCount + ')' +
@@ -4568,7 +4747,7 @@ async function refreshGlobalStockCounters() {
         const skus = Array.from(new Set((levels || []).map(l => l.sku)));
         const { data: items } = await db
           .from('items')
-          .select('sku, name, image_url')
+          .select('sku, name, image_url, is_favorite, reorder_at, shop_min, fav_by, fav_at')
           .in('sku', skus);
 
         const itemMap = new Map();
@@ -4586,6 +4765,7 @@ async function refreshGlobalStockCounters() {
               sku: s,
               name: cat.name,
               image_url: cat.image_url,
+              is_favorite: !!cat.is_favorite, reorder_at: cat.reorder_at, shop_min: cat.shop_min, fav_by: cat.fav_by, fav_at: cat.fav_at,
               werqPacks: 0,
               shopPacks: 0
             };
@@ -4595,6 +4775,7 @@ async function refreshGlobalStockCounters() {
         });
 
         cachedLocationItems = Object.values(skuGroup);
+        cachedLocationItems.forEach(it => { favCache[it.sku] = Object.assign(favCache[it.sku] || {}, it); });
 
         renderFilteredLocationStock();
       } catch (err) {
@@ -4661,8 +4842,10 @@ async function refreshGlobalStockCounters() {
               <div class="min-w-0">
                 <span class="font-mono font-bold text-bitWalnut block truncate">${item.sku}</span>
                 <span class="text-[10px] text-gray-500 font-medium block truncate">${item.name || 'Catalog Item'}</span>
+                ${item.is_favorite ? `<span class="text-[9px] font-bold text-amber-800 block">⭐ Favorite · reorder at ≤${item.reorder_at ?? 3}</span>` : ''}
               </div>
             </div>
+            ${favStarButton(item)}
             <!-- CLEAN SINGLE BADGE (NO DUPLICATE PILL) -->
             <div class="text-right shrink-0">
               <span class="px-2.5 py-1 bg-white border border-bitBorderDark rounded-xl text-bitWalnut font-bold text-xs block shadow-2xs">

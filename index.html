@@ -3969,8 +3969,8 @@ function triggerCatalogPhotoCapture(sku) {
     //   HERE = it's there (keep the system number), SOME = only some found (remove the rest), GONE = really missing.
     // Decisions are saved on the audit (discrepancy_details.rows[].review). "Review done" (admin) removes
     // the SOME/GONE packs as audit adjustments; rows nobody reviewed stay as they are (unverified).
-    const MISSING_MARKERS = ['admin', 'lead', 'coordinator'];
-    function canMarkMissing() { return !!currentActiveCrew && MISSING_MARKERS.includes((currentActiveCrew.role || '').toLowerCase()); }
+    // Anyone logged in can mark rows (each check is saved with their name); only Admin taps Review done.
+    function canMarkMissing() { return !!currentActiveCrew; }
     function missingRemoveCount(r) {
       if (!r.review) return 0;
       if (r.review.d === 'GONE') return r.expected - r.counted;

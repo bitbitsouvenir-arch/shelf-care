@@ -3902,7 +3902,8 @@ function triggerCatalogPhotoCapture(sku) {
       const locLabel = AUDIT_LOC_LABEL[audit.location] || audit.location;
       const dt = new Date(audit.audit_date);
       const byStatus = st => det.rows.filter(r => r.status === st);
-      const isAdmin = currentActiveCrew && (currentActiveCrew.role || '').toLowerCase() === 'admin';
+      const canFix = canFixAudit();
+      const missingOpen = det.rows.some(r => r.status === 'MISSING') && !det.missing_review;
       const toFix = det.rows.filter(r => r.status === 'EXCESS').length;
 
       const rowHtml = r => `<div class="flex items-center justify-between gap-2 py-1 border-b border-black/5 last:border-0">
@@ -3942,10 +3943,12 @@ function triggerCatalogPhotoCapture(sku) {
             ? `<span class="font-bold text-[11px] text-emerald-900 block">✓ Excess added on ${new Date(audit.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${audit.applied_by || 'Admin'}.</span>`
             : (toFix === 0
               ? '<span class="font-bold text-[11px] text-emerald-900 block">✓ No excess to add.</span>'
-              : (isAdmin
+              : (missingOpen
+                ? '<span class="text-[11px] text-gray-600 block">Finish the missing review first, then the excess can be added here.</span>'
+                : canFix
                 ? `<span class="text-[11px] block">Add the excess for <strong>${toFix} SKU${toFix > 1 ? 's' : ''}</strong> so the system matches what was scanned. Missing items are handled in the review above. Each change is logged as an audit adjustment.</span>
                    <button type="button" id="btn-apply-audit" onclick="applyAuditFix()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Fix it: add the excess to ${locLabel}</button>`
-                : '<span class="text-[11px] text-gray-600 block">An admin can open this audit and add the excess.</span>'))}
+                : '<span class="text-[11px] text-gray-600 block">The Stock Coordinator can open this audit and add the excess.</span>'))}
         </div>`;
 
       renderMissingReview(audit);
@@ -3969,8 +3972,11 @@ function triggerCatalogPhotoCapture(sku) {
     //   HERE = it's there (keep the system number), SOME = only some found (remove the rest), GONE = really missing.
     // Decisions are saved on the audit (discrepancy_details.rows[].review). "Review done" (admin) removes
     // the SOME/GONE packs as audit adjustments; rows nobody reviewed stay as they are (unverified).
-    // Anyone logged in can mark rows (each check is saved with their name); only Admin taps Review done.
-    function canMarkMissing() { return !!currentActiveCrew; }
+    // Anyone can scan an audit. Only the Stock Coordinator (Alex) checks each missing row and fixes the audit:
+    // every missing row must be checked before Review done, and Fix it (excess) opens after Review done.
+    const AUDIT_FIXERS = ['coordinator'];
+    function canFixAudit() { return !!currentActiveCrew && AUDIT_FIXERS.includes((currentActiveCrew.role || '').toLowerCase()); }
+    function canMarkMissing() { return canFixAudit(); }
     function missingRemoveCount(r) {
       if (!r.review) return 0;
       if (r.review.d === 'GONE') return r.expected - r.counted;
@@ -3992,8 +3998,8 @@ function triggerCatalogPhotoCapture(sku) {
       if (!rows.length) return;
       const done = det.missing_review;
       const canMark = !done && canMarkMissing();
-      const isAdmin = (currentActiveCrew && currentActiveCrew.role || '').toLowerCase() === 'admin';
       const reviewed = rows.filter(r => r.review);
+      const left = rows.length - reviewed.length;
       const cnt = d => rows.filter(r => r.review && r.review.d === d).length;
       const toRemove = rows.reduce((a, r) => a + missingRemoveCount(r), 0);
       const btn = (r, i, d, txt) => {
@@ -4018,10 +4024,12 @@ function triggerCatalogPhotoCapture(sku) {
       const head = done
         ? `<div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-[10px] font-bold">✓ Review done ${new Date(done.done_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${done.done_by}: −${done.removed_packs} packs removed · ${done.kept} kept · ${done.unverified} unverified</div>`
         : `<div class="text-[10px] font-bold">Reviewed ${reviewed.length} of ${rows.length} · ✅ ${cnt('HERE')} · 🔢 ${cnt('SOME')} · ❌ ${cnt('GONE')}${toRemove ? ` · −${toRemove} packs to remove` : ''}</div>
-           <span class="block text-[10px] opacity-80">Check each one on the shelf. Nothing is removed until Review done; rows left unreviewed stay as they are.</span>`;
-      const foot = done ? '' : (isAdmin
-        ? `<button type="button" id="btn-missing-done" onclick="finishMissingReview()" class="w-full mt-2 py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Review done${toRemove ? `: remove ${toRemove} pack${toRemove > 1 ? 's' : ''}` : ''}</button>`
-        : '<span class="block mt-1.5 text-[10px] text-gray-600">An admin taps Review done when the checks are finished.</span>');
+           <span class="block text-[10px] opacity-80">Check each one on the shelf. Checks are saved as you go; nothing is removed until Review done.</span>`;
+      const foot = done ? '' : (canFixAudit()
+        ? (left
+          ? `<button type="button" disabled class="w-full mt-2 py-2.5 bg-gray-200 text-gray-500 rounded-xl font-bold text-xs">Check ${left} more to finish the review</button>`
+          : `<button type="button" id="btn-missing-done" onclick="finishMissingReview()" class="w-full mt-2 py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Review done${toRemove ? `: remove ${toRemove} pack${toRemove > 1 ? 's' : ''}` : ''}</button>`)
+        : '<span class="block mt-1.5 text-[10px] text-gray-600">The Stock Coordinator checks each item and finishes the review.</span>');
       box.innerHTML = `<details class="p-2.5 rounded-2xl border ${AUDIT_STATUS.MISSING.cls}" open>
           <summary class="font-bold text-[11px] cursor-pointer">${AUDIT_STATUS.MISSING.label} · ${rows.length} SKU${rows.length > 1 ? 's' : ''} <span class="font-medium opacity-70">(${AUDIT_STATUS.MISSING.note})</span></summary>
           <div class="mt-1.5 space-y-1">${head}</div>
@@ -4062,12 +4070,13 @@ function triggerCatalogPhotoCapture(sku) {
     // Admin: removes the SOME/GONE packs as audit adjustments and closes the review
     async function finishMissingReview() {
       const audit = currentSelectedAudit;
-      if (!audit || (currentActiveCrew && currentActiveCrew.role || '').toLowerCase() !== 'admin') return alert('Only an admin can finish the review.');
+      if (!audit || !canFixAudit()) return alert('Only the Stock Coordinator can finish the review.');
       let det;
       try { det = (await dbWrite('Load audit', () => db.from('inventory_audits').select('discrepancy_details').eq('id', audit.id).single())).discrepancy_details; }
       catch (e) { return showSaveError(e); }
       if (det.missing_review) { audit.discrepancy_details = det; renderMissingReview(audit); return; }
       const rows = det.rows.filter(r => r.status === 'MISSING');
+      if (rows.some(r => !r.review)) { audit.discrepancy_details = det; renderMissingReview(audit); return alert('Check every missing item first.'); }
       const removePacks = rows.reduce((a, r) => a + missingRemoveCount(r), 0);
       const kept = rows.filter(r => r.review && r.review.d === 'HERE').length;
       const unverified = rows.filter(r => !r.review).length;
@@ -4105,7 +4114,8 @@ function triggerCatalogPhotoCapture(sku) {
     async function applyAuditFix() {
       const audit = currentSelectedAudit;
       if (!audit || audit.applied_at) return;
-      if ((currentActiveCrew && currentActiveCrew.role || '').toLowerCase() !== 'admin') return alert('Only an admin can fix an audit.');
+      if (!canFixAudit()) return alert('Only the Stock Coordinator can fix an audit.');
+      if (audit.discrepancy_details.rows.some(r => r.status === 'MISSING') && !audit.discrepancy_details.missing_review) return alert('Finish the missing review first.');
       const rows = (audit.discrepancy_details.rows || []).filter(r => r.status === 'EXCESS');
       const add = rows.reduce((a, r) => a + (r.counted - r.expected), 0);
       const locLabel = AUDIT_LOC_LABEL[audit.location];

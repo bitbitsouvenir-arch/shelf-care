@@ -1873,6 +1873,8 @@
         document.getElementById('crew-avatar').textContent = currentActiveCrew.name.charAt(0);
 
         document.getElementById('gate-lockscreen').style.display = 'none';
+        // An audit left open by the previous person is redrawn for whoever just logged in (their buttons, not the last person's)
+        if (currentSelectedAudit) renderAuditReport(currentSelectedAudit);
         goToView('view-hub');
 
         // First login of the day for this person → Start-your-day screen (time in, optionally open the store)

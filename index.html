@@ -482,7 +482,7 @@
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[10px] font-bold text-gray-500 mb-1">1. Category</label>
-            <select id="sku-cat-input" onchange="const p = document.getElementById('sku-pcs-per-pack'); if(p) delete p.dataset.manual; refreshSubcatOptions(); generateFourPartSku();" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
+            <select id="sku-cat-input" onchange="const p = document.getElementById('sku-pcs-per-pack'); if(p) delete p.dataset.manual; generateFourPartSku();" class="w-full p-2.5 bg-bitCream rounded-xl border border-bitBorderDark font-mono text-xs font-bold uppercase outline-none focus:border-bitWalnut cursor-pointer">
               <option value="BDS">BDS (Beads)</option>
               <option value="CHA">CHA (Charms)</option>
               <option value="HUP">HUP (Hook Ups)</option>
@@ -4372,21 +4372,6 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
     }
 
     // ================= QR BUILDER ENGINE =================
-    // Sub-categories per category. Any category not listed uses the default set.
-    const SUBCATS_BY_CAT = {
-      CONS: [['SAM', 'SAMPLE']]
-    };
-    const DEFAULT_SUBCATS = [['BAS', 'BASIC'], ['BOS', 'BOSS'], ['FBS', 'FINAL BOSS']];
-    function refreshSubcatOptions() {
-      const cat = (document.getElementById('sku-cat-input')?.value || 'BDS').trim().toUpperCase();
-      const sel = document.getElementById('sku-subcat-input');
-      if (!sel) return;
-      const list = SUBCATS_BY_CAT[cat] || DEFAULT_SUBCATS;
-      const prev = sel.value;
-      sel.innerHTML = list.map(([code, label]) => `<option value="${code}">${code} (${label})</option>`).join('');
-      sel.value = list.some(([code]) => code === prev) ? prev : list[0][0];
-    }
-
     function generateFourPartSku() {
       const cat = (document.getElementById('sku-cat-input')?.value || 'BDS').trim().toUpperCase();
 

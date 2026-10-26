@@ -3903,7 +3903,7 @@ function triggerCatalogPhotoCapture(sku) {
       const dt = new Date(audit.audit_date);
       const byStatus = st => det.rows.filter(r => r.status === st);
       const isAdmin = currentActiveCrew && (currentActiveCrew.role || '').toLowerCase() === 'admin';
-      const toFix = det.rows.filter(r => r.status !== 'BALANCED' && r.status !== 'NOT_IN_SYSTEM').length;
+      const toFix = det.rows.filter(r => r.status === 'EXCESS').length;
 
       const rowHtml = r => `<div class="flex items-center justify-between gap-2 py-1 border-b border-black/5 last:border-0">
           <span class="font-mono text-[10px] truncate">${r.sku}</span>
@@ -3935,18 +3935,20 @@ function triggerCatalogPhotoCapture(sku) {
           <div class="p-1.5 rounded-lg bg-violet-50 text-violet-900">${sum.not_in_system}<br>unknown</div>
         </div>
         <div id="audit-flow-box" class="p-2.5 bg-sky-50 border border-sky-200 rounded-2xl text-[11px] text-sky-900">Checking the other area's audit...</div>
-        ${section('MISSING', true)}${section('EXCESS', true)}${section('NOT_IN_SYSTEM', true)}${section('BALANCED', false)}
+        <div id="audit-missing-box" class="${byStatus('MISSING').length ? '' : 'hidden'}"></div>
+        ${section('EXCESS', true)}${section('NOT_IN_SYSTEM', true)}${section('BALANCED', false)}
         <div class="p-3 rounded-2xl border ${audit.applied_at ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-bitBorderDark'} space-y-1.5">
           ${audit.applied_at
-            ? `<span class="font-bold text-[11px] text-emerald-900 block">✓ System set to this count on ${new Date(audit.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${audit.applied_by || 'Admin'}.</span>`
+            ? `<span class="font-bold text-[11px] text-emerald-900 block">✓ Excess added on ${new Date(audit.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${audit.applied_by || 'Admin'}.</span>`
             : (toFix === 0
-              ? '<span class="font-bold text-[11px] text-emerald-900 block">✓ Nothing to fix: every known SKU matches.</span>'
+              ? '<span class="font-bold text-[11px] text-emerald-900 block">✓ No excess to add.</span>'
               : (isAdmin
-                ? `<span class="text-[11px] block">Set the system to what was counted for <strong>${toFix} SKU${toFix > 1 ? 's' : ''}</strong>. Each change is logged as an audit adjustment.</span>
-                   <button type="button" id="btn-apply-audit" onclick="applyAuditFix()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Fix it: set ${locLabel} to the count</button>`
-                : '<span class="text-[11px] text-gray-600 block">An admin can open this audit and set the system to the count.</span>'))}
+                ? `<span class="text-[11px] block">Add the excess for <strong>${toFix} SKU${toFix > 1 ? 's' : ''}</strong> so the system matches what was scanned. Missing items are handled in the review above. Each change is logged as an audit adjustment.</span>
+                   <button type="button" id="btn-apply-audit" onclick="applyAuditFix()" class="w-full py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Fix it: add the excess to ${locLabel}</button>`
+                : '<span class="text-[11px] text-gray-600 block">An admin can open this audit and add the excess.</span>'))}
         </div>`;
 
+      renderMissingReview(audit);
       const flow = await findFlowMisses(audit);
       const fb = document.getElementById('audit-flow-box');
       if (!fb || currentSelectedAudit !== audit) return;
@@ -3962,16 +3964,152 @@ function triggerCatalogPhotoCapture(sku) {
       }
     }
 
-    // Admin: set the system to the count, as audit adjustment movements (the stock trigger updates the totals)
+    // ---- MISSING REVIEW ----
+    // Each missing row is checked on the shelf before anything is removed:
+    //   HERE = it's there (keep the system number), SOME = only some found (remove the rest), GONE = really missing.
+    // Decisions are saved on the audit (discrepancy_details.rows[].review). "Review done" (admin) removes
+    // the SOME/GONE packs as audit adjustments; rows nobody reviewed stay as they are (unverified).
+    const MISSING_MARKERS = ['admin', 'lead', 'coordinator'];
+    function canMarkMissing() { return !!currentActiveCrew && MISSING_MARKERS.includes((currentActiveCrew.role || '').toLowerCase()); }
+    function missingRemoveCount(r) {
+      if (!r.review) return 0;
+      if (r.review.d === 'GONE') return r.expected - r.counted;
+      if (r.review.d === 'SOME') return Math.max(0, r.expected - r.review.found);
+      return 0;
+    }
+    function missingReviewLabel(r) {
+      if (!r.review) return '';
+      if (r.review.d === 'HERE') return "It's here (kept)";
+      if (r.review.d === 'SOME') return `Found ${r.review.found} of ${r.expected}`;
+      return 'Really missing';
+    }
+
+    function renderMissingReview(audit) {
+      const box = document.getElementById('audit-missing-box');
+      if (!box || currentSelectedAudit !== audit) return;
+      const det = audit.discrepancy_details;
+      const rows = det.rows.filter(r => r.status === 'MISSING');
+      if (!rows.length) return;
+      const done = det.missing_review;
+      const canMark = !done && canMarkMissing();
+      const isAdmin = (currentActiveCrew && currentActiveCrew.role || '').toLowerCase() === 'admin';
+      const reviewed = rows.filter(r => r.review);
+      const cnt = d => rows.filter(r => r.review && r.review.d === d).length;
+      const toRemove = rows.reduce((a, r) => a + missingRemoveCount(r), 0);
+      const btn = (r, i, d, txt) => {
+        const on = r.review && r.review.d === d;
+        return `<button type="button" onclick="markMissing(${i}, '${d}')" class="flex-1 py-1.5 rounded-lg border text-[10px] font-bold cursor-pointer ${on ? 'bg-bitWalnut text-white border-bitWalnut' : 'bg-white border-red-200 text-red-900'}">${txt}</button>`;
+      };
+      const rowHtml = r => {
+        const i = det.rows.indexOf(r);
+        const rv = r.review;
+        const status = rv
+          ? `<span class="block text-[10px] font-bold ${rv.d === 'HERE' ? 'text-emerald-800' : 'text-red-800'}">${rv.d === 'HERE' ? '✅' : rv.d === 'SOME' ? '🔢' : '❌'} ${missingReviewLabel(r)}${missingRemoveCount(r) ? ` · −${missingRemoveCount(r)}` : ''} <span class="font-medium opacity-70">· ${rv.by}</span></span>`
+          : (done ? '<span class="block text-[10px] font-bold text-gray-500">⏳ Not reviewed (unverified)</span>' : '');
+        return `<div class="py-1.5 border-b border-black/5 last:border-0">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10px] truncate">${r.sku}</span>
+              <span class="shrink-0 text-[10px] whitespace-nowrap">counted <strong>${r.counted}</strong> · system ${r.expected} · <strong>${r.counted - r.expected}</strong></span>
+            </div>
+            ${status}
+            ${canMark ? `<div class="flex gap-1 mt-1">${btn(r, i, 'HERE', "✅ It's here")}${btn(r, i, 'SOME', '🔢 Found some')}${btn(r, i, 'GONE', '❌ Missing')}</div>` : ''}
+          </div>`;
+      };
+      const head = done
+        ? `<div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-[10px] font-bold">✓ Review done ${new Date(done.done_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} by ${done.done_by}: −${done.removed_packs} packs removed · ${done.kept} kept · ${done.unverified} unverified</div>`
+        : `<div class="text-[10px] font-bold">Reviewed ${reviewed.length} of ${rows.length} · ✅ ${cnt('HERE')} · 🔢 ${cnt('SOME')} · ❌ ${cnt('GONE')}${toRemove ? ` · −${toRemove} packs to remove` : ''}</div>
+           <span class="block text-[10px] opacity-80">Check each one on the shelf. Nothing is removed until Review done; rows left unreviewed stay as they are.</span>`;
+      const foot = done ? '' : (isAdmin
+        ? `<button type="button" id="btn-missing-done" onclick="finishMissingReview()" class="w-full mt-2 py-2.5 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">Review done${toRemove ? `: remove ${toRemove} pack${toRemove > 1 ? 's' : ''}` : ''}</button>`
+        : '<span class="block mt-1.5 text-[10px] text-gray-600">An admin taps Review done when the checks are finished.</span>');
+      box.innerHTML = `<details class="p-2.5 rounded-2xl border ${AUDIT_STATUS.MISSING.cls}" open>
+          <summary class="font-bold text-[11px] cursor-pointer">${AUDIT_STATUS.MISSING.label} · ${rows.length} SKU${rows.length > 1 ? 's' : ''} <span class="font-medium opacity-70">(${AUDIT_STATUS.MISSING.note})</span></summary>
+          <div class="mt-1.5 space-y-1">${head}</div>
+          <div class="mt-1">${rows.map(rowHtml).join('')}</div>
+          ${foot}
+        </details>`;
+    }
+
+    // Saves one row's decision. Re-reads the audit first so two people checking at once don't overwrite each other.
+    async function markMissing(i, d) {
+      const audit = currentSelectedAudit;
+      if (!audit || !canMarkMissing()) return;
+      const r = audit.discrepancy_details.rows[i];
+      if (!r || r.status !== 'MISSING' || audit.discrepancy_details.missing_review) return;
+      let review = null;
+      if (r.review && r.review.d === d && d !== 'SOME') review = null; // tap again to clear
+      else if (d === 'SOME') {
+        const v = prompt(`${r.sku}\nSystem expects ${r.expected}, the scan found ${r.counted}.\n\nHow many packs are actually there in total?`, r.review && r.review.d === 'SOME' ? r.review.found : '');
+        if (v === null) return;
+        const n = parseInt(v, 10);
+        if (!(n >= 0) || n > r.expected) return alert(`Enter a number from 0 to ${r.expected}.`);
+        review = n === r.expected ? { d: 'HERE' } : { d: 'SOME', found: n };
+      } else review = { d };
+      if (review) Object.assign(review, { by: currentActiveCrew.name, at: new Date().toISOString() });
+      try {
+        const fresh = await dbWrite('Load audit', () => db.from('inventory_audits').select('discrepancy_details').eq('id', audit.id).single());
+        const det = fresh.discrepancy_details;
+        if (det.missing_review) { audit.discrepancy_details = det; renderMissingReview(audit); return alert('This review was already finished.'); }
+        const row = det.rows.find(x => x.sku === r.sku && x.status === 'MISSING');
+        if (!row) return;
+        if (review) row.review = review; else delete row.review;
+        await dbWrite('Save check', () => db.from('inventory_audits').update({ discrepancy_details: det }).eq('id', audit.id));
+        audit.discrepancy_details = det;
+      } catch (e) { return showSaveError(e); }
+      renderMissingReview(audit);
+    }
+
+    // Admin: removes the SOME/GONE packs as audit adjustments and closes the review
+    async function finishMissingReview() {
+      const audit = currentSelectedAudit;
+      if (!audit || (currentActiveCrew && currentActiveCrew.role || '').toLowerCase() !== 'admin') return alert('Only an admin can finish the review.');
+      let det;
+      try { det = (await dbWrite('Load audit', () => db.from('inventory_audits').select('discrepancy_details').eq('id', audit.id).single())).discrepancy_details; }
+      catch (e) { return showSaveError(e); }
+      if (det.missing_review) { audit.discrepancy_details = det; renderMissingReview(audit); return; }
+      const rows = det.rows.filter(r => r.status === 'MISSING');
+      const removePacks = rows.reduce((a, r) => a + missingRemoveCount(r), 0);
+      const kept = rows.filter(r => r.review && r.review.d === 'HERE').length;
+      const unverified = rows.filter(r => !r.review).length;
+      const locLabel = AUDIT_LOC_LABEL[audit.location];
+      if (!confirm(`Finish the missing review for ${locLabel}?\n\n−${removePacks} packs removed (${rows.filter(r => missingRemoveCount(r) > 0).length} SKUs)\n${kept} kept (it's here)\n${unverified} not reviewed: stay as they are (unverified)\n\nThis can't be undone with one tap.`)) return;
+
+      const btn = document.getElementById('btn-missing-done');
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      const who = currentActiveCrew.name;
+      const reason = `Audit ${new Date(audit.audit_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (${locLabel}): missing`;
+      const movements = [];
+      rows.forEach(r => {
+        const n = missingRemoveCount(r), pcs = pcsPerPackForCategory(r.sku.split('-')[0]);
+        for (let k = 0; k < n; k++) movements.push({ sku: r.sku, action: 'AUDIT_ADJUSTMENT', bag_type: 'STANDARD', pcs_moved: pcs, source_location: audit.location, dest_location: null, pull_out_reason: reason, moved_by: who });
+      });
+      try {
+        // Mark it done first so a second tap (or another phone) can't remove the packs twice
+        det.missing_review = { done_at: new Date().toISOString(), done_by: who, removed_packs: removePacks, kept, unverified };
+        await dbWrite('Close review', () => db.from('inventory_audits').update({ discrepancy_details: det }).eq('id', audit.id));
+        audit.discrepancy_details = det;
+        for (let i = 0; i < movements.length; i += 500) {
+          const chunk = movements.slice(i, i + 500);
+          await dbWrite('Remove missing', () => db.from('stock_movements').insert(chunk));
+        }
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Review done'; }
+        return showSaveError(new Error(e.message + (det.missing_review ? '\n\nThe review was marked done but some removals may not have saved. Tell Claude so it can check.' : '')));
+      }
+      alert(`✓ Review done: −${removePacks} packs removed from ${locLabel}. ${unverified} unverified stay on the list for the next audit.`);
+      refreshGlobalStockCounters();
+      renderMissingReview(audit);
+    }
+
+    // Admin: adds the excess to match the count, as audit adjustment movements (the stock trigger updates the totals)
     async function applyAuditFix() {
       const audit = currentSelectedAudit;
       if (!audit || audit.applied_at) return;
       if ((currentActiveCrew && currentActiveCrew.role || '').toLowerCase() !== 'admin') return alert('Only an admin can fix an audit.');
-      const rows = (audit.discrepancy_details.rows || []).filter(r => r.status === 'MISSING' || r.status === 'EXCESS');
-      const add = rows.filter(r => r.counted > r.expected).reduce((a, r) => a + (r.counted - r.expected), 0);
-      const remove = rows.filter(r => r.counted < r.expected).reduce((a, r) => a + (r.expected - r.counted), 0);
+      const rows = (audit.discrepancy_details.rows || []).filter(r => r.status === 'EXCESS');
+      const add = rows.reduce((a, r) => a + (r.counted - r.expected), 0);
       const locLabel = AUDIT_LOC_LABEL[audit.location];
-      if (!confirm(`Set ${locLabel} to the count?\n\n+${add} packs added (found)\n−${remove} packs removed (missing)\nacross ${rows.length} SKUs.\n\nThis can't be undone with one tap.`)) return;
+      if (!confirm(`Add the excess to ${locLabel}?\n\n+${add} packs across ${rows.length} SKUs, to match what was scanned.\nMissing items are not touched (use the missing review).\n\nThis can't be undone with one tap.`)) return;
 
       const btn = document.getElementById('btn-apply-audit');
       if (btn) { btn.disabled = true; btn.textContent = 'Applying...'; }
@@ -3996,10 +4134,10 @@ function triggerCatalogPhotoCapture(sku) {
         await dbWrite('Mark audit fixed', () => db.from('inventory_audits').update({ applied_at, applied_by: who }).eq('id', audit.id));
         audit.applied_at = applied_at; audit.applied_by = who;
       } catch (e) {
-        if (btn) { btn.disabled = false; btn.textContent = `Fix it: set ${locLabel} to the count`; }
+        if (btn) { btn.disabled = false; btn.textContent = `Fix it: add the excess to ${locLabel}`; }
         return showSaveError(e);
       }
-      alert(`✓ ${locLabel} now matches the count.`);
+      alert(`✓ Excess added: +${add} packs in ${locLabel}.`);
       refreshGlobalStockCounters();
       renderAuditReport(audit);
     }
@@ -4007,9 +4145,10 @@ function triggerCatalogPhotoCapture(sku) {
     function exportAuditCSV() {
       const a = currentSelectedAudit;
       if (!a || !a.discrepancy_details || !a.discrepancy_details.rows) return;
-      let csv = "SKU,Status,Counted Packs,System Packs,Difference\n";
+      let csv = "SKU,Status,Counted Packs,System Packs,Difference,Missing Review,Reviewed By\n";
       a.discrepancy_details.rows.forEach(r => {
-        csv += [r.sku, r.status.replace(/_/g, ' '), r.counted, r.expected, r.counted - r.expected].map(csvCell).join(',') + "\n";
+        const rv = r.status === 'MISSING' ? (r.review ? missingReviewLabel(r) : 'Not reviewed') : '';
+        csv += [r.sku, r.status.replace(/_/g, ' '), r.counted, r.expected, r.counted - r.expected, rv, r.review ? r.review.by : ''].map(csvCell).join(',') + "\n";
       });
       downloadBlob(csv, `Bitbit_Audit_${AUDIT_LOC_LABEL[a.location]}_${localDateKey(a.audit_date)}.csv`, "text/csv");
     }

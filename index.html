@@ -558,15 +558,15 @@
         <div class="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
           <div>
             <label id="lbl-pack-count" class="block text-[10px] font-bold text-gray-500 mb-1">Pack Count</label>
-            <input type="number" id="sku-pack-count" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" inputmode="numeric" id="sku-pack-count" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div id="wrap-pcs-per-pack">
             <label class="block text-[10px] font-bold text-gray-500 mb-1">Pcs / Pack</label>
-            <input type="number" id="sku-pcs-per-pack" value="20" min="1" onfocus="this.dataset.manual='true'" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" inputmode="numeric" id="sku-pcs-per-pack" value="20" min="1" placeholder="Type" onfocus="this.dataset.manual='true'" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
           <div>
             <label id="lbl-partial-pcs" class="block text-[10px] font-bold text-gray-500 mb-1">Partial Pcs</label>
-            <input type="number" id="sku-partial-pcs" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
+            <input type="number" inputmode="numeric" id="sku-partial-pcs" value="0" min="0" oninput="calculateTotalPcs()" class="w-full p-2 bg-bitCream rounded-xl border border-bitBorderDark font-sans font-bold text-xs text-center outline-none">
           </div>
         </div>
 
@@ -1213,11 +1213,11 @@
         <button type="button" onclick="closePhotoPickerModal()" class="text-gray-400 font-bold p-1">✕</button>
       </div>
       <div class="space-y-2">
-        <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
-          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
+        <button type="button" onclick="takeMasterPhoto()" class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer text-left">
           <span class="text-lg">📷</span>
           <span class="text-xs font-bold text-bitWalnut">Take Photo with Camera</span>
-        </label>
+        </button>
+        <input type="file" id="master-photo-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleChosenMasterPhoto(this)">
         <label class="w-full p-3 bg-bitCream hover:bg-bitMarigold/20 border border-bitBorderDark rounded-2xl flex items-center space-x-3 cursor-pointer">
           <input type="file" accept="image/*" class="hidden" onchange="handleChosenMasterPhoto(this)">
           <span class="text-lg">🖼️</span>
@@ -1438,6 +1438,19 @@
   </div>
 
   <!-- CAMERA SCANNER OVERLAY -->
+  <!-- LIVE PHOTO (laptops: the file picker can't open the camera there) -->
+  <div id="live-photo-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="font-bold text-sm text-bitWalnut">Take Photo</h3>
+        <button type="button" onclick="closeLivePhoto()" class="text-gray-400 font-bold p-1 text-base">✕</button>
+      </div>
+      <video id="live-photo-video" autoplay playsinline muted class="w-full rounded-2xl bg-black aspect-[4/3] object-cover"></video>
+      <span id="live-photo-status" class="block text-[11px] text-center text-gray-500 font-bold">Starting camera...</span>
+      <button type="button" id="live-photo-snap" onclick="snapLivePhoto()" disabled class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs cursor-pointer disabled:opacity-40">📸 Snap</button>
+    </div>
+  </div>
+
   <div id="camera-scanner-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder">
       <div class="flex items-center justify-between border-b pb-2">
@@ -1691,7 +1704,9 @@
       alert('⚠️ NOT SAVED\n' + (e && e.message ? e.message : e) + '\n\nNothing was recorded. Please try again.');
     }
 
-    // Pieces in one standard pack, by category (Beads 20, Links 50, everything else 10)
+    // Fixed pieces per pack. Every other category has no fixed size: QR Builder asks for it each time.
+    const FIXED_PCS_PER_PACK = { BDS: 20, LNK: 50, CHA: 10 };
+    // Pieces in one standard pack for scan movements (Beads 20, Links 50, everything else 10)
     function pcsPerPackForCategory(cat) {
       const c = (cat || '').toUpperCase();
       if (c === 'BDS') return 20;
@@ -2736,6 +2751,19 @@ function triggerCatalogPhotoCapture(sku) {
       renderAuditTally();
     }
 
+    // Typed count (keypad). 0 removes the SKU from this count.
+    function setAuditScan(sku, value) {
+      const row = auditRound && auditRound.scans[sku];
+      if (!row) return;
+      const n = parseInt(value, 10);
+      if (!(n >= 0)) return renderAuditTally();
+      row.packs = n;
+      if (row.partials > row.packs) row.partials = row.packs;
+      if (row.packs === 0) delete auditRound.scans[sku];
+      saveAuditProgress();
+      renderAuditTally();
+    }
+
     function renderAuditTally(flashSku) {
       const entries = Object.entries(auditRound.scans).sort((a, b) => (b[1].last || 0) - (a[1].last || 0));
       const packs = entries.reduce((a, [, r]) => a + r.packs, 0);
@@ -2750,7 +2778,7 @@ function triggerCatalogPhotoCapture(sku) {
           <span class="font-mono text-bitWalnut truncate">${sku}${r.partials ? `<span class="font-sans text-[10px] text-gray-500 font-medium"> · ${r.partials} partial</span>` : ''}</span>
           <span class="flex items-center gap-1 shrink-0">
             <button type="button" onclick="adjustAuditScan('${sku}', -1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">−</button>
-            <span class="min-w-[2rem] text-center px-1 py-0.5 bg-bitMarigold/20 text-bitWalnut rounded-md">${r.packs}</span>
+            <input type="number" inputmode="numeric" min="0" value="${r.packs}" onfocus="this.select()" onchange="setAuditScan('${sku}', this.value)" onkeydown="if(event.key==='Enter') this.blur()" class="w-12 text-center px-1 py-0.5 bg-bitMarigold/20 text-bitWalnut rounded-md font-bold outline-none focus:ring-2 focus:ring-bitWalnut">
             <button type="button" onclick="adjustAuditScan('${sku}', 1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">+</button>
           </span>
         </div>`).join('');
@@ -4303,6 +4331,13 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
 
     function setRemakeSourceLoc(i, loc) { const r = remakeSources[i]; if (!r) return; r.loc = loc; r.qty = Math.min(r.qty, r.levels[loc] || 1); renderRemakeSources(); }
     function changeRemakeQty(i, d) { const r = remakeSources[i]; if (!r || r.isPartial) return; r.qty = Math.max(1, Math.min(r.qty + d, r.levels[r.loc] || 1)); renderRemakeSources(); }
+    function setRemakeQty(i, value) {
+      const r = remakeSources[i]; if (!r || r.isPartial) return;
+      const max = r.levels[r.loc] || 1, n = parseInt(value, 10);
+      if (n > max) alert(`Only ${max} pack${max > 1 ? 's' : ''} in this spot.`);
+      if (n >= 1) r.qty = Math.min(n, max);
+      renderRemakeSources();
+    }
     function removeRemakeSource(i) { remakeSources.splice(i, 1); renderRemakeSources(); }
 
     function renderRemakeSources() {
@@ -4317,7 +4352,7 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         }).join('') : `<div class="col-span-4 text-[10px] text-red-700">No stock of this SKU anywhere. Check the label or remove it.</div>`;
         const qty = r.isPartial
           ? `<span class="text-[10px] text-gray-500">Partial (${r.pcs} pcs) · 1 bag</span>`
-          : `<span class="flex items-center gap-1"><button type="button" onclick="changeRemakeQty(${i}, -1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">−</button><span class="min-w-[1.5rem] text-center font-bold">${r.qty}</span><button type="button" onclick="changeRemakeQty(${i}, 1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">+</button><span class="text-[10px] text-gray-500">pack${r.qty > 1 ? 's' : ''}</span></span>`;
+          : `<span class="flex items-center gap-1"><button type="button" onclick="changeRemakeQty(${i}, -1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">−</button><input type="number" inputmode="numeric" min="1" max="${r.levels[r.loc] || 1}" value="${r.qty}" onfocus="this.select()" onchange="setRemakeQty(${i}, this.value)" onkeydown="if(event.key==='Enter') this.blur()" class="w-12 text-center font-bold bg-bitCream border border-bitBorderDark rounded-md outline-none focus:ring-2 focus:ring-bitWalnut"><button type="button" onclick="changeRemakeQty(${i}, 1)" class="w-6 h-6 rounded-md bg-bitCream border border-bitBorderDark cursor-pointer">+</button><span class="text-[10px] text-gray-500">pack${r.qty > 1 ? 's' : ''}</span></span>`;
         return `<div class="p-2.5 bg-white rounded-2xl border border-bitBorderDark space-y-1.5">
             <div class="flex items-center justify-between gap-2">
               <span class="font-mono text-[11px] font-bold truncate">${r.code}</span>
@@ -4527,19 +4562,13 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
       // Dynamic Pcs / Pack default based on selected Category
       const pcsInput = document.getElementById('sku-pcs-per-pack');
       if (pcsInput && !pcsInput.dataset.manual) {
-        if (cat === 'BDS') {
-          pcsInput.value = 20;
-        } else if (cat === 'LNK') {
-          pcsInput.value = 50;
-        } else {
-          pcsInput.value = 10;
-        }
+        pcsInput.value = FIXED_PCS_PER_PACK[cat] || '';
         calculateTotalPcs();
       }
       const sub = (document.getElementById('sku-subcat-input')?.value || 'BOS').trim().toUpperCase();
       
       let typRaw = (document.getElementById('sku-type-input')?.value || 'BIG').trim().toUpperCase();
-      const typ = typRaw.replace(/[^A-Z]/g, '').slice(0, 3) || 'TYP';
+      const typ = typRaw.replace(/[^A-Z]/g, '').slice(0, 4) || 'TYP';
 
       const identRaw = (document.getElementById('sku-ident-input')?.value || '').trim().toUpperCase().replace(/\s+/g, '-');
       const fullSku = `${cat}-${sub}-${typ}-${identRaw || '______'}`;
@@ -4583,7 +4612,7 @@ if (badge) {
 
     function calculateTotalPcs() {
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
-      const per = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
+      const per = parseInt(document.getElementById('sku-pcs-per-pack').value) || 0;
       const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
       const total = (packs * per) + partial;
       document.getElementById('sku-total-calc').textContent = total;
@@ -4593,19 +4622,56 @@ if (badge) {
     let isCommittingLabel = false;
     function openPhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'flex'; }
     function closePhotoPickerModal() { document.getElementById('photo-picker-modal').style.display = 'none'; }
+    function setMasterPhoto(dataUrl) {
+      currentSkuMasterPhoto = dataUrl;
+      document.getElementById('sku-img-preview').src = dataUrl;
+      document.getElementById('sku-photo-preview-wrap').classList.remove('hidden');
+      document.getElementById('sku-photo-icon').classList.add('hidden');
+      document.getElementById('sku-photo-label').textContent = "Change Photo";
+      closePhotoPickerModal();
+    }
     function handleChosenMasterPhoto(input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          currentSkuMasterPhoto = e.target.result;
-          document.getElementById('sku-img-preview').src = currentSkuMasterPhoto;
-          document.getElementById('sku-photo-preview-wrap').classList.remove('hidden');
-          document.getElementById('sku-photo-icon').classList.add('hidden');
-          document.getElementById('sku-photo-label').textContent = "Change Photo";
-          closePhotoPickerModal();
-        };
+        reader.onload = e => setMasterPhoto(e.target.result);
         reader.readAsDataURL(input.files[0]);
       }
+    }
+
+    // Phones and iPads open their camera from the file input. Laptops can't, so they get a live camera with a Snap button.
+    function isTouchDevice() { return (navigator.maxTouchPoints || 0) > 0 || 'ontouchstart' in window; }
+    let livePhotoStream = null;
+    async function takeMasterPhoto() {
+      if (isTouchDevice()) return document.getElementById('master-photo-camera-input').click();
+      closePhotoPickerModal();
+      const status = document.getElementById('live-photo-status'), snap = document.getElementById('live-photo-snap');
+      status.textContent = 'Starting camera...'; snap.disabled = true;
+      document.getElementById('live-photo-modal').style.display = 'flex';
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { status.textContent = 'This browser has no camera access. Close this and use Choose from Photo Library.'; return; }
+      try { livePhotoStream = await openCameraStream(); }
+      catch (e) { status.textContent = (e && e.name === 'NotAllowedError') ? 'Camera blocked. Allow the camera for this site in the browser, or use Choose from Photo Library.' : 'No camera found. Use Choose from Photo Library.'; return; }
+      if (document.getElementById('live-photo-modal').style.display === 'none') return closeLivePhoto();
+      const video = document.getElementById('live-photo-video');
+      video.srcObject = livePhotoStream;
+      try { await video.play(); } catch (e) { }
+      status.textContent = 'Hold the item in view, then tap Snap.'; snap.disabled = false;
+    }
+    function closeLivePhoto() {
+      if (livePhotoStream) livePhotoStream.getTracks().forEach(t => t.stop());
+      livePhotoStream = null;
+      document.getElementById('live-photo-video').srcObject = null;
+      document.getElementById('live-photo-modal').style.display = 'none';
+    }
+    function snapLivePhoto() {
+      const video = document.getElementById('live-photo-video');
+      if (!video.videoWidth) return;
+      const scale = Math.min(1, 1200 / Math.max(video.videoWidth, video.videoHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.round(video.videoWidth * scale); c.height = Math.round(video.videoHeight * scale);
+      c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+      const dataUrl = c.toDataURL('image/jpeg', 0.85);
+      closeLivePhoto();
+      setMasterPhoto(dataUrl);
     }
 
     async function openPrintStationModal() {
@@ -4621,10 +4687,10 @@ if (badge) {
 
       const cat = document.getElementById('sku-cat-input').value.trim();
       const sub = document.getElementById('sku-subcat-input').value.trim();
-      const typ = document.getElementById('sku-type-input').value.trim().slice(0, 3).toUpperCase();
+      const typ = document.getElementById('sku-type-input').value.trim().toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
       const ident = document.getElementById('sku-ident-input').value.trim();
       const packs = parseInt(document.getElementById('sku-pack-count').value) || 0;
-      const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || 10;
+      const perPack = parseInt(document.getElementById('sku-pcs-per-pack').value) || FIXED_PCS_PER_PACK[sku.split('-')[0]] || 0;
       const partial = parseInt(document.getElementById('sku-partial-pcs').value) || 0;
       const isPrintOnly = document.getElementById('chk-print-only').checked;
 
@@ -4651,6 +4717,7 @@ if (badge) {
       if (!sku || sku.includes('______')) return alert('Fill in the identifier first.');
       if (!isPrintOnly) {
         if (packs <= 0 && partial <= 0) return alert('Enter how many packs (or partial pcs) are going into the Werqroom.\n\nOnly printing a label? Tick "Reprint label only".');
+        if (packs > 0 && !perPack) { document.getElementById('sku-pcs-per-pack').focus(); return alert('Enter the Pcs / Pack for this item.\n\nOnly Beads, Links and Charms have a fixed pack size.'); }
         const what = [packs ? `${packs} pack${packs > 1 ? 's' : ''}` : '', partial ? `1 partial (${partial} pcs)` : ''].filter(Boolean).join(' + ');
         if (!confirm(`Save ${what} of ${sku} to the Werqroom?`)) return;
       }
@@ -4707,7 +4774,7 @@ if (badge) {
       if (currentPrintMode === 'PARTIAL') {
         subTag1.textContent = `🟡 Partial Pack (${pendingSkuData.partial_pcs} pcs)`;
       } else {
-        subTag1.textContent = `Standard Pack (${pendingSkuData.pcs_per_pack} pcs)`;
+        subTag1.textContent = pendingSkuData.pcs_per_pack ? `Standard Pack (${pendingSkuData.pcs_per_pack} pcs)` : 'Standard Pack';
         copies = Math.max(pendingSkuData.pack_count, 1);
       }
 

@@ -1988,8 +1988,9 @@
         }
         row.details = { opening: true, starting_cash: parseFloat(cashRaw) || 0, fotomatk_fund: parseFloat(fundRaw) || 0 };
       } else if (!(await storeOpenedToday())) {
-        // Nobody has opened yet: make sure "Time In Only" isn't a mis-tap
-        if (!confirm("The store hasn't been opened yet today.\n\nIs someone else opening it?\n\nOK = just time me in\nCancel = I'll open the store")) return showOpeningForm();
+        // The first person to time in opens the store: Time In Only waits until it's open
+        alert('The store is not open yet.\n\nThe first person in opens the store: tap 🏪 Open the Store.');
+        return hideOpeningForm();
       }
       try {
         if (openingOnlyMode) {

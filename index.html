@@ -652,8 +652,8 @@
               <span id="move-today-summary-tally" class="text-[10px] text-gray-500 font-medium">0 movements today</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="openDaySummaryModal()" class="px-2.5 py-1.5 bg-bitMarigold hover:bg-bitMarigoldDark border border-bitMarigoldDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
-                🧾 Day Summary
+              <button type="button" onclick="switchShelfTab('tab-summary')" class="px-2.5 py-1.5 bg-bitMarigold hover:bg-bitMarigoldDark border border-bitMarigoldDark text-[10px] font-bold text-bitWalnut rounded-xl cursor-pointer flex items-center gap-1 shadow-xs">
+                🧾 Day Summary →
               </button>
             </div>
           </div>
@@ -667,7 +667,79 @@
       </div>
     </section>
 
-    <!-- 4-TAB BOTTOM NAVIGATION -->
+    <!-- TAB 5: DAY SUMMARY (closing) -->
+    <section id="tab-summary" class="tab-pane hidden space-y-3">
+    <div class="bg-white p-5 rounded-[28px] border border-bitBorder shadow-sm space-y-3">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/40 px-2 py-0.5 rounded-full">Closing</span>
+          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Day Summary</h3>
+          <span id="ds-meta" class="text-[10px] text-gray-500 font-bold block">-</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div id="ds-opening-ref" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium"></div>
+
+        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block">Part 1 · Closing Report</span>
+
+        <div class="grid grid-cols-1 gap-2">
+          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <span class="text-[11px] font-bold text-bitWalnut underline block">Sales Today</span>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-gcash" class="text-[11px] font-bold text-gray-600">GCash</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-gcash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-act-card" class="text-[11px] font-bold text-gray-600">Card</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-card" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-bitBorder">
+              <span>Total</span><span id="ds-act-total">₱0.00</span>
+            </div>
+          </div>
+
+        </div>
+
+
+
+        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-cash-collected" class="text-[11px] font-bold text-gray-600">Cash collected</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-cash-collected" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-starting-cash" class="text-[11px] font-bold text-gray-600">Bitbit starting cash (next day)</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-starting-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="ds-fotomatk-fund" class="text-[11px] font-bold text-gray-600">Fotomatk change fund</label>
+              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-fotomatk-fund" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
+            </div>
+          <div>
+            <label for="ds-notes" class="text-[11px] font-bold text-gray-600 block mb-1">Notes</label>
+            <textarea id="ds-notes" rows="4" oninput="updateDaySummary()" placeholder="Ask of the Day:&#10;Customer Mood:&#10;Feedback:&#10;Own observations:" class="w-full p-2 bg-white rounded-lg border border-bitBorderDark text-xs outline-none focus:border-bitWalnut"></textarea>
+          </div>
+        </div>
+
+        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block pt-1">Part 2 · Stock Movement Today</span>
+        <pre id="ds-movement-preview" class="p-3 bg-gray-50 rounded-2xl border border-bitBorder text-[11px] text-gray-700 whitespace-pre-wrap font-sans">Loading...</pre>
+      </div>
+
+      <div class="shrink-0 space-y-1.5">
+        <button type="button" onclick="closeTheDay()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
+          <span id="ds-copy-label">✓ Save & Time Out</span>
+        </button>
+        <span class="block text-center text-[10px] text-gray-500">The summary posts to the team Telegram group automatically.</span>
+      </div>
+    </div>
+  </section>
+
+    <!-- 5-TAB BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-bitBorder z-40 pointer-events-auto px-3 py-2 max-w-md mx-auto flex items-center justify-between text-[10px] font-bold shadow-sm">
       <button type="button" onclick="switchShelfTab('tab-dropoff')" id="nav-tab-dropoff" class="nav-tab-btn flex flex-col items-center flex-1 text-bitWalnut py-1 cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-bitWalnut mb-1"></span>
@@ -684,6 +756,10 @@
       <button type="button" onclick="switchShelfTab('tab-move')" id="nav-tab-move" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
         <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
         <span>Move</span>
+      </button>
+      <button type="button" onclick="switchShelfTab('tab-summary')" id="nav-tab-summary" class="nav-tab-btn flex flex-col items-center flex-1 text-gray-400 py-1 cursor-pointer">
+        <span class="nav-indicator w-8 h-1 rounded-full bg-transparent mb-1"></span>
+        <span>Day Summary</span>
       </button>
     </nav>
   </main>
@@ -1372,78 +1448,6 @@
   </div>
 
   <!-- DAY SUMMARY (CLOSING REPORT + STOCK MOVEMENT) MODAL -->
-  <div id="day-summary-modal" style="display: none;" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[32px] p-5 space-y-3 shadow-2xl border border-bitBorder max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b border-gray-100 pb-2 shrink-0">
-        <div>
-          <span class="text-[10px] font-bold uppercase text-bitWalnut bg-bitMarigold/40 px-2 py-0.5 rounded-full">Closing</span>
-          <h3 class="font-bold text-base text-bitWalnut mt-0.5">Day Summary</h3>
-          <span id="ds-meta" class="text-[10px] text-gray-500 font-bold block">-</span>
-        </div>
-        <button type="button" onclick="closeDaySummaryModal()" class="text-gray-400 font-bold p-1 text-base">✕</button>
-      </div>
-
-      <div class="overflow-y-auto flex-1 space-y-3 pr-1">
-        <div id="ds-opening-ref" class="hidden p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium"></div>
-
-        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block">Part 1 · Closing Report</span>
-
-        <div class="grid grid-cols-1 gap-2">
-          <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <span class="text-[11px] font-bold text-bitWalnut underline block">Sales Today</span>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-act-cash" class="text-[11px] font-bold text-gray-600">Cash</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-act-gcash" class="text-[11px] font-bold text-gray-600">GCash</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-gcash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-act-card" class="text-[11px] font-bold text-gray-600">Card</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-act-card" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-bitBorder">
-              <span>Total</span><span id="ds-act-total">₱0.00</span>
-            </div>
-          </div>
-
-        </div>
-
-
-
-        <div class="p-3 bg-bitCream rounded-2xl border border-bitBorderDark space-y-1.5">
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-cash-collected" class="text-[11px] font-bold text-gray-600">Cash collected</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-cash-collected" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-starting-cash" class="text-[11px] font-bold text-gray-600">Bitbit starting cash (next day)</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-starting-cash" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-            <div class="flex items-center justify-between gap-2">
-              <label for="ds-fotomatk-fund" class="text-[11px] font-bold text-gray-600">Fotomatk change fund</label>
-              <input type="number" inputmode="decimal" step="0.01" min="0" id="ds-fotomatk-fund" oninput="updateDaySummary()" placeholder="0.00" class="w-28 p-1.5 bg-white rounded-lg border border-bitBorderDark text-xs font-bold text-right outline-none focus:border-bitWalnut">
-            </div>
-          <div>
-            <label for="ds-notes" class="text-[11px] font-bold text-gray-600 block mb-1">Notes</label>
-            <textarea id="ds-notes" rows="4" oninput="updateDaySummary()" placeholder="Ask of the Day:&#10;Customer Mood:&#10;Feedback:&#10;Own observations:" class="w-full p-2 bg-white rounded-lg border border-bitBorderDark text-xs outline-none focus:border-bitWalnut"></textarea>
-          </div>
-        </div>
-
-        <span class="text-[11px] font-bold text-bitWalnut uppercase tracking-wider block pt-1">Part 2 · Stock Movement Today</span>
-        <pre id="ds-movement-preview" class="p-3 bg-gray-50 rounded-2xl border border-bitBorder text-[11px] text-gray-700 whitespace-pre-wrap font-sans">Loading...</pre>
-      </div>
-
-      <div class="shrink-0 space-y-1.5">
-        <button type="button" onclick="closeTheDay()" class="w-full py-3 bg-bitWalnut hover:bg-black text-white rounded-xl font-bold text-xs cursor-pointer">
-          <span id="ds-copy-label">✓ Save & Time Out</span>
-        </button>
-        <span class="block text-center text-[10px] text-gray-500">The summary posts to the team Telegram group automatically.</span>
-      </div>
-    </div>
-  </div>
-
   <!-- CAMERA SCANNER OVERLAY -->
   <!-- LIVE PHOTO (laptops: the file picker can't open the camera there) -->
   <div id="live-photo-modal" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
@@ -4278,7 +4282,7 @@ function triggerCatalogPhotoCapture(sku) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
 
-      const tabs = ['dropoff', 'received', 'qrbuilder', 'move'];
+      const tabs = ['dropoff', 'received', 'qrbuilder', 'move', 'summary'];
       tabs.forEach(t => {
         const btn = document.getElementById(`nav-tab-${t}`);
         const indicator = btn.querySelector('.nav-indicator');
@@ -4303,6 +4307,7 @@ if (tabId === 'tab-received') switchLocationStockFilter(currentLocationFilter ||
         setTimeout(() => document.getElementById('move-scanner-input')?.focus(), 150);
         loadTodayMovements();
       }
+      if (tabId === 'tab-summary') openDaySummaryModal();
     }
 
    function setInhouseCraftMode(mode) {
@@ -5566,8 +5571,8 @@ async function refreshGlobalStockCounters() {
       } catch (e) {}
     }
 
+    // Day Summary is its own Shelf Care tab now; this fills it
     async function openDaySummaryModal() {
-      document.getElementById('day-summary-modal').style.display = 'flex';
       const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
       document.getElementById('ds-meta').textContent = `${dateStr} · ${currentActiveCrew ? currentActiveCrew.name : 'Staff'}`;
 
@@ -5610,7 +5615,7 @@ async function refreshGlobalStockCounters() {
     }
 
     function closeDaySummaryModal() {
-      document.getElementById('day-summary-modal').style.display = 'none';
+      if (!document.getElementById('tab-summary').classList.contains('hidden')) switchShelfTab('tab-move');
     }
 
     async function loadTodayOpeningRef() {

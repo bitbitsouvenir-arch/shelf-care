@@ -1730,7 +1730,7 @@
     }
 
     const DEFAULT_CREW = [
-      { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e001', name: 'Mems', pin: '6363', role: 'admin' },
+      { id: '11fdd25e-abc9-4b53-ab0f-8bda6449e001', name: 'Meme', pin: '6363', role: 'admin' },
       { id: 'ceb28403-407b-47f4-b0eb-b09a70b30002', name: 'Louise', pin: '2514', role: 'admin' },
       { id: '5b7f0a7c-4c2a-4956-be10-d60642920003', name: 'Isca', pin: '1234', role: 'lead' },
       { id: 'd1d38f84-e807-4375-8a94-cf2d268b0004', name: 'Alex', pin: '1234', role: 'lead' },
@@ -5691,7 +5691,7 @@ async function refreshGlobalStockCounters() {
       try { localStorage.removeItem(dsDraftKey()); } catch (e) {}
       closeDaySummaryModal();
       alert(`✓ Day saved. ${currentActiveCrew.name} timed out. Thanks for closing!` +
-        (posted.ok ? '' : `\n\n⚠️ The Telegram post didn't go through (${posted.error}). Please let Mems know.`));
+        (posted.ok ? '' : `\n\n⚠️ The Telegram post didn't go through (${posted.error}). Please let Meme know.`));
       lockStation(false);
     }
 

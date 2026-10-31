@@ -1423,6 +1423,12 @@
             <label for="sd-fotomatk-fund" class="text-xs font-bold text-bitWalnut">Fotomatk change fund</label>
             <input type="number" inputmode="decimal" step="0.01" min="0" id="sd-fotomatk-fund" placeholder="0.00" class="w-32 p-2 bg-white rounded-lg border border-bitBorderDark text-sm font-bold text-right outline-none focus:border-bitWalnut">
           </div>
+          <div id="sd-last-night" class="hidden text-[10px] text-gray-500 font-medium pt-1 border-t border-bitBorder"></div>
+        </div>
+        <div id="sd-mismatch" class="hidden p-3 bg-bitPink/10 rounded-2xl border-2 border-bitPinkDark space-y-2">
+          <div id="sd-mismatch-text" class="text-[11px] font-bold text-bitPinkDark"></div>
+          <textarea id="sd-mismatch-note" rows="2" placeholder="What happened? e.g. recounted twice, ₱1,450 was added from petty cash by Louise" class="w-full p-2 bg-white rounded-lg border border-bitBorderDark text-xs outline-none focus:border-bitWalnut"></textarea>
+          <span class="text-[10px] text-gray-500 block">Count again first. If it's still different, explain here. The note goes with the opening report.</span>
         </div>
         <button type="button" id="sd-open-btn" onclick="submitStartDay(true)" class="w-full py-3.5 bg-bitWalnut hover:bg-black text-white rounded-2xl font-bold text-xs cursor-pointer">
           Open Store & Time In →
@@ -1967,13 +1973,53 @@
       document.getElementById('sd-error').textContent = '';
       document.getElementById('sd-starting-cash').value = '';
       document.getElementById('sd-fotomatk-fund').value = '';
+      resetOpeningCheck();
       if (openingOnlyMode) showOpeningForm(); else hideOpeningForm();
       document.getElementById('start-day-modal').style.display = 'flex';
     }
     function showOpeningForm() {
       document.getElementById('sd-choice').classList.add('hidden');
       document.getElementById('sd-opening-form').classList.remove('hidden');
+      loadLastNightEndorsement();
       setTimeout(() => document.getElementById('sd-starting-cash').focus(), 100);
+    }
+
+    // ---- Opening check: counted amounts vs what was endorsed at the last closing ----
+    let lastNight = null; // { date, closed_by, starting_cash, fotomatk_fund }
+    const pesoFmt = n => '₱' + (Number(n) || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    function resetOpeningCheck() {
+      lastNight = null;
+      document.getElementById('sd-last-night').classList.add('hidden');
+      document.getElementById('sd-mismatch').classList.add('hidden');
+      document.getElementById('sd-mismatch-note').value = '';
+    }
+    async function loadLastNightEndorsement() {
+      const box = document.getElementById('sd-last-night');
+      try {
+        const { data, error } = await db.from('daily_reports')
+          .select('report_date, closed_by, starting_cash_next, fotomatk_fund')
+          .lt('report_date', localDateKey()).order('report_date', { ascending: false }).limit(1);
+        if (error) throw error;
+        const r = data && data[0];
+        if (!r || r.starting_cash_next == null) { lastNight = null; return; }
+        lastNight = { date: r.report_date, closed_by: r.closed_by || 'Staff',
+          starting_cash: Number(r.starting_cash_next) || 0,
+          fotomatk_fund: r.fotomatk_fund == null ? null : Number(r.fotomatk_fund) || 0 };
+        const d = new Date(r.report_date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        box.textContent = `Endorsed at closing (${d}, ${lastNight.closed_by}): Starting cash ${pesoFmt(lastNight.starting_cash)}` +
+          (lastNight.fotomatk_fund == null ? '' : ` · Fotomatk ${pesoFmt(lastNight.fotomatk_fund)}`);
+        box.classList.remove('hidden');
+      } catch (e) { console.warn(e.message); lastNight = null; }
+    }
+    // Returns the list of differences (empty = matches, or nothing to compare against)
+    function openingMismatches(cash, fund) {
+      if (!lastNight) return [];
+      const out = [];
+      if (Math.abs(cash - lastNight.starting_cash) >= 0.01)
+        out.push(`Starting cash: counted ${pesoFmt(cash)}, endorsed ${pesoFmt(lastNight.starting_cash)}`);
+      if (lastNight.fotomatk_fund != null && Math.abs(fund - lastNight.fotomatk_fund) >= 0.01)
+        out.push(`Fotomatk fund: counted ${pesoFmt(fund)}, endorsed ${pesoFmt(lastNight.fotomatk_fund)}`);
+      return out;
     }
     function hideOpeningForm() {
       document.getElementById('sd-choice').classList.remove('hidden');
@@ -1990,7 +2036,28 @@
           errEl.textContent = 'Enter both amounts (0 is fine).';
           return;
         }
-        row.details = { opening: true, starting_cash: parseFloat(cashRaw) || 0, fotomatk_fund: parseFloat(fundRaw) || 0 };
+        const cash = parseFloat(cashRaw) || 0, fund = parseFloat(fundRaw) || 0;
+        row.details = { opening: true, starting_cash: cash, fotomatk_fund: fund };
+        if (!lastNight) await loadLastNightEndorsement(); // in case it was tapped before it loaded
+        const diffs = openingMismatches(cash, fund);
+        if (diffs.length) {
+          const box = document.getElementById('sd-mismatch');
+          const note = document.getElementById('sd-mismatch-note').value.trim();
+          if (box.classList.contains('hidden') || !note) {
+            document.getElementById('sd-mismatch-text').innerHTML = "⚠️ Doesn't match last night's closing<br>" + diffs.join('<br>');
+            box.classList.remove('hidden');
+            errEl.textContent = 'Count again. If still different, add a note to continue.';
+            setTimeout(() => document.getElementById('sd-mismatch-note').focus(), 100);
+            return;
+          }
+          row.details.mismatch = true;
+          row.details.mismatch_note = note;
+          row.details.expected_starting_cash = lastNight.starting_cash;
+          if (lastNight.fotomatk_fund != null) row.details.expected_fotomatk_fund = lastNight.fotomatk_fund;
+          row.details.expected_from = lastNight.date;
+        } else {
+          document.getElementById('sd-mismatch').classList.add('hidden');
+        }
       } else if (!(await storeOpenedToday())) {
         // The first person to time in opens the store: Time In Only waits until it's open
         alert('The store is not open yet.\n\nThe first person in opens the store: tap 🏪 Open the Store.');
@@ -5629,7 +5696,9 @@ async function refreshGlobalStockCounters() {
         const o = rows && rows[0];
         if (o && o.details && o.details.opening) {
           const t = new Date(o.logged_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-          box.innerHTML = `☀️ Opened by <strong>${o.crew_name}</strong> at ${t} · Starting cash <strong>${peso(o.details.starting_cash)}</strong> · Fotomatk fund <strong>${peso(o.details.fotomatk_fund)}</strong>`;
+          const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+          box.innerHTML = `☀️ Opened by <strong>${esc(o.crew_name)}</strong> at ${t} · Starting cash <strong>${peso(o.details.starting_cash)}</strong> · Fotomatk fund <strong>${peso(o.details.fotomatk_fund)}</strong>` +
+            (o.details.mismatch ? `<br>⚠️ Didn't match last night's closing (endorsed ${peso(o.details.expected_starting_cash)}${o.details.expected_fotomatk_fund != null ? ` · Fotomatk ${peso(o.details.expected_fotomatk_fund)}` : ''}). Note: ${esc(o.details.mismatch_note)}` : '');
           box.classList.remove('hidden');
         }
       } catch (e) { console.warn(e.message); }
